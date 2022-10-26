@@ -4,6 +4,9 @@
 ### my ingores ###
 .vscode/
 .env
+*.env
+db.sqlite3
+env/
 
 
 
