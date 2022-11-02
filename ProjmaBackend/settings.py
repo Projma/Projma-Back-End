@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'accounts',
     'rest_framework',
     'rest_framework_simplejwt',
-    'rest_framework_swagger',
 ]
 
 MIDDLEWARE = [
@@ -85,7 +84,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'ProjmaDB', 
         'USER': 'postgres',
-        'PASSWORD': 'classicguys',
+        'PASSWORD': 'Mha22111380',
         'HOST': '127.0.0.1', 
         'PORT': '5432',
     }
