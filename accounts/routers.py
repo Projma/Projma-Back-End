@@ -1,4 +1,3 @@
-from django.db import router
 from rest_framework.routers import DefaultRouter, Route, DynamicRoute
 
 class UserRouter(DefaultRouter):
@@ -8,12 +7,12 @@ class UserRouter(DefaultRouter):
             url=r'^{prefix}{trailing_slash}$',
             mapping={
                 'get': 'list',
-                # 'post': 'create'
             },
             name='{basename}-list',
             detail=False,
             initkwargs={'suffix': 'List'}
         ),
+        # Post route
         Route(
             url=r'^{prefix}/signup{trailing_slash}$',
             mapping={
@@ -21,7 +20,7 @@ class UserRouter(DefaultRouter):
             },
             name='{basename}-list',
             detail=False,
-            initkwargs={'suffix': 'List'}
+            initkwargs={'suffix': 'Instance'}
         ),
         # Dynamically generated list routes. Generated using
         # @action(detail=False) decorator on methods of the viewset.
