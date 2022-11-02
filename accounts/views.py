@@ -5,7 +5,7 @@ from .models import *
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = CreateUserSerializer
 
     def get_permissions(self):
         if self.request.method == 'GET':
