@@ -1,20 +1,13 @@
-from django.shortcuts import render
-from .models import *
 from rest_framework import viewsets
+from rest_framework.permissions import IsAdminUser, AllowAny
 from .serializers import *
-from rest_framework.permissions import *
+from .models import *
 
-class UserViewset(viewsets.ModelViewSet):
-    serializer_class = UserSerializer
+class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
-    permission_classes = [IsAuthenticated]
-# Create your views here.
+    serializer_class = UserSerializer
 
-from django.conf.urls import url
-from rest_framework_swagger.views import get_swagger_view
-
-schema_view = get_swagger_view(title='Pastebin API')
-
-urlpatterns = [
-    url(r'^$', schema_view)
-]
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [IsAdminUser()]
+        return [AllowAny()]
