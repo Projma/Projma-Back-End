@@ -1,3 +1,6 @@
+{% block subject %}فراموشی رمز{% endblock subject %}
+
+{% block html_body %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="fa">
   <head>
@@ -420,7 +423,7 @@
                                             bgcolor="#0d6efd"
                                           >
                                             <a
-                                              href="#"
+                                              href={{ link }}
                                               style="
                                                 color: #ffffff;
                                                 font-size: 16px;
@@ -638,3 +641,4 @@
     </table>
   </body>
 </html>
+{% endblock html_body %}
