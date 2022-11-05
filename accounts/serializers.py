@@ -14,3 +14,15 @@ class CreateUserSerializer(serializers.ModelSerializer):
         new_user = User.objects.create_user(**validated_data)
         new_user.set_password(validated_data['password'])
         return new_user
+
+
+class ForgotPasswordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['email']
+
+
+class ResetPasswordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['password']

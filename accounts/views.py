@@ -1,13 +1,104 @@
+from django.contrib.auth.tokens import default_token_generator
+from django.core.validators import EmailValidator
+from rest_framework.response import Response
+from rest_framework import status
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, AllowAny
 from .serializers import *
 from .models import *
+from .Email import *
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = CreateUserSerializer
+    _ACTIVE_ACCOUNT_KEY = 'active'
 
     def get_permissions(self):
-        if self.request.method == 'GET':
+        if self.request.method == 'GET'\
+            and not self._ACTIVE_ACCOUNT_KEY in self.request.path:
             return [IsAdminUser()]
         return [AllowAny()]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        pk = serializer.instance.pk
+        self.verify_email(request, pk)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def verify_email(self, request, pk):
+        try:
+            user = self.queryset.get(pk=pk)
+        except:
+            return Response('User not found', status=status.HTTP_404_NOT_FOUND)
+        url = request.get_host() + f'/accounts/users/{self._ACTIVE_ACCOUNT_KEY}'
+        email_template = 'emails/bootstrap_email_ev.html'
+        context = {'username': user.username}
+        email_sender = SendEmail(self.queryset)
+        return email_sender.send_email(url, email_template, pk, context)
+
+    @action(detail=False, permission_classes=[AllowAny], methods=['get'])
+    def active(self, request, pk=None):
+        user_id = request.query_params.get('user_id', '')
+        confirmation_token = request.query_params.get('confirmation_token', '')
+        try:
+            user = self.queryset.get(pk=user_id)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
+        if user is None:
+            return Response({'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        if not default_token_generator.check_token(user, confirmation_token):
+            return Response({'message': 'Invalid or expired token. Please request another confirmation email by signing in.'}, status=status.HTTP_400_BAD_REQUEST)
+        if user.is_active:
+            return Response({'message': 'User already activated'}, status=status.HTTP_400_BAD_REQUEST)
+        user.is_active = True
+        user.save()
+        return Response({'message': 'User activated successfully'}, status=status.HTTP_200_OK)
+
+
+class ForgotPasswordViewSet(viewsets.GenericViewSet):
+    queryset = User.objects.all()
+    serializer_class = ForgotPasswordSerializer
+
+    # @action(detail=False, permission_classes=[AllowAny], methods=['post'])
+    def forgot_password(self, request):
+        validate_email = EmailValidator()
+        email = request.data.get('email')
+        try:
+            validate_email.__call__(email)
+        except ValidationError as e:
+            return Response(e.message, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user = self.queryset.get(email=email)
+        except User.DoesNotExist:
+            return Response("There is not any user with the given email" , status=status.HTTP_404_NOT_FOUND)
+        url = request.get_host() + f'/accounts/users/forgot_password'
+        email_template = 'emails/bootstrap_email_fp.html'
+        context = {}
+        email_sender = SendEmail(self.queryset)
+        return email_sender.send_email(url, email_template, user.pk, context)
+
+
+class ResetPasswordViewSet(viewsets.GenericViewSet):
+    queryset = User.objects.all()
+    serializer_class = ResetPasswordSerializer
+
+    # @action(detail=False, permission_classes=[AllowAny], methods=['post'])
+    def reset_password(self, request):
+        user_id = request.query_params.get('user_id')
+        confirmation_token = request.query_params.get('confirmation_token')
+        try:
+            user = self.queryset.get(pk=user_id)
+        except:
+            return Response({'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        new_password = request.data.get('password')
+        if user.check_password(new_password):
+            return Response('Insert a new password', status=status.HTTP_400_BAD_REQUEST)
+        if not default_token_generator.check_token(user, confirmation_token):
+            return Response({'message': 'Invalid or expired token. Please request another forget password request.'}, status=status.HTTP_400_BAD_REQUEST)
+        user.set_password(new_password)
+        user.save()
+        return Response('Password changed successfully', status=status.HTTP_200_OK)
