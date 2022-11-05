@@ -16,13 +16,13 @@ class CreateUserSerializer(serializers.ModelSerializer):
         return new_user
 
 
-class ForgotPassword(serializers.ModelSerializer):
+class ForgotPasswordSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['email']
 
 
-class ResetPassword(serializers.ModelSerializer):
+class ResetPasswordSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['password']
