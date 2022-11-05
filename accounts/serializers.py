@@ -1,8 +1,11 @@
-from django.forms import ValidationError
+from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from .models import *
 
 class CreateUserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, style={'input_type': 'password'},
+                                        required=True, allow_blank=False, allow_null=False,
+                                        validators=[validate_password])
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'username', 'password', 'email']
