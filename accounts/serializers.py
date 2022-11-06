@@ -17,12 +17,16 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
 
 class ForgotPasswordSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(required=True, allow_blank=False, allow_null=False)
     class Meta:
         model = User
         fields = ['email']
 
 
 class ResetPasswordSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, style={'input_type': 'password'},
+                                        required=True, allow_blank=False, allow_null=False,
+                                        validators=[validate_password])
     class Meta:
         model = User
         fields = ['password']

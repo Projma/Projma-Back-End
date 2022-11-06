@@ -1,5 +1,6 @@
 from django.contrib.auth.tokens import default_token_generator
 from django.core.validators import EmailValidator
+from django.forms import ValidationError
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
@@ -63,7 +64,6 @@ class ForgotPasswordViewSet(viewsets.GenericViewSet):
     queryset = User.objects.all()
     serializer_class = ForgotPasswordSerializer
 
-    # @action(detail=False, permission_classes=[AllowAny], methods=['post'])
     def forgot_password(self, request):
         validate_email = EmailValidator()
         email = request.data.get('email')
@@ -75,7 +75,7 @@ class ForgotPasswordViewSet(viewsets.GenericViewSet):
             user = self.queryset.get(email=email)
         except User.DoesNotExist:
             return Response("There is not any user with the given email" , status=status.HTTP_404_NOT_FOUND)
-        url = request.get_host() + f'/accounts/users/forgot_password'
+        url = request.get_host() + f'/accounts/reset-password'
         email_template = 'emails/bootstrap_email_fp.html'
         context = {}
         email_sender = SendEmail(self.queryset)
@@ -86,7 +86,6 @@ class ResetPasswordViewSet(viewsets.GenericViewSet):
     queryset = User.objects.all()
     serializer_class = ResetPasswordSerializer
 
-    # @action(detail=False, permission_classes=[AllowAny], methods=['post'])
     def reset_password(self, request):
         user_id = request.query_params.get('user_id')
         confirmation_token = request.query_params.get('confirmation_token')
@@ -95,6 +94,8 @@ class ResetPasswordViewSet(viewsets.GenericViewSet):
         except:
             return Response({'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         new_password = request.data.get('password')
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         if user.check_password(new_password):
             return Response('Insert a new password', status=status.HTTP_400_BAD_REQUEST)
         if not default_token_generator.check_token(user, confirmation_token):
