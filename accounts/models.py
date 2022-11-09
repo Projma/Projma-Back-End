@@ -14,3 +14,8 @@ class User(AbstractUser):
         ),
     )
 
+    def save(self, *args, **kwargs) -> None:
+        if self.is_superuser:
+            self.is_active = True
+        return super().save(*args, **kwargs)
+
