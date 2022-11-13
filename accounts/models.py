@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 
@@ -13,4 +14,11 @@ class User(AbstractUser):
             "Unselect this instead of deleting accounts."
         ),
     )
+
+class Profile(models.Model):
+    bdate = models.DateField()
+    bio = models.CharField(max_length=1000)
+    phone = models.CharField()
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
+    img = models.ImageField()
 
