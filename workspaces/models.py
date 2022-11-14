@@ -62,3 +62,11 @@ class Label(models.Model):
 class File(models.Model):
     file_url = models.URLField(max_length=1000, blank=True, null=True)
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
+
+
+class TaskLabel(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    label = models.ForeignKey(Label, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('task', 'label')
