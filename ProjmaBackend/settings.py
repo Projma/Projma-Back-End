@@ -40,10 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'accounts',
     'rest_framework',
     'rest_framework_simplejwt',
+    'cloudinary_storage',
+    'cloudinary',
     'drf_yasg',
+    'accounts',
+    'workspaces',
 ]
 
 MIDDLEWARE = [
@@ -85,7 +88,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'ProjmaDB', 
         'USER': 'postgres',
-        'PASSWORD': 'Mha22111380',
+        'PASSWORD': 'classicguys',
         'HOST': '127.0.0.1', 
         'PORT': '5432',
     }
@@ -165,3 +168,12 @@ SIMPLE_JWT = {
 
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'projmacloud',
+    'API_KEY': '529966568459517',
+    'API_SECRET': 'K2zrPRn37aSQ_mI_FUX3ZZpRJTc',
+}
+
+MEDIA_URL = '/media/'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
