@@ -33,3 +33,14 @@ class Board(models.Model):
 class TaskList(models.Model):
     title = models.CharField(max_length=256)
     board = models.ForeignKey(Board, on_delete=models.CASCADE)
+
+
+class Task(models.Model):
+    title = models.CharField(max_length=256)
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateTimeField(blank=True, null=True)
+    estimate = models.FloatField(blank=True, null=True)
+    spend = models.FloatField(blank=True, null=True)
+    out_of_estimate = models.FloatField(blank=True, null=True)
+    description = models.CharField(max_length=1000, blank=True, null=True)
+    task_list = models.ForeignKey(TaskList, on_delete=models.CASCADE)
