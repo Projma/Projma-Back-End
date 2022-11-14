@@ -1,4 +1,5 @@
 from django.db import models
+from colorfield.fields import ColorField
 from accounts.models import Profile
 
 
@@ -50,3 +51,9 @@ class CheckList(models.Model):
     text = models.CharField(max_length=512)
     is_done = models.BooleanField(default=False)
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
+
+
+class Label(models.Model):
+    title = models.CharField(max_length=256)
+    color = ColorField()
+    board = models.ForeignKey(Board, on_delete=models.CASCADE)
