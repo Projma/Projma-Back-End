@@ -44,3 +44,9 @@ class Task(models.Model):
     out_of_estimate = models.FloatField(blank=True, null=True)
     description = models.CharField(max_length=1000, blank=True, null=True)
     task_list = models.ForeignKey(TaskList, on_delete=models.CASCADE)
+
+
+class CheckList(models.Model):
+    text = models.CharField(max_length=512)
+    is_done = models.BooleanField(default=False)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
