@@ -57,3 +57,8 @@ class Label(models.Model):
     title = models.CharField(max_length=256)
     color = ColorField()
     board = models.ForeignKey(Board, on_delete=models.CASCADE)
+
+
+class File(models.Model):
+    file_url = models.URLField(max_length=1000, blank=True, null=True)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
