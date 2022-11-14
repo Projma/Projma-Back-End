@@ -30,3 +30,8 @@ class ResetPasswordSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['password']
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ['user', 'birth_date', 'bio', 'phone', 'profile_pic', 'telegram_id']

@@ -4,10 +4,14 @@ from .routers import *
 from .models import *
 from .views import *
 
-router = UserRouter()
-router.register('users', UserViewSet, basename='user')
+userrouter = UserRouter()
+userrouter.register('users', UserViewSet, basename='user')
 
-urlpatterns = router.urls
+router = DefaultRouter()
+router.register('profile', ProfileViewset, basename='profile')
+
+urlpatterns = userrouter.urls
+urlpatterns += router.urls
 
 urlpatterns += [
     path('forgot-password/', ForgotPasswordViewSet.as_view({'post': 'forgot_password'})),
