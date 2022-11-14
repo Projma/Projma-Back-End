@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'cloudinary_storage',
     'cloudinary',
     'drf_yasg',
+    'colorfield',
     'accounts',
     'workspaces',
 ]
