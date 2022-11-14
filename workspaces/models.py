@@ -86,3 +86,11 @@ class BoardAdmin(models.Model):
 
     class Meta:
         unique_together = ('profile', 'board')
+
+
+class MemberShip(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    board = models.ForeignKey(Board, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('profile', 'board')
