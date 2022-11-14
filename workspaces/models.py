@@ -28,3 +28,8 @@ class Board(models.Model):
     description = models.CharField(max_length=1000, blank=True, null=True)
     background_pic = models.URLField(max_length=1000, blank=True, null=True)
     workspace = models.ForeignKey(WorkSpace, on_delete=models.CASCADE)
+
+
+class TaskList(models.Model):
+    title = models.CharField(max_length=256)
+    board = models.ForeignKey(Board, on_delete=models.CASCADE)
