@@ -70,3 +70,11 @@ class TaskLabel(models.Model):
 
     class Meta:
         unique_together = ('task', 'label')
+
+
+class WorksOn(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('profile', 'task')
