@@ -5,6 +5,8 @@ class WorkSpacePermissions(BasePermission):
     def has_permission(self, request, view):
         if request.user and request.user.is_staff:
             return True
+        if not request.user or request.user.is_anonymous:
+            return False
         if request.method == 'POST' or request.method == 'DELETE':
             return bool(request.user and request.user.is_authenticated)
         return True
