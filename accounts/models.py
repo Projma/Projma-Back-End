@@ -20,12 +20,15 @@ class User(AbstractUser):
     def save(self, *args, **kwargs) -> None:
         if self.is_superuser:
             self.is_active = True
-        return super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
+        Profile.objects.get_or_create(user=self, defaults={'bio':None, 'birth_date':None, 'phone':None, 'telegram_id':None})
+        return
 
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile', primary_key=True)
-    birth_date = models.DateField(blank=True, null=True, 
-                                    validators=[MaxValueValidator(datetime.date.today())])
+    birth_date = models.DateField(blank=True, null=True)
+    # birth_date = models.DateField(blank=True, null=True,
+                                    # validators=[MaxValueValidator(datetime.date.today())])
     bio = models.CharField(max_length=1000, blank=True, null=True)
     phone = models.CharField(max_length=11, blank=True, null=True,
                             validators=[RegexValidator(regex='^09\d{9}$', 
@@ -34,3 +37,5 @@ class Profile(models.Model):
     telegram_id = models.CharField(max_length=100, blank=True, null=True,
                                     validators=[RegexValidator(regex='^@.+$', message='Telegram ID must start with @')])
 
+    def __str__(self):
+        return self.user.username
