@@ -103,3 +103,8 @@ class ResetPasswordViewSet(viewsets.GenericViewSet):
         user.set_password(new_password)
         user.save()
         return Response('Password changed successfully', status=status.HTTP_200_OK)
+
+class ProfileViewset(viewsets.ModelViewSet):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    
