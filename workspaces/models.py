@@ -28,7 +28,7 @@ class Board(models.Model):
     name = models.CharField(max_length=256)
     description = models.CharField(max_length=1000, blank=True, null=True)
     background_pic = models.URLField(max_length=1000, blank=True, null=True)
-    workspace = models.ForeignKey(WorkSpace, on_delete=models.CASCADE)
+    workspace = models.ForeignKey(WorkSpace, on_delete=models.CASCADE, related_name='boards')
 
 
 class TaskList(models.Model):

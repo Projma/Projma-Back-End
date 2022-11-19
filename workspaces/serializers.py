@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from .models import WorkSpace, Profile
+from .models import WorkSpace, Profile, Board
 
 class WorkspaceSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
@@ -18,3 +18,10 @@ class WorkspaceSerializer(serializers.ModelSerializer):
         profile = get_object_or_404(Profile, user=user)
         validated_data['owner'] = profile
         return super().create(validated_data)
+
+
+class BoardSerializer(serializers.ModelSerializer):
+    workspace = serializers.PrimaryKeyRelatedField(read_only=True)
+    class Meta:
+        model = Board
+        fields = ['name', 'description', 'workspace']
