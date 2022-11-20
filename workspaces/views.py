@@ -1,9 +1,13 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.decorators import action
+from rest_framework import status
 from .models import *
 from .serializers import *
 from .permissions import *
+from accounts.serializers import *
+from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 
 class WorkSpaceViewSet(viewsets.ModelViewSet):
@@ -32,3 +36,19 @@ class BoardViewSet(viewsets.ModelViewSet):
     def get_serializer_context(self):
         workspace_id = self.kwargs.get('w_id')
         return {'workspace_id': workspace_id}
+
+
+
+class UserDashboardViewset(viewsets.GenericViewSet):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=['get'])
+    def get_user_boards(self, request):
+        serializer = BoardSerializer(data=list(request.user.profile.boards.all()), many=True)
+        if serializer.is_valid():
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+
