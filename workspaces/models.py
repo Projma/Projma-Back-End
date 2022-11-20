@@ -6,15 +6,14 @@ from accounts.models import Profile
 # Create your models here.
 class WorkSpace(models.Model):
     TYPE_CHOICES = [
-        ("education", "Education"),
-        ("marketing", "Marketing"),
-        ("small business", "Small Business"),
-        ("sales & crm", "Sales & CRM"),
-        ("operations", "Operations"),
-        ("engineering-it", "Engineering IT"),
-        ("finance", "Finance"),
-        ("human resources", "Human Resources"),
-        ("other", "Other"),
+        ("education", "آموزشی"),
+        ("marketing", "بازاریابی"),
+        ("small business", "سرمایه گذاری کوچک"),
+        ("operations", "عملیاتی"),
+        ("engineering-it", "مهندسی و IT"),
+        ("finance", "مالی"),
+        ("human resources", "منابع انسانی"),
+        ("other", "سایر"),
     ]
 
     name = models.CharField(max_length=256)
