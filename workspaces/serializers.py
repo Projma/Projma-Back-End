@@ -21,7 +21,16 @@ class WorkspaceSerializer(serializers.ModelSerializer):
 
 
 class BoardSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
     workspace = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = Board
-        fields = ['name', 'description', 'workspace']
+        fields = ['id', 'name', 'description', 'workspace']
+
+    def create(self, validated_data):
+        workspace_id = self.context.get('workspace_id')
+        if workspace_id is None:
+            raise serializers.FieldDoesNotExist("workspace not found")
+        workspace = get_object_or_404(WorkSpace, pk=workspace_id)
+        validated_data['workspace'] = workspace
+        return super().create(validated_data)
