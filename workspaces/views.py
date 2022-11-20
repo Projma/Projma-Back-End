@@ -24,7 +24,7 @@ class BoardViewSet(viewsets.ModelViewSet):
     serializer_class = BoardSerializer
 
     def get_queryset(self):
-        path = self.request.path.strip('/').split()
+        path = self.request.path.strip('/').split('/')
         workspace_id = int(path[1])
         workspace = get_object_or_404(WorkSpace, pk=workspace_id)
         boards = Board.objects.filter(workspace=workspace)
