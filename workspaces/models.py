@@ -21,6 +21,7 @@ class WorkSpace(models.Model):
     type = models.CharField(max_length=256, choices=TYPE_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    members = models.ManyToManyField(to=Profile, related_name='workspaces')
 
 
 class Board(models.Model):
@@ -28,6 +29,8 @@ class Board(models.Model):
     description = models.CharField(max_length=1000, blank=True, null=True)
     background_pic = models.URLField(max_length=1000, blank=True, null=True)
     workspace = models.ForeignKey(WorkSpace, on_delete=models.CASCADE, related_name='boards')
+    admins = models.ManyToManyField(Profile, related_name='administrating_boards')
+    members = models.ManyToManyField(Profile, related_name='boards')
 
 
 class TaskList(models.Model):
@@ -44,6 +47,8 @@ class Task(models.Model):
     out_of_estimate = models.FloatField(blank=True, null=True)
     description = models.CharField(max_length=1000, blank=True, null=True)
     task_list = models.ForeignKey(TaskList, on_delete=models.CASCADE)
+    labels = models.ManyToManyField(to='Label', related_name='tasks')
+    workers = models.ManyToManyField(Profile, related_name='tasks')
 
 
 class CheckList(models.Model):
@@ -63,33 +68,33 @@ class File(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
 
 
-class TaskLabel(models.Model):
-    task = models.ForeignKey(Task, on_delete=models.CASCADE)
-    label = models.ForeignKey(Label, on_delete=models.CASCADE)
+# class TaskLabel(models.Model):
+#     task = models.ForeignKey(Task, on_delete=models.CASCADE)
+#     label = models.ForeignKey(Label, on_delete=models.CASCADE)
 
-    class Meta:
-        unique_together = ('task', 'label')
-
-
-class WorksOn(models.Model):
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    task = models.ForeignKey(Task, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ('profile', 'task')
+#     class Meta:
+#         unique_together = ('task', 'label')
 
 
-class BoardAdmin(models.Model):
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    board = models.ForeignKey(Board, on_delete=models.CASCADE)
+# class WorksOn(models.Model):
+#     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+#     task = models.ForeignKey(Task, on_delete=models.CASCADE)
 
-    class Meta:
-        unique_together = ('profile', 'board')
+#     class Meta:
+#         unique_together = ('profile', 'task')
 
 
-class MemberShip(models.Model):
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    board = models.ForeignKey(Board, on_delete=models.CASCADE)
+# class BoardAdmin(models.Model):
+#     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+#     board = models.ForeignKey(Board, on_delete=models.CASCADE)
 
-    class Meta:
-        unique_together = ('profile', 'board')
+#     class Meta:
+#         unique_together = ('profile', 'board')
+
+
+# class MemberShip(models.Model):
+#     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+#     board = models.ForeignKey(Board, on_delete=models.CASCADE)
+
+#     class Meta:
+#         unique_together = ('profile', 'board')
