@@ -24,16 +24,11 @@ class BoardViewSet(viewsets.ModelViewSet):
     serializer_class = BoardSerializer
 
     def get_queryset(self):
-        workspace_id = self.get_workspace_id()
+        workspace_id = self.kwargs.get('w_id')
         workspace = get_object_or_404(WorkSpace, pk=workspace_id)
         boards = Board.objects.filter(workspace=workspace)
         return boards
 
     def get_serializer_context(self):
-        workspace_id = self.get_workspace_id()
+        workspace_id = self.kwargs.get('w_id')
         return {'workspace_id': workspace_id}
-
-    def get_workspace_id(self):
-        path = self.request.path.strip('/').split('/')
-        workspace_id = int(path[1])
-        return workspace_id
