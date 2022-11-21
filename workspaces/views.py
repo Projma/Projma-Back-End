@@ -1,9 +1,10 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404 
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from .invite_link import encode, decode
 from .models import *
 from .serializers import *
 from .permissions import *
@@ -13,7 +14,7 @@ from accounts.serializers import *
 class WorkspaceViewSet(viewsets.ModelViewSet):
     queryset = WorkSpace.objects.all()
     serializer_class = WorkspaceSerializer
-    permission_classes = [WorkSpacePermissions]
+    permission_classes = [IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
         user = request.user
@@ -28,6 +29,28 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
         types = WorkSpace.TYPE_CHOICES
         dic_types = {t[0]: t[1] for t in types}
         return Response(dic_types)
+
+    @action(methods=['get'], detail=True)
+    def invite_link(self, request, pk):
+        workspace = self.get_object()
+        if workspace.owner.user == request.user:
+            invite_link = encode(workspace)
+            return Response(invite_link)
+        else:
+            return Response('You are not authorized to view this link', status=status.HTTP_401_UNAUTHORIZED)
+
+    @action(methods=['get'], detail=False, url_path='invite-to-workspace/(?P<invite_link>.+)')
+    def invite_to_workspace(self, request, invite_link):
+        workspace = decode(invite_link)
+        if workspace is None:
+            return Response('Invalid invite link', status=status.HTTP_400_BAD_REQUEST)
+        try:
+            if request.user.profile in workspace.members.all():
+                return Response('You are already a member of this workspace', status=status.HTTP_400_BAD_REQUEST)
+            workspace.members.add(request.user.profile)
+            return Response('You have been added to the workspace successfully', status=status.HTTP_200_OK)
+        except:
+            return Response('Adding user to workspace failed', status=status.HTTP_400_BAD_REQUEST)
 
 
 class BoardManagementViewSet(viewsets.ModelViewSet):
