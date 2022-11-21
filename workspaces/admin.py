@@ -1,12 +1,15 @@
 from django.contrib import admin
 from .models import *
+from .forms import *
 # Register your models here.
 class WorkSpaceAdmin(admin.ModelAdmin):
-    pass
+    model = WorkSpace
+    form = WorkSpaceForm
 
 
 class BoardAdmin(admin.ModelAdmin):
-    pass
+    model = Board
+    form = BoardForm
 
 
 class TaskListAdmin(admin.ModelAdmin):
