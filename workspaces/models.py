@@ -24,6 +24,13 @@ class WorkSpace(models.Model):
     owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
     members = models.ManyToManyField(to=Profile, related_name='workspaces')
 
+    def save(self, *args, **kwargs) -> None:
+        super().save(*args, **kwargs)
+        if self.owner not in self.members.all():
+            self.members.add(self.owner)
+        # super().save(*args, **kwargs)
+        return
+
 
 class Board(models.Model):
     name = models.CharField(max_length=256)
@@ -34,6 +41,17 @@ class Board(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     members = models.ManyToManyField(Profile, related_name='boards')
+
+    def save(self, *args, **kwargs) -> None:
+        for admin in self.admins.all():
+            if admin not in self.workspace.members.all():
+                raise Exception("admin is not a member of workspace")
+
+        for admin in self.admins.all():
+            if not admin in self.members.all():
+                self.members.add(admin)
+        super().save(*args, **kwargs)
+        return
 
 
 class TaskList(models.Model):
