@@ -8,7 +8,7 @@ class WorkspaceSerializer(serializers.ModelSerializer):
     owner = serializers.PrimaryKeyRelatedField(read_only=True,)
     class Meta:
         model = WorkSpace
-        fields = ['id', 'name', 'description', 'type', 'created_at', 'owner']
+        fields = ['id', 'name', 'description', 'type', 'created_at', 'updated_at', 'owner', 'members', 'boards']
 
     def create(self, validated_data):
         try:
@@ -25,7 +25,7 @@ class BoardSerializer(serializers.ModelSerializer):
     workspace = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = Board
-        fields = ['id', 'name', 'description', 'workspace']
+        fields = ['id', 'name', 'description', 'background_pic', 'workspace', 'admins', 'created_at', 'updated_at', 'members', 'tasklists']
 
     def create(self, validated_data):
         workspace_id = self.context.get('workspace_id')
@@ -34,3 +34,4 @@ class BoardSerializer(serializers.ModelSerializer):
         workspace = get_object_or_404(WorkSpace, pk=workspace_id)
         validated_data['workspace'] = workspace
         return super().create(validated_data)
+
