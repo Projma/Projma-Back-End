@@ -3,11 +3,11 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .models import *
 from .serializers import *
 from .permissions import *
 from accounts.serializers import *
-from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 
 class WorkSpaceViewSet(viewsets.ModelViewSet):
@@ -24,19 +24,27 @@ class WorkSpaceViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class BoardViewSet(viewsets.ModelViewSet):
+class BoardManagementViewSet(viewsets.ModelViewSet):
     serializer_class = BoardSerializer
 
     def get_queryset(self):
         workspace_id = self.kwargs.get('w_id')
-        workspace = get_object_or_404(WorkSpace, pk=workspace_id)
-        boards = Board.objects.filter(workspace=workspace)
+        if workspace_id is not None:
+            workspace = get_object_or_404(WorkSpace, pk=workspace_id)
+            boards = Board.objects.filter(workspace=workspace)
+        else:
+            boards = Board.objects.all()
         return boards
 
     def get_serializer_context(self):
         workspace_id = self.kwargs.get('w_id')
         return {'workspace_id': workspace_id}
 
+
+class BoardViewSet(viewsets.ModelViewSet):
+    queryset = Board.objects.all()
+    serializer_class = BoardSerializer
+    permission_classes = [IsAdminUser]
 
 
 class UserDashboardViewset(viewsets.GenericViewSet):
