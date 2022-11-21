@@ -5,7 +5,8 @@ from .models import WorkSpace, Profile, Board
 class WorkspaceSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     created_at = serializers.DateTimeField(read_only=True)
-    owner = serializers.PrimaryKeyRelatedField(read_only=True,)
+    owner = serializers.PrimaryKeyRelatedField(read_only=True)
+    boards = serializers.PrimaryKeyRelatedField(read_only = True, many=True)
     class Meta:
         model = WorkSpace
         fields = ['id', 'name', 'description', 'type', 'created_at', 'updated_at', 'owner', 'members', 'boards']
@@ -25,7 +26,8 @@ class BoardSerializer(serializers.ModelSerializer):
     workspace = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = Board
-        fields = ['id', 'name', 'description', 'background_pic', 'workspace', 'admins', 'created_at', 'updated_at', 'members', 'tasklists']
+        fields = ['id', 'name', 'description', 'background_pic', 'workspace', 'admins', 
+                    'created_at', 'updated_at', 'members', 'tasklists']
 
     def create(self, validated_data):
         request = self.context['request']
