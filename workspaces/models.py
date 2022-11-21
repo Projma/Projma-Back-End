@@ -22,7 +22,7 @@ class WorkSpace(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    members = models.ManyToManyField(to=Profile, related_name='workspaces')
+    members = models.ManyToManyField(to=Profile, related_name='workspaces', null=True, blank=True)
 
     def save(self, *args, **kwargs) -> None:
         super().save(*args, **kwargs)
@@ -40,7 +40,7 @@ class Board(models.Model):
     admins = models.ManyToManyField(Profile, related_name='administrating_boards')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
-    members = models.ManyToManyField(Profile, related_name='boards')
+    members = models.ManyToManyField(Profile, related_name='boards', null=True, blank=True)
 
     def save(self, *args, **kwargs) -> None:
         for admin in self.admins.all():
@@ -70,7 +70,7 @@ class Task(models.Model):
     out_of_estimate = models.FloatField(blank=True, null=True)
     description = models.CharField(max_length=1000, blank=True, null=True)
     task_list = models.ForeignKey(TaskList, on_delete=models.CASCADE, related_name='tasks')
-    labels = models.ManyToManyField(to='Label', related_name='tasks')
+    labels = models.ManyToManyField(to='Label', related_name='tasks', null=True, blank=True)
     workers = models.ManyToManyField(Profile, related_name='tasks')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
