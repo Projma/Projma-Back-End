@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import *
 # Register your models here.
-class WorkspaceAdmin(admin.ModelAdmin):
+class WorkSpaceAdmin(admin.ModelAdmin):
     pass
 
 
@@ -28,7 +28,7 @@ class LabelAdmin(admin.ModelAdmin):
 class FileAdmin(admin.ModelAdmin):
     pass
 
-admin.site.register(Workspace, WorkspaceAdmin)
+admin.site.register(WorkSpace, WorkSpaceAdmin)
 admin.site.register(Board, BoardAdmin)
 admin.site.register(TaskList, TaskListAdmin)
 admin.site.register(Task, TaskAdmin)
