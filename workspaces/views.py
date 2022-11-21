@@ -82,10 +82,24 @@ class UserDashboardViewset(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
 
     @action(detail=False, methods=['get'])
-    def get_user_boards(self, request):
+    def myboards(self, request):
         serializer = BoardSerializer(data=list(request.user.profile.boards.all()), many=True)
         if serializer.is_valid():
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-
+    
+    @action(detail=False, methods=['get'])
+    def myadministrating_boards(self, request):
+        serializer = BoardSerializer(data=list(request.user.profile.administrating_boards.all()), many=True)
+        if serializer.is_valid():
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    
+    @action(detail=False, methods=['get'])
+    def myworkspaces(self, request):
+        serializer = WorkspaceSerializer(data=list(request.user.profile.workspaces.all()), many=True)
+        if serializer.is_valid():
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
