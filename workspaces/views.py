@@ -23,6 +23,12 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(self.queryset.filter(owner__user=user), many=True)
         return Response(serializer.data)
 
+    @action(methods=['get'], detail=False)
+    def type(self, request):
+        types = WorkSpace.TYPE_CHOICES
+        dic_types = {t[0]: t[1] for t in types}
+        return Response(dic_types)
+
 
 class BoardManagementViewSet(viewsets.ModelViewSet):
     serializer_class = BoardSerializer
