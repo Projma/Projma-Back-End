@@ -10,7 +10,7 @@ from .permissions import *
 from accounts.serializers import *
 # Create your views here.
 
-class WorkSpaceViewSet(viewsets.ModelViewSet):
+class WorkspaceViewSet(viewsets.ModelViewSet):
     queryset = WorkSpace.objects.all()
     serializer_class = WorkspaceSerializer
     permission_classes = [WorkSpacePermissions]
