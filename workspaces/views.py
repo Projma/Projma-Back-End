@@ -83,23 +83,20 @@ class UserDashboardViewset(viewsets.GenericViewSet):
 
     @action(detail=False, methods=['get'])
     def myboards(self, request):
-        serializer = BoardSerializer(data=list(request.user.profile.boards.all()), many=True)
-        if serializer.is_valid():
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+        serializer = BoardSerializer(instance=list(request.user.profile.boards.all()), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)        
     
     @action(detail=False, methods=['get'])
     def myadministrating_boards(self, request):
-        serializer = BoardSerializer(data=list(request.user.profile.administrating_boards.all()), many=True)
-        if serializer.is_valid():
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-    
+        serializer = BoardSerializer(instance=list(request.user.profile.administrating_boards.all()), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+            
     @action(detail=False, methods=['get'])
     def myworkspaces(self, request):
-        serializer = WorkspaceSerializer(data=list(request.user.profile.workspaces.all()), many=True)
-        if serializer.is_valid():
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = WorkspaceSerializer(instance=list(request.user.profile.workspaces.all()), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'])
+    def myowning_workspaces(self, request):
+        serializer = WorkspaceSerializer(instance=list(request.user.profile.owning_workspaces.all()), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

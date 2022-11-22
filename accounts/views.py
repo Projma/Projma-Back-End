@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAdminUser, AllowAny
+from rest_framework.permissions import IsAdminUser, AllowAny, IsAuthenticated
 from .serializers import *
 from .models import *
 from .Email import *
@@ -58,6 +58,24 @@ class UserViewSet(viewsets.ModelViewSet):
         user.is_active = True
         user.save()
         return Response({'message': 'User activated successfully'}, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=['get', 'patch'], permission_classes=[IsAuthenticated])
+    def myaccount(self, request):
+        if request.method == 'GET':
+            serializer = UserSerializer(instance=request.user)
+            try:
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        elif request.method == 'PATCH':
+            instance = request.user
+            serializer = UserSerializer(instance, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class ForgotPasswordViewSet(viewsets.GenericViewSet):
@@ -108,3 +126,30 @@ class ProfileViewset(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
     
+    @action(detail=False, methods=['get', 'patch'], permission_classes=[IsAuthenticated])
+    def myprofile(self, request):
+        if request.method == 'GET':
+            serializer = ProfileSerializer(instance=request.user.profile)
+            try:
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        elif request.method == 'PATCH':
+            instance = request.user.profile
+            serializer = self.get_serializer(instance, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+        
+    # @action(detail=False, methods=['patch'], url_path='myprofile',permission_classes=[IsAuthenticated])
+    # def editmyprofile(self, request):
+    #     instance = request.user.profile
+    #     serializer = self.get_serializer(instance, data=request.data, partial=partial)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_200_OK)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
