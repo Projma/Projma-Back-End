@@ -21,7 +21,7 @@ class WorkSpace(models.Model):
     type = models.CharField(max_length=256, choices=TYPE_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
-    owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    owner = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='owning_workspaces')
     members = models.ManyToManyField(to=Profile, related_name='workspaces', null=True, blank=True)
 
     def save(self, *args, **kwargs) -> None:
@@ -30,7 +30,6 @@ class WorkSpace(models.Model):
             self.members.add(self.owner)
         # super().save(*args, **kwargs)
         return
-
 
 class Board(models.Model):
     name = models.CharField(max_length=256)

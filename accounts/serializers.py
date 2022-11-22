@@ -20,6 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'first_name', 'last_name', 'username', 'password', 'email']
+        read_only_fields = ('id', 'username', 'password', 'email')
 
 
 class ForgotPasswordSerializer(serializers.ModelSerializer):
@@ -38,7 +39,7 @@ class ResetPasswordSerializer(serializers.ModelSerializer):
         fields = ['password']
 
 class ProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
+    user = UserSerializer(read_only=False)
     class Meta:
         model = Profile
         fields = ['user', 'birth_date', 'bio', 'phone', 'profile_pic', 'telegram_id']
