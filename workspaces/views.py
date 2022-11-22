@@ -67,7 +67,7 @@ class BoardManagementViewSet(viewsets.ModelViewSet):
 
     def get_serializer_context(self):
         workspace_id = self.kwargs.get('w_id')
-        return {'workspace_id': workspace_id}
+        return {'workspace_id': workspace_id, 'request': self.request}
 
 
 class BoardViewSet(viewsets.ModelViewSet):

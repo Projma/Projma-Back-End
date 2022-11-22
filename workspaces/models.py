@@ -37,21 +37,10 @@ class Board(models.Model):
     description = models.CharField(max_length=1000, blank=True, null=True)
     background_pic = models.ImageField(blank=True, null=True)
     workspace = models.ForeignKey(WorkSpace, on_delete=models.CASCADE, related_name='boards')
-    admins = models.ManyToManyField(Profile, related_name='administrating_boards')
+    admins = models.ManyToManyField(Profile, related_name='administrating_boards', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     members = models.ManyToManyField(Profile, related_name='boards', null=True, blank=True)
-
-    def save(self, *args, **kwargs) -> None:
-        for admin in self.admins.all():
-            if admin not in self.workspace.members.all():
-                raise Exception("admin is not a member of workspace")
-
-        for admin in self.admins.all():
-            if not admin in self.members.all():
-                self.members.add(admin)
-        super().save(*args, **kwargs)
-        return
 
 
 class TaskList(models.Model):
