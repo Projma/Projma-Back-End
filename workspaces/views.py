@@ -35,7 +35,7 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
         workspace = self.get_object()
         if workspace.owner.user == request.user:
             invite_link = encode(workspace)
-            return Response(invite_link)
+            return Response(invite_link, status=status.HTTP_200_OK)
         else:
             return Response('You are not authorized to view this link', status=status.HTTP_401_UNAUTHORIZED)
 

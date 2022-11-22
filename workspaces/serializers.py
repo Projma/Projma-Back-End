@@ -24,6 +24,7 @@ class WorkspaceSerializer(serializers.ModelSerializer):
 class BoardSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     workspace = serializers.PrimaryKeyRelatedField(read_only=True)
+    tasklists = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
     class Meta:
         model = Board
         fields = ['id', 'name', 'description', 'background_pic', 'workspace', 'admins', 
