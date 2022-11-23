@@ -78,6 +78,16 @@ class WorkSpaceOwnerViewSet(viewsets.GenericViewSet):
         memberprofile = get_object_or_404(Profile, pk=memberid)
         serializer = BoardSerializer(instance=memberprofile.boards.all().filter(workspace=pk), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(detail=True, methods=['get'], url_path='workspace-members')
+    def workspace_members(self, request, pk):
+        serializer = ProfileSerializer(instance=self.get_object().members.all(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['get'], url_path='workspace-boards')
+    def workspace_boards(self, request, pk):
+        serializer = BoardSerializer(instance=self.get_object().boards.all(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['patch'], url_path='edit-workspace')
     def edit_workspace(self, request, pk):
@@ -104,7 +114,14 @@ class WorkSpaceOwnerViewSet(viewsets.GenericViewSet):
         workspace = self.get_object()
         invite_link = encode(workspace)
         return Response(invite_link, status=status.HTTP_200_OK)
-
+    
+    @action(methods=['post'], detail=True, url_path='create-board')
+    def create_board(self, request, pk):
+        ws = self.get_object()
+        serializer = BoardSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(workspace=ws)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class BoardAdminViewSet(viewsets.GenericViewSet):
     queryset = Board.objects.all()
