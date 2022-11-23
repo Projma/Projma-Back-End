@@ -94,7 +94,8 @@ class ForgotPasswordViewSet(viewsets.GenericViewSet):
             user = self.queryset.get(email=email)
         except User.DoesNotExist:
             return Response("There is not any user with the given email" , status=status.HTTP_404_NOT_FOUND)
-        url = request.get_host() + f'/accounts/reset-password'
+        # url = request.get_host() + f'/accounts/reset-password'
+        url = 'http://localhost:3000/reset-password'
         email_template = 'emails/bootstrap_email_fp.html'
         context = {}
         email_sender = SendEmail(self.queryset)
