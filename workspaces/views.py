@@ -73,18 +73,18 @@ class WorkSpaceOwnerViewSet(viewsets.GenericViewSet):
     serializer_class = WorkspaceSerializer
     permission_classes = [IsWorkSpaceOwner]
 
-    @action(detail=True, methods=['get'], url_path='memberboards/(?P<memberid>\d+)')
+    @action(detail=True, methods=['get'], url_path='memberboards/(?P<memberid>\d+)', serializer_class=BoardAdminSerializer)
     def memberboards(self, request, pk, memberid):
         memberprofile = get_object_or_404(Profile, pk=memberid)
         serializer = BoardAdminSerializer(instance=memberprofile.boards.all().filter(workspace=pk), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-    @action(detail=True, methods=['get'], url_path='workspace-members')
+    @action(detail=True, methods=['get'], url_path='workspace-members', serializer_class=ProfileSerializer)
     def workspace_members(self, request, pk):
         serializer = ProfileSerializer(instance=self.get_object().members.all(), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=['get'], url_path='workspace-boards')
+    @action(detail=True, methods=['get'], url_path='workspace-boards', serializer_class=BoardAdminSerializer)
     def workspace_boards(self, request, pk):
         serializer = BoardAdminSerializer(instance=self.get_object().boards.all(), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -115,7 +115,7 @@ class WorkSpaceOwnerViewSet(viewsets.GenericViewSet):
         invite_link = encode(workspace)
         return Response(invite_link, status=status.HTTP_200_OK)
     
-    @action(methods=['post'], detail=True, url_path='create-board')
+    @action(methods=['post'], detail=True, url_path='create-board', serializer_class=BoardAdminSerializer)
     def create_board(self, request, pk):
         ws = self.get_object()
         serializer = BoardAdminSerializer(data=request.data)
@@ -157,5 +157,5 @@ class BoardMembershipViewSet(viewsets.GenericViewSet):
     @action(detail=True, methods=['get'], url_path='get-board')
     def get_board(self, request, pk):
         board = self.get_object()
-        serializer = BoardAdminSerializer(instance=board)
+        serializer = BoardMemberSerializer(instance=board)
         return Response(serializer.data, status=status.HTTP_200_OK)
