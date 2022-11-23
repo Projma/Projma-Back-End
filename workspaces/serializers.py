@@ -5,7 +5,7 @@ from .models import WorkSpace, Profile, Board
 class WorkspaceSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     created_at = serializers.DateTimeField(read_only=True)
-    owner = serializers.PrimaryKeyRelatedField(read_only=True)
+    # owner = serializers.PrimaryKeyRelatedField(read_only=True)
     boards = serializers.PrimaryKeyRelatedField(read_only = True, many=True)
     class Meta:
         model = WorkSpace
@@ -18,12 +18,14 @@ class WorkspaceSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("User not found")
         profile = get_object_or_404(Profile, user=user)
         validated_data['owner'] = profile
+        validated_data['members'].append(profile)
         return super().create(validated_data)
 
 
 class BoardSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     workspace = serializers.PrimaryKeyRelatedField(read_only=True)
+    tasklists = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
     class Meta:
         model = Board
         fields = ['id', 'name', 'description', 'background_pic', 'workspace', 'admins', 
@@ -35,6 +37,11 @@ class BoardSerializer(serializers.ModelSerializer):
         if str(workspace_id) in request.path:
             workspace = get_object_or_404(WorkSpace, pk=workspace_id)
             validated_data['workspace'] = workspace
+            admin = request.user.profile
+            if not admin in WorkSpace.objects.get(pk=workspace.pk).members.all():
+                raise serializers.ValidationError("user is not a member of workspace")
+            validated_data['admins'].append(admin)
+            print('----------------serializer--------\n', validated_data)
             return super().create(validated_data)
         elif workspace_id is None:
             return super().create(validated_data)
