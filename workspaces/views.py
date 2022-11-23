@@ -3,7 +3,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from .invite_link import encode, decode
 from .models import *
 from .serializers import *
@@ -33,29 +33,6 @@ class WorkspaceViewSet(viewsets.GenericViewSet):
             return Response('You have been added to the workspace successfully', status=status.HTTP_200_OK)
         except:
             return Response('Adding user to workspace failed', status=status.HTTP_400_BAD_REQUEST)
-
-
-class BoardManagementViewSet(viewsets.ModelViewSet):
-    serializer_class = BoardSerializer
-
-    def get_queryset(self):
-        workspace_id = self.kwargs.get('w_id')
-        if workspace_id is not None:
-            workspace = get_object_or_404(WorkSpace, pk=workspace_id)
-            boards = Board.objects.filter(workspace=workspace)
-        else:
-            boards = Board.objects.all()
-        return boards
-
-    def get_serializer_context(self):
-        workspace_id = self.kwargs.get('w_id')
-        return {'workspace_id': workspace_id, 'request': self.request}
-
-
-class BoardViewSet(viewsets.ModelViewSet):
-    queryset = Board.objects.all()
-    serializer_class = BoardSerializer
-    permission_classes = [IsAdminUser]
 
 
 class UserDashboardViewset(viewsets.GenericViewSet):
@@ -127,3 +104,29 @@ class WorkSpaceOwnerViewSet(viewsets.GenericViewSet):
         workspace = self.get_object()
         invite_link = encode(workspace)
         return Response(invite_link, status=status.HTTP_200_OK)
+
+
+class BoardAdminViewSet(viewsets.GenericViewSet):
+    queryset = Board.objects.all()
+    serializer_class = BoardSerializer
+    permission_classes = [IsBoardAdmin]
+
+    @action(detail=True, methods=['patch'], url_path='edit-board')
+    def edit_board(self, request, pk):
+        board = self.get_object()
+        serializer = BoardSerializer(instance=board, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=['delete'], url_path='delete-board')
+    def delete_board(self, request, pk):
+        board = self.get_object()
+        board.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=['get'], url_path='get-board')
+    def get_board(self, request, pk):
+        board = self.get_object()
+        serializer = BoardSerializer(instance=board)
+        return Response(serializer.data, status=status.HTTP_200_OK)
