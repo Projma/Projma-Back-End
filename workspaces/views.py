@@ -100,3 +100,14 @@ class UserDashboardViewset(viewsets.GenericViewSet):
     def myowning_workspaces(self, request):
         serializer = WorkspaceSerializer(instance=list(request.user.profile.owning_workspaces.all()), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class WorkSpaceOwnerViewSet(viewsets.GenericViewSet):
+    queryset = WorkSpace.objects.all()
+    serializer_class = WorkspaceSerializer
+    permission_classes = [IsWorkSpaceOwner]
+    @action(detail=True, methods=['get'], url_path='memberboards/(?P<memberid>\d+)')
+    def memberboards(self, request, pk, memberid):
+        memberprofile = get_object_or_404(Profile, pk=memberid)
+        serializer = BoardSerializer(instance=memberprofile.boards.all().filter(workspace=pk), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
