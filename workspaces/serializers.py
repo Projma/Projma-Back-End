@@ -10,7 +10,7 @@ class WorkspaceSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'owner']
 
 
-class BoardSerializer(serializers.ModelSerializer):
+class BoardAdminSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     workspace = serializers.PrimaryKeyRelatedField(read_only=True)
     tasklists = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
@@ -20,3 +20,10 @@ class BoardSerializer(serializers.ModelSerializer):
                     'created_at', 'updated_at', 'members', 'tasklists']
 
 
+
+class BoardMemberSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+    tasklists = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
+    class Meta:
+        model = Board
+        fields = ['id', 'name', 'description', 'background_pic', 'admins', 'members', 'tasklists']
