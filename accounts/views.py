@@ -36,7 +36,8 @@ class UserViewSet(viewsets.ModelViewSet):
             user = self.queryset.get(pk=pk)
         except:
             return Response('User not found', status=status.HTTP_404_NOT_FOUND)
-        url = request.get_host() + f'/accounts/users/{self._ACTIVE_ACCOUNT_KEY}'
+        # url = request.get_host() + f'/accounts/users/{self._ACTIVE_ACCOUNT_KEY}'
+        url = 'http://localhost:3000/email-verification'
         email_template = 'emails/bootstrap_email_ev.html'
         context = {'username': user.username}
         email_sender = SendEmail(self.queryset)
@@ -94,7 +95,8 @@ class ForgotPasswordViewSet(viewsets.GenericViewSet):
             user = self.queryset.get(email=email)
         except User.DoesNotExist:
             return Response("There is not any user with the given email" , status=status.HTTP_404_NOT_FOUND)
-        url = request.get_host() + f'/accounts/reset-password'
+        # url = request.get_host() + f'/accounts/reset-password'
+        url = 'http://localhost:3000/reset-password'
         email_template = 'emails/bootstrap_email_fp.html'
         context = {}
         email_sender = SendEmail(self.queryset)
