@@ -11,18 +11,9 @@ from .permissions import *
 from accounts.serializers import *
 # Create your views here.
 
-class WorkspaceViewSet(viewsets.ModelViewSet):
+class WorkspaceViewSet(viewsets.GenericViewSet):
     queryset = WorkSpace.objects.all()
     serializer_class = WorkspaceSerializer
-    permission_classes = [IsAuthenticated]
-
-    def list(self, request, *args, **kwargs):
-        user = request.user
-        if request.user.is_staff:
-            serializer = self.get_serializer(self.get_queryset(), many=True)
-        else:
-            serializer = self.get_serializer(self.queryset.filter(owner__user=user), many=True)
-        return Response(serializer.data)
 
     @action(methods=['get'], detail=False)
     def type(self, request):
@@ -30,17 +21,8 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
         dic_types = {t[0]: t[1] for t in types}
         return Response(dic_types)
 
-    @action(methods=['get'], detail=True)
-    def invite_link(self, request, pk):
-        workspace = self.get_object()
-        if workspace.owner.user == request.user:
-            invite_link = encode(workspace)
-            return Response(invite_link, status=status.HTTP_200_OK)
-        else:
-            return Response('You are not authorized to view this link', status=status.HTTP_401_UNAUTHORIZED)
-
-    @action(methods=['get'], detail=False, url_path='invite-to-workspace/(?P<invite_link>.+)')
-    def invite_to_workspace(self, request, invite_link):
+    @action(methods=['get'], detail=False, permission_classes=[IsAuthenticated], url_path='join-to-workspace/(?P<invite_link>.+)')
+    def join_to_workspace(self, request, invite_link):
         workspace = decode(invite_link)
         if workspace is None:
             return Response('Invalid invite link', status=status.HTTP_400_BAD_REQUEST)
@@ -78,8 +60,15 @@ class BoardViewSet(viewsets.ModelViewSet):
 
 class UserDashboardViewset(viewsets.GenericViewSet):
     queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
+    serializer_class = WorkspaceSerializer
     permission_classes = [IsAuthenticated]
+
+    @action(methods=['post'], detail=False, url_path='create-workspace')
+    def create_workspace(self, request):
+        serializer = WorkspaceSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(owner=request.user.profile)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['get'])
     def myboards(self, request):
@@ -90,7 +79,7 @@ class UserDashboardViewset(viewsets.GenericViewSet):
     def myadministrating_boards(self, request):
         serializer = BoardSerializer(instance=list(request.user.profile.administrating_boards.all()), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-            
+
     @action(detail=False, methods=['get'])
     def myworkspaces(self, request):
         serializer = WorkspaceSerializer(instance=list(request.user.profile.workspaces.all()), many=True)
@@ -106,8 +95,35 @@ class WorkSpaceOwnerViewSet(viewsets.GenericViewSet):
     queryset = WorkSpace.objects.all()
     serializer_class = WorkspaceSerializer
     permission_classes = [IsWorkSpaceOwner]
+
     @action(detail=True, methods=['get'], url_path='memberboards/(?P<memberid>\d+)')
     def memberboards(self, request, pk, memberid):
         memberprofile = get_object_or_404(Profile, pk=memberid)
         serializer = BoardSerializer(instance=memberprofile.boards.all().filter(workspace=pk), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['patch'], url_path='edit-workspace')
+    def edit_workspace(self, request, pk):
+        workspace = self.get_object()
+        serializer = WorkspaceSerializer(instance=workspace, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=['get'], url_path='get-workspace')
+    def get_workspace(self, request, pk):
+        workspace = self.get_object()
+        serializer = WorkspaceSerializer(instance=workspace)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['delete'], url_path='delete-workspace')
+    def delete_workspace(self, request, pk):
+        workspace = self.get_object()
+        workspace.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(methods=['get'], detail=True, permission_classes=[IsWorkSpaceOwner]) 
+    def invite_link(self, request, pk):
+        workspace = self.get_object()
+        invite_link = encode(workspace)
+        return Response(invite_link, status=status.HTTP_200_OK)

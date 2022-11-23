@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'colorfield',
     'accounts',
     'workspaces',
+    'cruds',
 ]
 
 MIDDLEWARE = [
