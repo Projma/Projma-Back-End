@@ -47,12 +47,12 @@ class UserDashboardViewset(viewsets.GenericViewSet):
         serializer.save(owner=request.user.profile)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['get'], serializer_class=BoardAdminSerializer)
     def myboards(self, request):
         serializer = BoardAdminSerializer(instance=list(request.user.profile.boards.all()), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)        
     
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['get'], serializer_class=BoardAdminSerializer)
     def myadministrating_boards(self, request):
         serializer = BoardAdminSerializer(instance=list(request.user.profile.administrating_boards.all()), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
