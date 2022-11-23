@@ -18,7 +18,7 @@ class BoardAdminSerializer(serializers.ModelSerializer):
         model = Board
         fields = ['id', 'name', 'description', 'background_pic', 'workspace', 'admins', 
                     'created_at', 'updated_at', 'members', 'tasklists']
-
+        read_only_fields = ['id', 'workspace']
 
 
 class BoardMemberSerializer(serializers.ModelSerializer):
