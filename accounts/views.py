@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.tokens import default_token_generator
 from django.core.validators import EmailValidator
 from django.forms import ValidationError
@@ -125,7 +126,7 @@ class ResetPasswordViewSet(viewsets.GenericViewSet):
 class ProfileViewset(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    
+
     @action(detail=False, methods=['get', 'patch'], permission_classes=[IsAuthenticated])
     def myprofile(self, request):
         if request.method == 'GET':
@@ -144,7 +145,12 @@ class ProfileViewset(viewsets.ModelViewSet):
         else:
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-        
+    @action(detail=False, methods=['get'], url_path='public-profile/(?P<username>[^/.]+)', serializer_class=PublicInfoProfileSerializer)
+    def public_profile(self, request, username):
+        profile = get_object_or_404(self.queryset, user__username=username)
+        serializer = PublicInfoProfileSerializer(instance=profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     # @action(detail=False, methods=['patch'], url_path='myprofile',permission_classes=[IsAuthenticated])
     # def editmyprofile(self, request):
     #     instance = request.user.profile
