@@ -23,6 +23,13 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'username', 'password', 'email')
 
 
+class PublicInfoUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name', 'last_name', 'email']
+        read_only_fields = ('id', 'username', 'password')
+
+
 class ForgotPasswordSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True, allow_blank=False, allow_null=False)
     class Meta:
@@ -38,9 +45,16 @@ class ResetPasswordSerializer(serializers.ModelSerializer):
         model = User
         fields = ['password']
 
+
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=False)
     class Meta:
         model = Profile
         fields = ['user', 'birth_date', 'bio', 'phone', 'profile_pic', 'telegram_id']
 
+
+class PublicInfoProfileSerializer(serializers.ModelSerializer):
+    user = PublicInfoUserSerializer(read_only=True)
+    class Meta:
+        model = Profile
+        fields = ['user', 'bio', 'profile_pic']
