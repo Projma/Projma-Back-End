@@ -11,25 +11,18 @@ from .serializers import *
 from .models import *
 from .Email import *
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(viewsets.GenericViewSet):
     queryset = User.objects.all()
     serializer_class = CreateUserSerializer
     _ACTIVE_ACCOUNT_KEY = 'active'
 
-    def get_permissions(self):
-        if self.request.method == 'GET'\
-            and not self._ACTIVE_ACCOUNT_KEY in self.request.path:
-            return [IsAdminUser()]
-        return [AllowAny()]
-
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
+        serializer.save()
         pk = serializer.instance.pk
         self.verify_email(request, pk)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def verify_email(self, request, pk):
         try:
@@ -125,6 +118,7 @@ class ResetPasswordViewSet(viewsets.GenericViewSet):
         user.save()
         return Response('Password changed successfully', status=status.HTTP_200_OK)
 
+
 class ProfileViewset(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
@@ -146,6 +140,19 @@ class ProfileViewset(viewsets.ModelViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated], url_path='change-password', serializer_class=ChangePasswordSerializer)
+    def change_password(self, request):
+        user = get_object_or_404(User, pk=request.user.pk)
+        serializer = ChangePasswordSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        old_password = request.data.get('old_password')
+        new_password = request.data.get('new_password')
+        if not user.check_password(old_password):
+            return Response({'message': 'Your old password is incorrect'}, status=status.HTTP_400_BAD_REQUEST)
+        user.set_password(new_password)
+        user.save()
+        return Response({'message': 'Password changed successfully'}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'], url_path='public-profile/(?P<username>[^/.]+)', serializer_class=PublicInfoProfileSerializer)
     def public_profile(self, request, username):
