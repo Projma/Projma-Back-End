@@ -36,6 +36,7 @@ class Profile(models.Model):
     profile_pic = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
     telegram_id = models.CharField(max_length=100, blank=True, null=True,
                                     validators=[RegexValidator(regex='^@.+$', message='Telegram ID must start with @')])
+    starred_boards = models.ManyToManyField(to='workspaces.Board', related_name='starred_for', blank=True)
 
     def __str__(self):
         return self.user.username
