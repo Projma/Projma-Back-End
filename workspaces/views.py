@@ -52,7 +52,7 @@ class UserDashboardViewset(viewsets.GenericViewSet):
         serializer = BoardAdminSerializer(instance=list(request.user.profile.boards.all()), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)        
     
-    @action(detail=False, methods=['get'], serializer_class=BoardAdminSerializer)
+    @action(detail=False, methods=['get'], serializer_class=BoardAdminSerializer, url_path='myadministrating-boards')
     def myadministrating_boards(self, request):
         serializer = BoardAdminSerializer(instance=list(request.user.profile.administrating_boards.all()), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -62,7 +62,7 @@ class UserDashboardViewset(viewsets.GenericViewSet):
         serializer = WorkspaceSerializer(instance=list(request.user.profile.workspaces.all()), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['get'], url_path='myowning-workspaces')
     def myowning_workspaces(self, request):
         serializer = WorkspaceSerializer(instance=list(request.user.profile.owning_workspaces.all()), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
