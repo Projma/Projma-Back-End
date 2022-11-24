@@ -13,7 +13,7 @@ from accounts.serializers import *
 
 class WorkspaceViewSet(viewsets.GenericViewSet):
     queryset = WorkSpace.objects.all()
-    serializer_class = WorkspaceSerializer
+    serializer_class = WorkSpaceMemberSerializer
 
     @action(methods=['get'], detail=False)
     def type(self, request):
@@ -37,7 +37,7 @@ class WorkspaceViewSet(viewsets.GenericViewSet):
 
 class UserDashboardViewset(viewsets.GenericViewSet):
     queryset = Profile.objects.all()
-    serializer_class = WorkspaceSerializer
+    serializer_class = WorkSpaceMemberSerializer
     permission_classes = [IsAuthenticated]
 
     @action(methods=['post'], detail=False, url_path='create-workspace')
@@ -70,7 +70,7 @@ class UserDashboardViewset(viewsets.GenericViewSet):
 
 class WorkSpaceOwnerViewSet(viewsets.GenericViewSet):
     queryset = WorkSpace.objects.all()
-    serializer_class = WorkspaceSerializer
+    serializer_class = WorkSpaceOwnerSerializer
     permission_classes = [IsWorkSpaceOwner]
 
     @action(detail=True, methods=['get'], url_path='memberboards/(?P<memberid>\d+)', serializer_class=BoardAdminSerializer)
@@ -158,4 +158,22 @@ class BoardMembershipViewSet(viewsets.GenericViewSet):
     def get_board(self, request, pk):
         board = self.get_object()
         serializer = BoardMemberSerializer(instance=board)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class WorkSpaceMemberViewSet(viewsets.GenericViewSet):
+    queryset = WorkSpace.objects.all()
+    serializer_class = WorkSpaceMemberSerializer
+    permission_classes = [IsWorkSpaceMember]
+
+    @action(detail=True, methods=['get'], url_path='workspace-boards', serializer_class=BoardMemberSerializer)
+    def workspace_boards(self, request, pk):
+        serializer = BoardMemberSerializer(instance=self.get_object().boards.all().filter(members__user=request.user), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['get'], url_path='workspace-starred-boards', serializer_class=BoardMemberSerializer)
+    def workspace_boards(self, request, pk):
+        ws = self.get_object()
+        userstarredboards = request.user.profile.starred_boards.all().filter(workspace=ws)
+        serializer = BoardMemberSerializer(instance=userstarredboards, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

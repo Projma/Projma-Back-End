@@ -9,5 +9,6 @@ router.register('boardsadmin', views.BoardAdminViewSet, basename='boardsadmin')
 router.register('boardsmember', views.BoardMembershipViewSet, basename='boardsmember')
 router.register('dashboard', views.UserDashboardViewset, basename='dashboard')
 router.register('workspaceowner', views.WorkSpaceOwnerViewSet, basename='workspaceowner')
+router.register('workspacemember', views.WorkSpaceMemberViewSet, basename='workspacemember')
 
 urlpatterns = router.urls
