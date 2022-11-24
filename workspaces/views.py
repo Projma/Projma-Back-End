@@ -109,7 +109,7 @@ class WorkSpaceOwnerViewSet(viewsets.GenericViewSet):
         workspace.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(methods=['get'], detail=True, permission_classes=[IsWorkSpaceOwner]) 
+    @action(methods=['get'], detail=True, permission_classes=[IsWorkSpaceOwner], url_path='invite-link') 
     def invite_link(self, request, pk):
         workspace = self.get_object()
         invite_link = encode(workspace)
