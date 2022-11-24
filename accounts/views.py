@@ -11,25 +11,18 @@ from .serializers import *
 from .models import *
 from .Email import *
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(viewsets.GenericViewSet):
     queryset = User.objects.all()
     serializer_class = CreateUserSerializer
     _ACTIVE_ACCOUNT_KEY = 'active'
 
-    def get_permissions(self):
-        if self.request.method == 'GET'\
-            and not self._ACTIVE_ACCOUNT_KEY in self.request.path:
-            return [IsAdminUser()]
-        return [AllowAny()]
-
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
+        serializer.save()
         pk = serializer.instance.pk
         self.verify_email(request, pk)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def verify_email(self, request, pk):
         try:
