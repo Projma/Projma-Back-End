@@ -118,6 +118,7 @@ class ResetPasswordViewSet(viewsets.GenericViewSet):
         user.save()
         return Response('Password changed successfully', status=status.HTTP_200_OK)
 
+
 class ProfileViewset(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
@@ -139,6 +140,19 @@ class ProfileViewset(viewsets.ModelViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated], url_path='change-password', serializer_class=ChangePasswordSerializer)
+    def change_password(self, request):
+        user = get_object_or_404(User, pk=request.user.pk)
+        serializer = ChangePasswordSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        old_password = request.data.get('old_password')
+        new_password = request.data.get('new_password')
+        if not user.check_password(old_password):
+            return Response({'message': 'Your old password is incorrect'}, status=status.HTTP_400_BAD_REQUEST)
+        user.set_password(new_password)
+        user.save()
+        return Response({'message': 'Password changed successfully'}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'], url_path='public-profile/(?P<username>[^/.]+)', serializer_class=PublicInfoProfileSerializer)
     def public_profile(self, request, username):
