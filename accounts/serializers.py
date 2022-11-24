@@ -46,6 +46,17 @@ class ResetPasswordSerializer(serializers.ModelSerializer):
         fields = ['password']
 
 
+class ChangePasswordSerializer(serializers.ModelSerializer):
+    old_password = serializers.CharField(write_only=True, style={'input_type': 'password'},
+                                        required=True, allow_blank=False, allow_null=False,
+                                        validators=[validate_password])
+    new_password = serializers.CharField(write_only=True, style={'input_type': 'password'},
+                                        required=True, allow_blank=False, allow_null=False,
+                                        validators=[validate_password])
+    class Meta:
+        model = User
+        fields = ['old_password', 'new_password']
+
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=False)
     class Meta:
