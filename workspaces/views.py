@@ -40,9 +40,9 @@ class UserDashboardViewset(viewsets.GenericViewSet):
     serializer_class = WorkSpaceMemberSerializer
     permission_classes = [IsAuthenticated]
 
-    @action(methods=['post'], detail=False, url_path='create-workspace')
+    @action(methods=['post'], detail=False, url_path='create-workspace', serializer_class=WorkSpaceOwnerSerializer)
     def create_workspace(self, request):
-        serializer = WorkspaceSerializer(data=request.data)
+        serializer = WorkSpaceOwnerSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(owner=request.user.profile)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -57,14 +57,14 @@ class UserDashboardViewset(viewsets.GenericViewSet):
         serializer = BoardAdminSerializer(instance=list(request.user.profile.administrating_boards.all()), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['get'], serializer_class=WorkSpaceOwnerSerializer)
     def myworkspaces(self, request):
-        serializer = WorkspaceSerializer(instance=list(request.user.profile.workspaces.all()), many=True)
+        serializer = WorkSpaceMemberSerializer(instance=list(request.user.profile.workspaces.all()), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=['get'], url_path='myowning-workspaces')
+    @action(detail=False, methods=['get'], url_path='myowning-workspaces', serializer_class=WorkSpaceOwnerSerializer)
     def myowning_workspaces(self, request):
-        serializer = WorkspaceSerializer(instance=list(request.user.profile.owning_workspaces.all()), many=True)
+        serializer = WorkSpaceOwnerSerializer(instance=list(request.user.profile.owning_workspaces.all()), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
