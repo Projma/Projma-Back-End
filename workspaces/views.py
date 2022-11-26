@@ -3,7 +3,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .invite_link import encode, decode
 from .models import *
 from .serializers import *
@@ -71,7 +71,7 @@ class UserDashboardViewset(viewsets.GenericViewSet):
 class WorkSpaceOwnerViewSet(viewsets.GenericViewSet):
     queryset = WorkSpace.objects.all()
     serializer_class = WorkSpaceOwnerSerializer
-    permission_classes = [IsWorkSpaceOwner]
+    permission_classes = [IsWorkSpaceOwner | IsAdminUser]
 
     @action(detail=True, methods=['get'], url_path='memberboards/(?P<memberid>\d+)', serializer_class=BoardAdminSerializer)
     def memberboards(self, request, pk, memberid):
@@ -126,7 +126,7 @@ class WorkSpaceOwnerViewSet(viewsets.GenericViewSet):
 class BoardAdminViewSet(viewsets.GenericViewSet):
     queryset = Board.objects.all()
     serializer_class = BoardAdminSerializer
-    permission_classes = [IsBoardAdmin]
+    permission_classes = [IsBoardAdmin | IsAdminUser | IsWorkSpaceOwner]
 
     @action(detail=True, methods=['patch'], url_path='edit-board')
     def edit_board(self, request, pk):
@@ -152,7 +152,7 @@ class BoardAdminViewSet(viewsets.GenericViewSet):
 class BoardMembershipViewSet(viewsets.GenericViewSet):
     queryset = Board.objects.all()
     serializer_class = BoardMemberSerializer
-    permission_classes = [IsMemberOfBoard]
+    permission_classes = [IsMemberOfBoard | IsAdminUser | IsBoardAdmin | IsWorkSpaceOwner]
 
     @action(detail=True, methods=['get'], url_path='get-board')
     def get_board(self, request, pk):
@@ -164,7 +164,7 @@ class BoardMembershipViewSet(viewsets.GenericViewSet):
 class WorkSpaceMemberViewSet(viewsets.GenericViewSet):
     queryset = WorkSpace.objects.all()
     serializer_class = WorkSpaceMemberSerializer
-    permission_classes = [IsWorkSpaceMember]
+    permission_classes = [IsWorkSpaceMember | IsAdminUser | IsWorkSpaceOwner]
 
     @action(detail=True, methods=['get'], url_path='workspace-boards', serializer_class=BoardMemberSerializer)
     def workspace_boards(self, request, pk):
@@ -182,7 +182,7 @@ class WorkSpaceMemberViewSet(viewsets.GenericViewSet):
 class BoardViewSet(viewsets.GenericViewSet):
     queryset = Board.objects.all()
     serializer_class = BoardMemberSerializer
-    permission_classes = [IsMemberOfBoard]
+    permission_classes = [IsMemberOfBoard | IsAdminUser | IsBoardAdmin | IsWorkSpaceOwner]
 
     @action(detail=True, methods=['get'])
     def members(self, request, pk):
