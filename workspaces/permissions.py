@@ -25,9 +25,7 @@ class IsWorkSpaceOwner(BasePermission):
         return bool(request.user and request.user.is_authenticated)
 
     def has_object_permission(self, request, view, obj):
-        if request.user.is_superuser or request.user.is_staff:
-            return True
-        elif obj.owner.user == request.user:
+        if obj.owner.user == request.user:
             return True
         return False
 
@@ -37,10 +35,7 @@ class IsBoardAdmin(BasePermission):
         return bool(request.user and request.user.is_authenticated)
 
     def has_object_permission(self, request, view, obj):
-        if request.user.is_superuser or request.user.is_staff:
-            return True
-        elif obj.admins.filter(user=request.user.profile).exists() or \
-            obj.workspace.owner.user == request.user:
+        if obj.admins.filter(user=request.user.profile).exists():
             return True
         return False
 
@@ -50,11 +45,7 @@ class IsMemberOfBoard(BasePermission):
         return bool(request.user and request.user.is_authenticated)
 
     def has_object_permission(self, request, view, obj):
-        if request.user.is_superuser or request.user.is_staff:
-            return True
-        elif obj.members.filter(user=request.user.profile).exists() or \
-            obj.workspace.owner.user == request.user or \
-            request.user.profile in obj.admins.all():
+        if obj.members.filter(user=request.user.profile).exists():
             return True
         return False
 
@@ -63,9 +54,6 @@ class IsWorkSpaceMember(BasePermission):
         return bool(request.user and request.user.is_authenticated)
 
     def has_object_permission(self, request, view, obj):
-        if request.user.is_superuser or request.user.is_staff:
-            return True
-        elif request.user.profile in obj.members.all() or \
-            request.user.profile == obj.owner:
+        if request.user.profile in obj.members.all():
             return True
         return False
