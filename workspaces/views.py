@@ -177,3 +177,15 @@ class WorkSpaceMemberViewSet(viewsets.GenericViewSet):
         userstarredboards = request.user.profile.starred_boards.all().filter(workspace=ws)
         serializer = BoardMemberSerializer(instance=userstarredboards, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class BoardViewSet(viewsets.GenericViewSet):
+    queryset = Board.objects.all()
+    serializer_class = BoardMemberSerializer
+    permission_classes = [IsMemberOfBoard]
+
+    @action(detail=True, methods=['get'])
+    def members(self, request, pk):
+        board = self.get_object()
+        serializer = BoardMemberSerializer(instance=board.members.all() | board.admins.all(), many=True, context={'board': pk})
+        return Response(serializer.data, status=status.HTTP_200_OK)
