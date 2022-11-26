@@ -92,7 +92,7 @@ class WorkSpaceOwnerViewSet(viewsets.GenericViewSet):
     @action(detail=True, methods=['patch'], url_path='edit-workspace')
     def edit_workspace(self, request, pk):
         workspace = self.get_object()
-        serializer = WorkspaceSerializer(instance=workspace, data=request.data, partial=True)
+        serializer = WorkSpaceOwnerSerializer(instance=workspace, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
@@ -100,7 +100,7 @@ class WorkSpaceOwnerViewSet(viewsets.GenericViewSet):
     @action(detail=True, methods=['get'], url_path='get-workspace')
     def get_workspace(self, request, pk):
         workspace = self.get_object()
-        serializer = WorkspaceSerializer(instance=workspace)
+        serializer = WorkSpaceOwnerSerializer(instance=workspace)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['delete'], url_path='delete-workspace')
