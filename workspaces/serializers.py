@@ -59,3 +59,31 @@ class LabelSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'color', 'board']
         read_only_fields = ['id', 'board']
 
+class TaskListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TaskList
+        fields = ['id', 'title', 'board', 'order',' tasks']
+        read_only_fields = ['id', 'board', 'order', 'tasks']
+
+
+class ReorderTaskListSerializer(serializers.Serializer):
+    order = serializers.ListField(child = serializers.IntegerField())
+
+
+class BoardOverviewSerializer(serializers.ModelSerializer):
+    workspace = serializers.PrimaryKeyRelatedField(read_only=True)
+    tasklists = TaskListSerializer(read_only=True, many=True)
+    labels = LabelSerializer(read_only=True, many=True)
+    class Meta:
+        model = Board
+        fields = ['id', 'name', 'description', 'background_pic', 'workspace', 'admins', 
+                    'created_at', 'updated_at', 'members', 'tasklists', 'labels']
+        read_only_fields = ['id', 'workspace', 'labels']
+
+# class FullTaskListSerializer(serializers.ModelSerializer):
+#     tasks = Task
+#     class Meta:
+#         model = TaskList
+#         fields = ['id', 'title', 'board', 'order',' tasks']
+#         read_only_fields = ['id', 'board', 'order', 'tasks']
+
