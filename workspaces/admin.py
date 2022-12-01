@@ -4,12 +4,10 @@ from .forms import *
 # Register your models here.
 class WorkSpaceAdmin(admin.ModelAdmin):
     model = WorkSpace
-    form = WorkSpaceForm
 
 
 class BoardAdmin(admin.ModelAdmin):
     model = Board
-    form = BoardForm
 
 
 class TaskListAdmin(admin.ModelAdmin):

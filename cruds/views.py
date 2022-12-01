@@ -64,3 +64,8 @@ class CRUDBoardViewSet(viewsets.ModelViewSet):
     queryset = Board.objects.all()
     serializer_class = CRUDBoardSerializer
     permission_classes = [IsAdminUser]
+
+class CRUDLabelViewset(viewsets.ModelViewSet):
+    queryset = Label.objects.all()
+    serializer_class = CRUDLabelSerializer
+    permission_classes = [IsAdminUser]
