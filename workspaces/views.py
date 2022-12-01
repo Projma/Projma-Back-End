@@ -123,6 +123,7 @@ class WorkSpaceOwnerViewSet(viewsets.GenericViewSet):
         serializer.save(workspace=ws)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+
 class BoardAdminViewSet(viewsets.GenericViewSet):
     queryset = Board.objects.all()
     serializer_class = BoardAdminSerializer
@@ -181,7 +182,7 @@ class WorkSpaceMemberViewSet(viewsets.GenericViewSet):
 
 class BoardViewSet(viewsets.GenericViewSet):
     queryset = Board.objects.all()
-    serializer_class = BoardMemberSerializer
+    serializer_class = BoardMembersSerializer
     permission_classes = [IsMemberOfBoard | IsAdminUser | IsBoardAdmin | IsWorkSpaceOwner]
 
     @action(detail=True, methods=['get'])

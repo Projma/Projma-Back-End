@@ -36,7 +36,7 @@ class UserViewSet(viewsets.GenericViewSet):
         email_sender = SendEmail(self.queryset)
         return email_sender.send_email(url, email_template, pk, context)
 
-    @action(detail=False, permission_classes=[AllowAny], methods=['get'])
+    @action(detail=False, permission_classes=[AllowAny], methods=['post'])
     def active(self, request, pk=None):
         user_id = request.query_params.get('user_id', '')
         confirmation_token = request.query_params.get('confirmation_token', '')
