@@ -180,7 +180,7 @@ class WorkSpaceMemberViewSet(viewsets.GenericViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class BoardViewSet(viewsets.GenericViewSet):
+class BoardMembersViewSet(viewsets.GenericViewSet):
     queryset = Board.objects.all()
     serializer_class = BoardMembersSerializer
     permission_classes = [IsMemberOfBoard | IsAdminUser | IsBoardAdmin | IsWorkSpaceOwner]
@@ -188,5 +188,37 @@ class BoardViewSet(viewsets.GenericViewSet):
     @action(detail=True, methods=['get'])
     def members(self, request, pk):
         board = self.get_object()
-        serializer = BoardMemberSerializer(instance=board.members.all() | board.admins.all(), many=True, context={'board': pk})
+        serializer = BoardMembersSerializer(instance=board.members.all() | board.admins.all(), many=True, context={'board': pk})
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class BoardInviteLinkViewSet(viewsets.GenericViewSet):
+    queryset = Board.objects.all()
+    serializer_class = BoardAdminSerializer
+    permission_classes = [IsBoardAdmin | IsAdminUser | IsWorkSpaceOwner]
+
+    @action(detail=True, methods=['get'], url_path='')
+    def invite_link(self, request, pk):
+        board = self.get_object()
+        invite_link = encode(board)
+        return Response(invite_link, status=status.HTTP_200_OK)
+
+
+class BoardJoinViewSet(viewsets.GenericViewSet):
+    queryset = Board.objects.all()
+    serializer_class = BoardMemberSerializer
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=['get'], url_path='join-to-board/(?P<invite_link>.+)')
+    def join_board(self, request, invite_link):
+        board = decode(invite_link)
+        if board is None:
+            return Response('Invalid invite link', status=status.HTTP_400_BAD_REQUEST)
+        try:
+            qs = board.members.all() | board.admins.all()
+            if request.user.profile in qs or request.user.profile == board.workspace.owner:
+                return Response('You are already a member of this board', status=status.HTTP_400_BAD_REQUEST)
+            board.members.add(request.user.profile)
+            return Response('You have been added to the board successfully', status=status.HTTP_200_OK)
+        except:
+            return Response('Adding user to board failed', status=status.HTTP_400_BAD_REQUEST)

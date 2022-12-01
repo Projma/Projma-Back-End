@@ -5,11 +5,13 @@ from . import views
 router = DefaultRouter()
 
 router.register('workspaces', views.WorkspaceViewSet, basename='workspaces')
-router.register('board', views.BoardViewSet, basename='board')
-router.register('boardsadmin', views.BoardAdminViewSet, basename='boardsadmin')
-router.register('boardsmember', views.BoardMembershipViewSet, basename='boardsmember')
+router.register('board', views.BoardMembersViewSet, basename='board')
+router.register('board', views.BoardInviteLinkViewSet, basename='board')
+router.register('board', views.BoardJoinViewSet, basename='board')
+router.register('boardsadminapi', views.BoardAdminViewSet, basename='boardsadminapi')
+router.register('boardsmemberapi', views.BoardMembershipViewSet, basename='boardsmemberapi')
 router.register('dashboard', views.UserDashboardViewset, basename='dashboard')
-router.register('workspaceowner', views.WorkSpaceOwnerViewSet, basename='workspaceowner')
-router.register('workspacemember', views.WorkSpaceMemberViewSet, basename='workspacemember')
+router.register('workspaceownerapi', views.WorkSpaceOwnerViewSet, basename='workspaceownerapi')
+router.register('workspacememberapi', views.WorkSpaceMemberViewSet, basename='workspacememberapi')
 
 urlpatterns = router.urls
