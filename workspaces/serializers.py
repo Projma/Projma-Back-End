@@ -38,7 +38,7 @@ class BoardMemberSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'description', 'background_pic', 'admins', 'members', 'tasklists']
 
 
-class BoardMemberSerializer(serializers.ModelSerializer):
+class BoardMembersSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     role = serializers.SerializerMethodField()
     class Meta:
@@ -46,7 +46,6 @@ class BoardMemberSerializer(serializers.ModelSerializer):
         fields = ['user', 'birth_date', 'bio', 'phone', 'profile_pic', 'role']
 
     def get_role(self, profile: Profile):
-        print('context::::::;', self.context)
         board_id = int(self.context.get('board'))
         board = Board.objects.get(pk=board_id)
         if profile in board.admins.all():
