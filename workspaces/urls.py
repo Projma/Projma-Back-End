@@ -5,7 +5,7 @@ from . import views
 router = DefaultRouter()
 
 router.register('workspaces', views.WorkspaceViewSet, basename='workspaces')
-router.register('board', views.BoardMembersViewSet, basename='board')
+router.register('board/(?P<b_id>[^/.]+)', views.BoardMembersViewSet, basename='board')
 router.register('board', views.BoardInviteLinkViewSet, basename='board')
 router.register('board', views.JoinToBoardViewSet, basename='board')
 router.register('boardsadminapi', views.BoardAdminViewSet, basename='boardsadminapi')
