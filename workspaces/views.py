@@ -1,9 +1,11 @@
 from django.shortcuts import get_object_or_404 
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.filters import SearchFilter
+from rest_framework import status
 from .invite_link import encode, decode
 from .models import *
 from .serializers import *
@@ -184,11 +186,23 @@ class BoardMembersViewSet(viewsets.GenericViewSet):
     queryset = Board.objects.all()
     serializer_class = BoardMemberSerializer
     permission_classes = [IsBoardMember | IsAdminUser | IsBoardAdmin | IsBoardWorkSpaceOwner]
+    serializer_class = BoardMembersSerializer
+    permission_classes = [IsBoardMember | IsAdminUser | IsBoardAdmin | IsWorkSpaceOwner]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    related_search_fields = ['user']
+    search_fields = ['user__username', 'user__email']
 
-    @action(detail=True, methods=['get'])
-    def members(self, request, pk):
-        board = self.get_object()
-        serializer = BoardMembersSerializer(instance=board.members.all() | board.admins.all(), many=True, context={'board': pk})
+    def get_queryset(self):
+        board_id = self.kwargs['b_id']
+        board = get_object_or_404(Board, pk=board_id)
+        owner = Profile.objects.filter(user=board.workspace.owner).all()
+        qs = board.members.all() | board.admins.all() | owner
+        return qs
+
+    def list(self, request, *args, **kwargs):
+        pk = kwargs.get('b_id')
+        qs = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(instance=qs, many=True, context={'board': pk})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

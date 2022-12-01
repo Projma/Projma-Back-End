@@ -48,7 +48,7 @@ class BoardMembersSerializer(serializers.ModelSerializer):
     def get_role(self, profile: Profile):
         board_id = int(self.context.get('board'))
         board = Board.objects.get(pk=board_id)
-        if profile in board.admins.all():
+        if profile in board.admins.all() or profile == board.workspace.owner:
             return 'Admin'
         elif profile in board.members.all():
             return 'Member'
