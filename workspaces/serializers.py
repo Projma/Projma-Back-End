@@ -62,7 +62,7 @@ class LabelSerializer(serializers.ModelSerializer):
 class TaskListSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaskList
-        fields = ['id', 'title', 'board', 'order',' tasks']
+        fields = ['id', 'title', 'board', 'order','tasks']
         read_only_fields = ['id', 'board', 'order', 'tasks']
 
 
