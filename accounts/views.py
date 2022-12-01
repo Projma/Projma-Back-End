@@ -2,12 +2,15 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.tokens import default_token_generator
 from django.core.validators import EmailValidator
 from django.forms import ValidationError
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
+from rest_framework.filters import SearchFilter
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, AllowAny, IsAuthenticated
 from .serializers import *
+from .filters import *
 from .models import *
 from .Email import *
 
@@ -122,6 +125,9 @@ class ResetPasswordViewSet(viewsets.GenericViewSet):
 class ProfileViewset(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    related_search_fields = ['user']
+    search_fields = ['user__username', 'user__email']
 
     @action(detail=False, methods=['get', 'patch'], permission_classes=[IsAuthenticated])
     def myprofile(self, request):
