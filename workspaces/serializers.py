@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from accounts.serializers import *
-from .models import WorkSpace, Profile, Board
+from .models import *
 
 class WorkSpaceOwnerSerializer(serializers.ModelSerializer):
     boards = serializers.PrimaryKeyRelatedField(read_only = True, many=True)
@@ -26,8 +26,8 @@ class BoardAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = Board
         fields = ['id', 'name', 'description', 'background_pic', 'workspace', 'admins', 
-                    'created_at', 'updated_at', 'members', 'tasklists']
-        read_only_fields = ['id', 'workspace']
+                    'created_at', 'updated_at', 'members', 'tasklists', 'labels']
+        read_only_fields = ['id', 'workspace', 'labels']
 
 
 class BoardMemberSerializer(serializers.ModelSerializer):
@@ -35,8 +35,8 @@ class BoardMemberSerializer(serializers.ModelSerializer):
     tasklists = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
     class Meta:
         model = Board
-        fields = ['id', 'name', 'description', 'background_pic', 'admins', 'members', 'tasklists']
-
+        fields = ['id', 'name', 'description', 'background_pic', 'admins', 'members', 'tasklists', 'labels']
+        read_only_fields = ['id', 'workspace', 'labels']
 
 class BoardMembersSerializer(serializers.ModelSerializer):
     user = UserSerializer()
@@ -52,3 +52,10 @@ class BoardMembersSerializer(serializers.ModelSerializer):
             return 'Admin'
         elif profile in board.members.all():
             return 'Member'
+
+class LabelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Label
+        fields = ['id', 'title', 'color', 'board']
+        read_only_fields = ['id', 'board']
+

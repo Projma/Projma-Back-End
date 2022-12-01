@@ -31,3 +31,9 @@ class CRUDBoardSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'description', 'background_pic', 'workspace', 
                     'created_at', 'updated_at', 'admins', 'members', 'tasklists']
         read_only_fields = ('id', 'created_at', 'updated_at')
+
+class CRUDLabelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Label
+        fields = ['id', 'board', 'title', 'color']
+        read_only_fields = ['id', 'board']

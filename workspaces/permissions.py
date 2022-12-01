@@ -30,6 +30,17 @@ class IsWorkSpaceOwner(BasePermission):
         return False
 
 
+class IsBoardWorkSpaceOwner(BasePermission):
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.is_authenticated)
+    
+    def has_object_permission(self, request, view, obj):
+        if obj.workspace.owner.user == request.user:
+            return True
+        return False
+
+
+
 class IsBoardAdmin(BasePermission):
     def has_permission(self, request, view):
         return bool(request.user and request.user.is_authenticated)
@@ -40,7 +51,7 @@ class IsBoardAdmin(BasePermission):
         return False
 
 
-class IsMemberOfBoard(BasePermission):
+class IsBoardMember(BasePermission):
     def has_permission(self, request, view):
         return bool(request.user and request.user.is_authenticated)
 
@@ -57,3 +68,15 @@ class IsWorkSpaceMember(BasePermission):
         if request.user.profile in obj.members.all():
             return True
         return False
+
+class IsLabelBoardMember(IsBoardMember):
+    def has_object_permission(self, request, view, obj):
+        return super().has_object_permission(request, view, obj.board)
+
+class IsLabelBoardAdmin(IsBoardAdmin):
+    def has_object_permission(self, request, view, obj):
+        return super().has_object_permission(request, view, obj.board)
+
+class IsLabelBoardWorkSpaceOwner(IsBoardWorkSpaceOwner):
+    def has_object_permission(self, request, view, obj):
+        return super().has_object_permission(request, view, obj.board)

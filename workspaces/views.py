@@ -153,7 +153,7 @@ class BoardAdminViewSet(viewsets.GenericViewSet):
 class BoardMembershipViewSet(viewsets.GenericViewSet):
     queryset = Board.objects.all()
     serializer_class = BoardMemberSerializer
-    permission_classes = [IsMemberOfBoard | IsAdminUser | IsBoardAdmin | IsWorkSpaceOwner]
+    permission_classes = [IsBoardMember | IsAdminUser | IsBoardAdmin | IsWorkSpaceOwner]
 
     @action(detail=True, methods=['get'], url_path='get-board')
     def get_board(self, request, pk):
@@ -182,8 +182,8 @@ class WorkSpaceMemberViewSet(viewsets.GenericViewSet):
 
 class BoardMembersViewSet(viewsets.GenericViewSet):
     queryset = Board.objects.all()
-    serializer_class = BoardMembersSerializer
-    permission_classes = [IsMemberOfBoard | IsAdminUser | IsBoardAdmin | IsWorkSpaceOwner]
+    serializer_class = BoardMemberSerializer
+    permission_classes = [IsBoardMember | IsAdminUser | IsBoardAdmin | IsBoardWorkSpaceOwner]
 
     @action(detail=True, methods=['get'])
     def members(self, request, pk):
@@ -222,3 +222,49 @@ class BoardJoinViewSet(viewsets.GenericViewSet):
             return Response('You have been added to the board successfully', status=status.HTTP_200_OK)
         except:
             return Response('Adding user to board failed', status=status.HTTP_400_BAD_REQUEST)
+
+class CreateLabelViewSet(viewsets.GenericViewSet):
+    queryset = Board.objects.all()
+    serializer_class = LabelSerializer
+    permission_classes = [IsBoardMember | IsAdminUser | IsBoardAdmin | IsBoardWorkSpaceOwner]
+    @action(detail=True, methods=['post'])
+    def create_Label(self, request, pk):
+        board = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(board=board)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class UpdateLabelViewSet(viewsets.GenericViewSet):
+    queryset = Label.objects.all()
+    serializer_class = LabelSerializer
+    permission_classes = [IsAdminUser | IsLabelBoardAdmin | IsLabelBoardMember | IsLabelBoardWorkSpaceOwner]
+    @action(detail=True, methods=['patch'])
+    def update_label(self, request, pk):
+        label = self.get_object()
+        serializer = self.get_serializer(instance=label, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class DeleteLabelViewSet(viewsets.GenericViewSet):
+    queryset = Label.objects.all()
+    serializer_class = LabelSerializer
+    permission_classes = [IsAdminUser | IsLabelBoardAdmin | IsLabelBoardMember | IsLabelBoardWorkSpaceOwner]
+    @action(detail=True, methods=['delete'])
+    def delete_label(self, request, pk):
+        label = self.get_object()
+        label.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class GetBoardLabelsViewSet(viewsets.GenericViewSet):
+    queryset = Board.objects.all()
+    serializer_class = LabelSerializer
+    permission_classes = [IsAdminUser | IsBoardMember | IsBoardAdmin | IsBoardWorkSpaceOwner]
+    @action(detail=True, methods=['get'])
+    def get_board_labels(self, request, pk):
+        board = self.get_object()
+        serializer = self.get_serializer(instance = Label.objects.all().filter(board=board), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
