@@ -26,12 +26,12 @@ class WorkSpace(models.Model):
     members = models.ManyToManyField(to=Profile, related_name='workspaces', blank=True)
 
 
-    def save(self, *args, **kwargs) -> None:
-        super().save(*args, **kwargs)
-        if self.owner not in self.members.all():
-            self.members.add(self.owner)
-        # super().save(*args, **kwargs)
-        return
+    # def save(self, *args, **kwargs) -> None:
+    #     super().save(*args, **kwargs)
+    #     if self.owner not in self.members.all():
+    #         self.members.add(self.owner)
+    #     # super().save(*args, **kwargs)
+    #     return
 
 class Board(models.Model):
     name = models.CharField(max_length=256)
@@ -44,6 +44,19 @@ class Board(models.Model):
     members = models.ManyToManyField(Profile, related_name='boards', blank=True)
     is_starred = models.BooleanField(default=False)
 
+    def reorder_tasklists(self, neworder):
+        ids = [tl.id for tl in self.tasklists.all()]
+        if len(neworder) != len(ids):
+            raise Exception("Invalid Order")
+        for pk in neworder:
+            if pk not in ids:
+                raise Exception("Invalid Order")
+
+        for i in range(len(neworder)):
+            pk = neworder[i]
+            tl = self.tasklists.all().get(pk=pk)
+            tl.order = i+1
+            tl.save()
 
 
 
@@ -52,6 +65,16 @@ class TaskList(models.Model):
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='tasklists')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
+    order = models.IntegerField(default=0, null=False)
+
+    def save(self, *args, **kwargs):
+        creating = False
+        if self.pk == None:
+            creating = True
+        super().save(*args, **kwargs)
+        if creating:
+            self.order = self.pk
+        return
 
 
 class Task(models.Model):
