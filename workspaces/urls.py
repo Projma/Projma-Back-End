@@ -22,6 +22,8 @@ router.register('board', views.CreateTaskListViewSet, basename='board')
 router.register('tasklist', views.DeleteTaskListViewSet, basename='board')
 router.register('board', views.GetBoardTaskListsViewSet, basename='board')
 router.register('board', views.ReorderTaskListsViewSet, basename='board')
+router.register('board', views.CreateTaskViewSet, basename='board')
+router.register('task', views.UpdateTaskViewSet, basename='task')
 
 
 urlpatterns = router.urls
