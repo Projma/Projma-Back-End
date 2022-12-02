@@ -125,6 +125,43 @@ class WorkSpaceOwnerViewSet(viewsets.GenericViewSet):
         serializer.save(workspace=ws)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    @action(methods=['post'], detail=True, url_path='add-user-to-workspace/(?P<user_id>.+)', serializer_class=WorkSpaceMemberSerializer)
+    def add_user_to_workspace(self, request, pk, user_id):
+        workspace = self.get_object()
+        self.check_object_permissions(request, workspace)
+        user = get_object_or_404(Profile, pk=user_id)
+        return self.add_to_workspace(workspace, user)
+
+    @action(methods=['delete'], detail=True, url_path='remove-user-from-workspace/(?P<user_id>.+)', serializer_class=WorkSpaceMemberSerializer)
+    def remove_user_from_workspace(self, request, pk, user_id):
+        workspace = self.get_object()
+        user = get_object_or_404(Profile, pk=user_id)
+        return self.remove_from_workspace(workspace, user)
+
+    def add_to_workspace(self, workspace, user):
+        if workspace is None:
+            return Response('Workspace does not exist', status=status.HTTP_400_BAD_REQUEST)
+        try:
+            if user in workspace.members.all() or user == workspace.owner:
+                return Response('User is already a member of the workspace', status=status.HTTP_400_BAD_REQUEST)
+            workspace.members.add(user)
+            return Response('User added to workspace successfully', status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(repr(e), status=status.HTTP_400_BAD_REQUEST)
+
+    def remove_from_workspace(self, workspace, user):
+        if workspace is None:
+            return Response('Workspace does not exist', status=status.HTTP_400_BAD_REQUEST)
+        try:
+            if user == workspace.owner:
+                return Response('You cannot remove the owner of the workspace', status=status.HTTP_400_BAD_REQUEST)
+            if user not in workspace.members.all():
+                return Response('User is not a member of the workspace', status=status.HTTP_400_BAD_REQUEST)
+            workspace.members.remove(user)
+            workspace.save()
+            return Response('User removed from workspace successfully', status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(repr(e), status=status.HTTP_400_BAD_REQUEST)
 
 class WorkSpaceMemberViewSet(viewsets.GenericViewSet):
     queryset = WorkSpace.objects.all()
