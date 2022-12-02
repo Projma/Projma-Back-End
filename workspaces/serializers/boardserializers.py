@@ -25,6 +25,7 @@ class BoardMemberSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'description', 'background_pic', 'admins', 'members', 'tasklists', 'labels']
         read_only_fields = ['id', 'workspace', 'labels']
 
+
 class BoardMembersSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     role = serializers.SerializerMethodField()
@@ -39,6 +40,19 @@ class BoardMembersSerializer(serializers.ModelSerializer):
             return 'Admin'
         elif profile in board.members.all():
             return 'Member'
+
+
+class BoardChangeRoleSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField()
+    role = serializers.CharField()
+    class Meta:
+        model = Profile
+        fields = ['user_id', 'role']
+
+    def validate_role(self, value):
+        if value not in ['Admin', 'Member']:
+            raise serializers.ValidationError('Invalid role')
+        return value
 
 
 class BoardOverviewSerializer(serializers.ModelSerializer):
