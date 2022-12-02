@@ -125,6 +125,25 @@ class WorkSpaceOwnerViewSet(viewsets.GenericViewSet):
         serializer.save(workspace=ws)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    @action(methods=['post'], detail=True, url_path='add-user-to-workspace/(?P<user_id>.+)', serializer_class=WorkSpaceMemberSerializer)
+    def add_user_to_workspace(self, request, pk, user_id):
+        workspace = self.get_object()
+        self.check_object_permissions(request, workspace)
+        user = get_object_or_404(Profile, pk=user_id)
+        return self.add_to_workspace(workspace, user)
+
+
+    def add_to_workspace(self, workspace, user):
+        if workspace is None:
+            return Response('Workspace does not exist', status=status.HTTP_400_BAD_REQUEST)
+        try:
+            if user in workspace.members.all() or user == workspace.owner:
+                return Response('User is already a member of the workspace', status=status.HTTP_400_BAD_REQUEST)
+            workspace.members.add(user)
+            return Response('User added to workspace successfully', status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(repr(e), status=status.HTTP_400_BAD_REQUEST)
+
 
 class WorkSpaceMemberViewSet(viewsets.GenericViewSet):
     queryset = WorkSpace.objects.all()
