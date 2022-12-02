@@ -52,9 +52,6 @@ class BoardMembershipViewSet(viewsets.GenericViewSet):
 
 
 class BoardMembersViewSet(viewsets.GenericViewSet):
-    queryset = Board.objects.all()
-    serializer_class = BoardMemberSerializer
-    permission_classes = [IsBoardMember | IsAdminUser | IsBoardAdmin | IsBoardWorkSpaceOwner]
     serializer_class = BoardMembersSerializer
     permission_classes = [IsBoardMember | IsAdminUser | IsBoardAdmin | IsWorkSpaceOwner]
     filter_backends = [DjangoFilterBackend, SearchFilter]
@@ -66,13 +63,51 @@ class BoardMembersViewSet(viewsets.GenericViewSet):
         board = get_object_or_404(Board, pk=board_id)
         owner = Profile.objects.filter(user=board.workspace.owner).all()
         qs = board.members.all() | board.admins.all() | owner
-        return qs
+        return qs.distinct()
 
     def list(self, request, *args, **kwargs):
         pk = kwargs.get('b_id')
         qs = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(instance=qs, many=True, context={'board': pk})
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class BoardRoleViewSet(viewsets.GenericViewSet):
+    serializer_class = BoardChangeRoleSerializer
+    permission_classes = [IsBoardAdmin | IsAdminUser | IsWorkSpaceOwner]
+
+    def get_queryset(self):
+        board_id = self.kwargs['b_id']
+        board = get_object_or_404(Board, pk=board_id)
+        owner = Profile.objects.filter(user=board.workspace.owner).all()
+        qs = board.members.all() | board.admins.all() | owner
+        return qs.distinct()
+
+    @action(detail=False, methods=['post'], url_path='change-role')
+    def change_role(self, request, *args, **kwargs):
+        user_id = request.data.get('user_id')
+        user = get_object_or_404(Profile, pk=user_id)
+        if not user in self.get_queryset():
+            return Response({'error': 'User is not a member of this board'}, status=status.HTTP_400_BAD_REQUEST)
+        board_id = kwargs.get('b_id')
+        board = get_object_or_404(Board, pk=board_id)
+        role = request.data.get('role')
+        serializer = BoardChangeRoleSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        if user == board.workspace.owner:
+            return Response({'detail': 'User is the owner of the workspace of the board. Owner can not be changed'}, status=status.HTTP_400_BAD_REQUEST)
+        if role == 'Admin':
+            if user in board.members.all():
+                board.members.remove(user)
+            if not user in board.admins.all():
+                board.admins.add(user)
+        elif role == 'Member':
+            if user in board.admins.all():
+                board.admins.remove(user)
+            if not user in board.members.all():
+                board.members.add(user)
+        board.save()
+        return Response('Role changed successfully', status=status.HTTP_200_OK)
 
 
 class BoardInviteLinkViewSet(viewsets.GenericViewSet):
