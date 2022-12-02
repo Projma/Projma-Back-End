@@ -79,15 +79,15 @@ class TaskList(models.Model):
 
 class Task(models.Model):
     title = models.CharField(max_length=256)
+    description = models.CharField(max_length=1000, blank=True, null=True)
     start_date = models.DateField(blank=True, null=True)
-    end_date = models.DateTimeField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
     estimate = models.FloatField(blank=True, null=True)
     spend = models.FloatField(blank=True, null=True)
     out_of_estimate = models.FloatField(blank=True, null=True)
-    description = models.CharField(max_length=1000, blank=True, null=True)
-    task_list = models.ForeignKey(TaskList, on_delete=models.CASCADE, related_name='tasks')
+    tasklist = models.ForeignKey(TaskList, on_delete=models.CASCADE, related_name='tasks')
     labels = models.ManyToManyField(to='Label', related_name='tasks', blank=True)
-    workers = models.ManyToManyField(Profile, related_name='tasks')
+    doers = models.ManyToManyField(to=Profile, related_name='tasks', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
 
