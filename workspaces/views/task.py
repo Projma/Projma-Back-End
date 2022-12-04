@@ -38,7 +38,7 @@ class UpdateTaskViewSet(viewsets.GenericViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class AddLabelsToTask(viewsets.GenericViewSet):
+class AddLabelsToTaskViewSet(viewsets.GenericViewSet):
     queryset = Task.objects.all()
     serializer_class = UpdateTaskLabelsSerializer
     permission_classes = [IsAdminUser | IsTaskBoardMember | IsTaskBoardAdmin | IsTaskBoardWorkSpaceOwner]
@@ -58,7 +58,7 @@ class AddLabelsToTask(viewsets.GenericViewSet):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-class DeleteLabelsFromTask(viewsets.GenericViewSet):
+class DeleteLabelsFromTaskViewSet(viewsets.GenericViewSet):
     queryset = Task.objects.all()
     serializer_class = UpdateTaskLabelsSerializer
     permission_classes = [IsAdminUser | IsTaskBoardMember | IsTaskBoardAdmin | IsTaskBoardWorkSpaceOwner]
@@ -78,7 +78,7 @@ class DeleteLabelsFromTask(viewsets.GenericViewSet):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-class AddDoersToTask(viewsets.GenericViewSet):
+class AddDoersToTaskViewSet(viewsets.GenericViewSet):
     queryset = Task.objects.all()
     serializer_class = UpdateTaskDoersSerializer
     permission_classes = [IsAdminUser | IsTaskBoardMember | IsTaskBoardAdmin | IsTaskBoardWorkSpaceOwner]
@@ -101,7 +101,7 @@ class AddDoersToTask(viewsets.GenericViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class DeleteDoersFromTasl(viewsets.GenericViewSet):
+class DeleteDoersFromTaskViewSet(viewsets.GenericViewSet):
     queryset = Task.objects.all()
     serializer_class = UpdateTaskDoersSerializer
     permission_classes = [IsAdminUser | IsTaskBoardMember | IsTaskBoardAdmin | IsTaskBoardWorkSpaceOwner]
@@ -121,7 +121,7 @@ class DeleteDoersFromTasl(viewsets.GenericViewSet):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-class GetTaskPreview(viewsets.GenericViewSet):
+class GetTaskPreviewViewSet(viewsets.GenericViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskPreviewSerializer
     permission_classes = [IsAdminUser | IsTaskBoardMember | IsTaskBoardAdmin | IsTaskBoardWorkSpaceOwner]
