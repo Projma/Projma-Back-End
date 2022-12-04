@@ -91,6 +91,10 @@ class Task(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        self.out_of_estimate = self.spend - self.estimate
+        super().save(*args, **kwargs)
+
 
 class CheckList(models.Model):
     text = models.CharField(max_length=512)
