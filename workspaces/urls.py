@@ -25,11 +25,11 @@ router.register('label', label.DeleteLabelViewSet, basename='board')
 router.register('tasklist', tasklist.UpdateTaskListViewSet, basename='board')
 router.register('tasklist', tasklist.DeleteTaskListViewSet, basename='board')
 router.register('task', task.UpdateTaskViewSet, basename='task')
-router.register('task', task.AddLabelsToTask, basename='task')
-router.register('task', task.DeleteLabelsFromTask, basename='task')
-router.register('task', task.AddDoersToTask, basename='task')
-router.register('task', task.DeleteDoersFromTasl, basename='task')
-router.register('task', task.GetTaskPreview, basename='task')
+router.register('task', task.AddLabelsToTaskViewSet, basename='task')
+router.register('task', task.DeleteLabelsFromTaskViewSet, basename='task')
+router.register('task', task.AddDoersToTaskViewSet, basename='task')
+router.register('task', task.DeleteDoersFromTaskViewSet, basename='task')
+router.register('task', task.GetTaskPreviewViewSet, basename='task')
 
 
 urlpatterns = router.urls
