@@ -35,6 +35,7 @@ class UpdateTaskListViewSet(viewsets.GenericViewSet):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 class DeleteTaskListViewSet(viewsets.GenericViewSet):
     queryset = TaskList.objects.all()
     serializer_class = TaskListSerializer
