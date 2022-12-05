@@ -96,6 +96,15 @@ class Task(models.Model):
         super().save(*args, **kwargs)
 
 
+class Comment(models.Model):
+    text = models.TextField()
+    sender = models.ForeignKey(to=Profile, on_delete=models.CASCADE, related_name='comments')
+    task = models.ForeignKey(to=Task, on_delete=models.CASCADE, related_name='comments')
+    reply_to = models.ForeignKey(to='Comment', on_delete=models.CASCADE, related_name='replies', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+
+
 class CheckList(models.Model):
     text = models.CharField(max_length=512)
     is_done = models.BooleanField(default=False)
