@@ -61,7 +61,8 @@ class UserDashboardViewset(viewsets.GenericViewSet):
 
     @action(detail=False, methods=['get'], serializer_class=WorkSpaceOwnerSerializer)
     def myworkspaces(self, request):
-        serializer = WorkSpaceMemberSerializer(instance=list(request.user.profile.workspaces.all()), many=True)
+        qs = request.user.profile.workspaces.all() | request.user.profile.owning_workspaces.all()
+        serializer = WorkSpaceMemberSerializer(instance=qs.distinct(), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'], url_path='myowning-workspaces', serializer_class=WorkSpaceOwnerSerializer)
