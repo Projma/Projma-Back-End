@@ -61,6 +61,7 @@ class BoardMembersViewSet(viewsets.GenericViewSet):
     def get_queryset(self):
         board_id = self.kwargs['b_id']
         board = get_object_or_404(Board, pk=board_id)
+        self.check_object_permissions(self.request, board)
         owner = Profile.objects.filter(user=board.workspace.owner).all()
         qs = board.members.all() | board.admins.all() | owner
         return qs.distinct()
