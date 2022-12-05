@@ -1,5 +1,5 @@
 from rest_framework.routers import DefaultRouter
-from .views import board, workspace, tasklist, label, task, checklist
+from .views import board, workspace, tasklist, label, task, checklist, comment
 
 
 router = DefaultRouter()
@@ -33,5 +33,9 @@ router.register('task', task.GetTaskPreviewViewSet, basename='task')
 router.register('task', checklist.CreateOrReadCheckListViewSet, basename='checklist')
 router.register('task/update-checklist', checklist.UpdateCheckListViewSet, basename='checklist')
 router.register('task/delete-checklist', checklist.DeleteCheckListViewSet, basename='checklist')
+router.register('task', comment.NewCommentViewset, basename='task')
+router.register('comment', comment.ReplyCommentViewSet, basename='comment')
+router.register('comment', comment.EditCommentViewSet, basename='comment')
+router.register('comment', comment.DeleteCommentViewSet, basename='comment')
 
 urlpatterns = router.urls
