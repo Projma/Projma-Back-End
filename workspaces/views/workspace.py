@@ -51,7 +51,8 @@ class UserDashboardViewset(viewsets.GenericViewSet):
 
     @action(detail=False, methods=['get'], serializer_class=BoardAdminSerializer)
     def myboards(self, request):
-        serializer = BoardAdminSerializer(instance=list(request.user.profile.boards.all()), many=True)
+        qs = request.user.profile.boards.all() | request.user.profile.administrating_boards.all()
+        serializer = BoardMemberSerializer(instance=qs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)        
     
     @action(detail=False, methods=['get'], serializer_class=BoardAdminSerializer, url_path='myadministrating-boards')
