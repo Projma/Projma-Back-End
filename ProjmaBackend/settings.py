@@ -184,14 +184,15 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'projmacloud',
-    'API_KEY': '529966568459517',
-    'API_SECRET': 'K2zrPRn37aSQ_mI_FUX3ZZpRJTc',
-    'api_proxy': 'http://proxy.server:3128',
-}
-
+# CLOUDINARY_STORAGE = {
+#     'CLOUD_NAME': 'projmacloud',
+#     'API_KEY': '529966568459517',
+#     'API_SECRET': 'K2zrPRn37aSQ_mI_FUX3ZZpRJTc',
+#     'api_proxy': 'http://proxy.server:3128',
+# }
 MEDIA_URL = '/media/'
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+MEDIA_ROOT = BASE_DIR / 'media'
+# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 CORS_ORIGIN_ALLOW_ALL = True
