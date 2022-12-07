@@ -14,7 +14,7 @@ class CreateTaskListViewSet(viewsets.GenericViewSet):
     queryset = Board.objects.all()
     serializer_class = TaskListSerializer
     permission_classes = [IsBoardMember | IsAdminUser | IsBoardAdmin | IsBoardWorkSpaceOwner]
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['post'], url_path='create-tasklist')
     def create_tasklist(self, request, pk):
         board = self.get_object()
         serializer = self.get_serializer(data=request.data)
@@ -27,7 +27,7 @@ class UpdateTaskListViewSet(viewsets.GenericViewSet):
     queryset = TaskList.objects.all()
     serializer_class = TaskListSerializer
     permission_classes = [IsAdminUser | IsTaskListBoardMember | IsTaskListBoardAdmin | IsTaskListBoardWorkSpaceOwner]
-    @action(detail=True, methods=['patch'])
+    @action(detail=True, methods=['patch'], url_path='update-tasklist')
     def update_tasklist(self, request, pk):
         tl = self.get_object()
         serializer = self.get_serializer(instance=tl, data=request.data, partial=True)
@@ -40,7 +40,7 @@ class DeleteTaskListViewSet(viewsets.GenericViewSet):
     queryset = TaskList.objects.all()
     serializer_class = TaskListSerializer
     permission_classes = [IsAdminUser | IsTaskListBoardMember | IsTaskListBoardAdmin | IsTaskListBoardWorkSpaceOwner]
-    @action(detail=True, methods=['delete'])
+    @action(detail=True, methods=['delete'], url_path='delete-tasklist')
     def delete_tasklist(self, request, pk):
         tl = self.get_object()
         tl.delete()
@@ -51,7 +51,7 @@ class ReorderTaskListsViewSet(viewsets.GenericViewSet):
     queryset = Board.objects.all()
     serializer_class = ReorderTaskListSerializer
     permission_classes = [IsBoardMember | IsAdminUser | IsBoardAdmin | IsBoardWorkSpaceOwner]
-    @action(detail=True, methods=['put'])
+    @action(detail=True, methods=['put'], url_path='reorder-tasklists')
     def reorder_tasklists(self, request, pk):
         board = self.get_object()
         serializer = self.get_serializer(data=request.data)

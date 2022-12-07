@@ -14,8 +14,8 @@ class CreateLabelViewSet(viewsets.GenericViewSet):
     queryset = Board.objects.all()
     serializer_class = LabelSerializer
     permission_classes = [IsBoardMember | IsAdminUser | IsBoardAdmin | IsBoardWorkSpaceOwner]
-    @action(detail=True, methods=['post'])
-    def create_Label(self, request, pk):
+    @action(detail=True, methods=['post'], url_path='create-label')
+    def create_label(self, request, pk):
         board = self.get_object()
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -27,7 +27,7 @@ class UpdateLabelViewSet(viewsets.GenericViewSet):
     queryset = Label.objects.all()
     serializer_class = LabelSerializer
     permission_classes = [IsAdminUser | IsLabelBoardAdmin | IsLabelBoardMember | IsLabelBoardWorkSpaceOwner]
-    @action(detail=True, methods=['patch'])
+    @action(detail=True, methods=['patch'], url_path='update-label')
     def update_label(self, request, pk):
         label = self.get_object()
         serializer = self.get_serializer(instance=label, data=request.data, partial=True)
@@ -40,7 +40,7 @@ class DeleteLabelViewSet(viewsets.GenericViewSet):
     queryset = Label.objects.all()
     serializer_class = LabelSerializer
     permission_classes = [IsAdminUser | IsLabelBoardAdmin | IsLabelBoardMember | IsLabelBoardWorkSpaceOwner]
-    @action(detail=True, methods=['delete'])
+    @action(detail=True, methods=['delete'], url_path='delete-label')
     def delete_label(self, request, pk):
         label = self.get_object()
         label.delete()

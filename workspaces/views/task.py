@@ -19,7 +19,7 @@ class CreateTaskViewSet(viewsets.GenericViewSet):
     queryset = TaskList.objects.all()
     serializer_class = CreateTaskSerializer
     permission_classes = [IsAdminUser | IsTaskListBoardMember | IsTaskListBoardAdmin | IsTaskListBoardWorkSpaceOwner]
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['post'], url_path='create-task')
     def create_task(self, request, pk):
         tl = self.get_object()
         serializer = self.get_serializer(data=request.data)
@@ -32,7 +32,7 @@ class UpdateTaskViewSet(viewsets.GenericViewSet):
     queryset = Task.objects.all()
     serializer_class = UpdateTaskSerializer
     permission_classes = [IsAdminUser | IsTaskBoardMember | IsTaskBoardAdmin | IsTaskBoardWorkSpaceOwner]
-    @action(detail=True, methods=['patch'])
+    @action(detail=True, methods=['patch'], url_path='update-task')
     def update_task(self, request, pk):
         task = self.get_object()
         serializer = self.get_serializer(instance=task, data=request.data, partial=True)
@@ -45,7 +45,7 @@ class AddLabelsToTaskViewSet(viewsets.GenericViewSet):
     queryset = Task.objects.all()
     serializer_class = UpdateTaskLabelsSerializer
     permission_classes = [IsAdminUser | IsTaskBoardMember | IsTaskBoardAdmin | IsTaskBoardWorkSpaceOwner]
-    @action(detail=True, methods=['patch'])
+    @action(detail=True, methods=['patch'], url_path='add-labels-to-task')
     def add_labels_to_task(self, request, pk):
         task = self.get_object()
         data = request.data
@@ -66,7 +66,7 @@ class DeleteLabelsFromTaskViewSet(viewsets.GenericViewSet):
     queryset = Task.objects.all()
     serializer_class = UpdateTaskLabelsSerializer
     permission_classes = [IsAdminUser | IsTaskBoardMember | IsTaskBoardAdmin | IsTaskBoardWorkSpaceOwner]
-    @action(detail=True, methods=['patch'])
+    @action(detail=True, methods=['patch'], url_path='delete-labels-from-task')
     def delete_labels_from_task(self, request, pk):
         task = self.get_object()
         data = {'labels': [prelabel.id for prelabel in task.labels.all()]}
@@ -87,7 +87,7 @@ class AddDoersToTaskViewSet(viewsets.GenericViewSet):
     queryset = Task.objects.all()
     serializer_class = UpdateTaskDoersSerializer
     permission_classes = [IsAdminUser | IsTaskBoardMember | IsTaskBoardAdmin | IsTaskBoardWorkSpaceOwner]
-    @action(detail=True, methods=['patch'])
+    @action(detail=True, methods=['patch'], url_path='add-doers-to-task')
     def add_doers_to_task(self, request, pk):
         task = self.get_object()
         data = request.data
@@ -110,7 +110,7 @@ class DeleteDoersFromTaskViewSet(viewsets.GenericViewSet):
     queryset = Task.objects.all()
     serializer_class = UpdateTaskDoersSerializer
     permission_classes = [IsAdminUser | IsTaskBoardMember | IsTaskBoardAdmin | IsTaskBoardWorkSpaceOwner]
-    @action(detail=True, methods=['patch'])
+    @action(detail=True, methods=['patch'], url_path='delete-doers-from-task')
     def delete_doers_from_task(self, request, pk):
         task = self.get_object()
         data = {'doers': [predoer.pk for predoer in task.doers.all()]}
@@ -168,7 +168,7 @@ class AddAttachmentToTaskViewSet(viewsets.GenericViewSet):
     queryset = Task.objects.all()
     serializer_class = AttachmentSerializer
     permission_classes = [IsAdminUser | IsTaskBoardMember | IsTaskBoardAdmin | IsTaskBoardWorkSpaceOwner]
-    @action(detail=True, methods=['patch'])
+    @action(detail=True, methods=['patch'], url_path='add-attachment-to-task')
     def add_attachment_to_task(self, request, pk):
         task = self.get_object()
         serializer = self.get_serializer(data=request.data)
@@ -181,7 +181,7 @@ class DeleteAttachmentFromTaskViewSet(viewsets.GenericViewSet):
     queryset = Attachment.objects.all()
     serializer_class = AttachmentSerializer
     permission_classes = [IsAdminUser | IsAttachmentBoardMember | IsAttachmentBoardAdmin | IsAttachmentBoardWorkSpaceOwner]
-    @action(detail=True, methods=['delete'])
+    @action(detail=True, methods=['delete'], url_path='delete-attachment-from-task')
     def delete_attachment_from_task(self, request, pk):
         at = self.get_object()
         at.delete()

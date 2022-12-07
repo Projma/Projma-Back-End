@@ -14,7 +14,7 @@ class NewCommentViewset(viewsets.GenericViewSet):
     queryset = Task.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [IsAdminUser | IsTaskBoardMember | IsTaskBoardAdmin | IsTaskBoardWorkSpaceOwner]
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['post'], url_path='new-comment')
     def new_comment(self, request, pk):
         task = self.get_object()
         serializer = CommentSerializer(data=request.data)
@@ -26,7 +26,7 @@ class ReplyCommentViewSet(viewsets.GenericViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [IsAdminUser | IsCommentBoardMember | IsCommentBoardAdmin | IsCommentBoardWorkSpaceOwner]
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['post'], url_path='reply-comment')
     def reply_comment(self, request, pk):
         rpcom = self.get_object()
         serializer = CommentSerializer(data=request.data)
@@ -38,7 +38,7 @@ class EditCommentViewSet(viewsets.GenericViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [IsAdminUser | IsCommentSender]
-    @action(detail=True, methods=['patch'])
+    @action(detail=True, methods=['patch'], url_path='eddit-comment')
     def eddit_comment(self, request, pk):
         com = self.get_object()
         serializer = CommentSerializer(instance=com, data=request.data, partial=True)
@@ -50,7 +50,7 @@ class DeleteCommentViewSet(viewsets.GenericViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [IsAdminUser | IsCommentSender | IsCommentBoardAdmin | IsCommentBoardWorkSpaceOwner]
-    @action(detail=True, methods=['delete'])
+    @action(detail=True, methods=['delete'], url_path='delete-comment')
     def delete_comment(self, request, pk):
         com = self.get_object()
         com.delete()

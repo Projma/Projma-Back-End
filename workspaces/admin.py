@@ -32,6 +32,10 @@ class LabelAdmin(admin.ModelAdmin):
 class AttachmentAdmin(admin.ModelAdmin):
     pass
 
+
+class CommentAdmin(admin.ModelAdmin):
+    pass
+
 admin.site.register(WorkSpace, WorkSpaceAdmin)
 admin.site.register(Board, BoardAdmin)
 admin.site.register(TaskList, TaskListAdmin)
@@ -39,3 +43,4 @@ admin.site.register(Task, TaskAdmin)
 admin.site.register(CheckList, CheckListAdmin)
 admin.site.register(Label, LabelAdmin)
 admin.site.register(Attachment, AttachmentAdmin)
+admin.site.register(Comment, CommentAdmin)

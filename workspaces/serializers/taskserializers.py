@@ -63,9 +63,9 @@ class UpdateTaskLabelsSerializer(UpdateTaskSerializer):
     class Meta:
         model = Task
         fields = ['id', 'created_at', 'updated_at', 'title', 'description', 'start_date', 'end_date', \
-                  'estimate', 'spend', 'out_of_estimate', 'labels', 'tasklist', 'doers']
+                  'estimate', 'spend', 'out_of_estimate', 'labels',]
         read_only_fields = ['id', 'created_at', 'updated_at', 'title', 'description', 'start_date', 'end_date', \
-                  'estimate', 'spend', 'out_of_estimate', 'tasklist', 'doers']
+                  'estimate', 'spend', 'out_of_estimate', 'tasklist', 'attachments']
     
 class UpdateTaskDoersSerializer(UpdateTaskSerializer):
     class Meta:

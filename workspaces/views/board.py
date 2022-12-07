@@ -185,7 +185,7 @@ class GetBoardLabelsViewSet(viewsets.GenericViewSet):
     queryset = Board.objects.all()
     serializer_class = LabelSerializer
     permission_classes = [IsAdminUser | IsBoardMember | IsBoardAdmin | IsBoardWorkSpaceOwner]
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=['get'],url_path='get-board-labels')
     def get_board_labels(self, request, pk):
         board = self.get_object()
         serializer = self.get_serializer(instance = Label.objects.all().filter(board=board), many=True)
@@ -196,8 +196,8 @@ class GetBoardTaskListsViewSet(viewsets.GenericViewSet):
     queryset = Board.objects.all()
     serializer_class = TaskListSerializer
     permission_classes = [IsBoardMember | IsAdminUser | IsBoardAdmin | IsBoardWorkSpaceOwner]
-    @action(detail=True, methods=['get'])
-    def get_board_labels(self, request, pk):
+    @action(detail=True, methods=['get'], url_path='get-board-tasklists')
+    def get_board_tasklists(self, request, pk):
         board = self.get_object()
         serializer = self.get_serializer(instance = TaskList.objects.all().filter(board=board), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -207,7 +207,7 @@ class GetBoardOverviewViewSet(viewsets.GenericViewSet):
     queryset = Board.objects.all()
     serializer_class = BoardOverviewSerializer
     permission_classes = [IsAdminUser | IsBoardMember | IsBoardAdmin | IsBoardWorkSpaceOwner]
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=['get'], url_path='get-board-overview')
     def get_board_overview(self, request, pk):
         board = self.get_object()
         serializer = self.get_serializer(instance=board)
