@@ -201,3 +201,14 @@ class GetBoardTaskListsViewSet(viewsets.GenericViewSet):
         board = self.get_object()
         serializer = self.get_serializer(instance = TaskList.objects.all().filter(board=board), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class GetBoardOverviewViewSet(viewsets.GenericViewSet):
+    queryset = Board.objects.all()
+    serializer_class = BoardOverviewSerializer
+    permission_classes = [IsAdminUser | IsBoardMember | IsBoardAdmin | IsBoardWorkSpaceOwner]
+    @action(detail=True, methods=['get'])
+    def get_board_overview(self, request, pk):
+        board = self.get_object()
+        serializer = self.get_serializer(instance=board)
+        return Response(serializer.data, status=status.HTTP_200_OK)

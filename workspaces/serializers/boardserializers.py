@@ -57,7 +57,7 @@ class BoardChangeRoleSerializer(serializers.ModelSerializer):
 
 class BoardOverviewSerializer(serializers.ModelSerializer):
     workspace = serializers.PrimaryKeyRelatedField(read_only=True)
-    tasklists = TaskListSerializer(read_only=True, many=True)
+    tasklists = TaskListOverviewSerializer(read_only=True, many=True)
     labels = LabelSerializer(read_only=True, many=True)
     class Meta:
         model = Board
