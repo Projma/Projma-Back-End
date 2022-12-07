@@ -69,3 +69,25 @@ class PublicInfoProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['user', 'bio', 'profile_pic']
+
+class ProfileOverviewSerializer(serializers.ModelSerializer):
+    first_name = serializers.SerializerMethodField()
+    last_name = serializers.SerializerMethodField()
+    email = serializers.SerializerMethodField()
+    username = serializers.SerializerMethodField()
+    class Meta:
+        model = Profile
+        fields = ['profile_pic', 'first_name', 'last_name', 'email', 'username']
+        read_only_fields = ['profile_pic', 'first_name', 'last_name', 'email', 'username']
+    
+    def get_first_name(self, prof):
+        return prof.user.first_name
+    
+    def get_last_name(self, prof):
+        return prof.user.last_name
+    
+    def get_email(self, prof):
+        return prof.user.email
+    
+    def get_username(self, prof):
+        return prof.user.username

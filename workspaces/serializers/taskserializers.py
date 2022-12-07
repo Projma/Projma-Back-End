@@ -74,3 +74,27 @@ class UpdateTaskDoersSerializer(UpdateTaskSerializer):
                   'estimate', 'spend', 'out_of_estimate', 'doers']
         read_only_fields = ['id', 'created_at', 'updated_at', 'title', 'description', 'start_date', 'end_date', \
                   'estimate', 'spend', 'out_of_estimate', 'tasklist', 'attachments']
+
+class TaskOverviewSerializer(serializers.ModelSerializer):
+    checklists_num = serializers.SerializerMethodField()
+    attachments_num = serializers.SerializerMethodField()
+    checked_checklists_num = serializers.SerializerMethodField()
+    comments_num = serializers.SerializerMethodField()
+    labels = LabelSerializer(read_only=True, many=True)
+    doers = ProfileOverviewSerializer(read_only=True, many=True)
+    class Meta:
+        model = Task
+        fields = ['id', 'title', 'labels', 'tasklist', 'doers', 'checklists_num', 'attachments_num', 'comments_num', 'checked_checklists_num']
+        read_only_fields = ['id', 'title', 'labels', 'tasklist', 'doers', 'checklists_num', 'attachments_num', 'comments_num', 'checked_checklists_num']
+    
+    def get_checklists_num(self, task):
+        return len(task.checklists.all())
+    
+    def get_attachments_num(self, task):
+        return len(task.attachments.all())
+    
+    def get_comments_num(self, task):
+        return len(task.comments.all())
+    
+    def get_checked_checklists_num(self, task):
+        return len(task.checklists.all().filter(is_done=True))
