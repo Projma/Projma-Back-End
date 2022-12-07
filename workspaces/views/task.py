@@ -7,6 +7,7 @@ from rest_framework import status
 from ..models import *
 from ..serializers.taskserializers import *
 from ..serializers.attachmentserializer import *
+from ..serializers.labelserializers import *
 from ..permissions.taskpermissions import *
 from ..permissions.tasklistpermissions import *
 from accounts.serializers import *
@@ -60,6 +61,7 @@ class AddLabelsToTaskViewSet(viewsets.GenericViewSet):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+
 class DeleteLabelsFromTaskViewSet(viewsets.GenericViewSet):
     queryset = Task.objects.all()
     serializer_class = UpdateTaskLabelsSerializer
@@ -79,6 +81,7 @@ class DeleteLabelsFromTaskViewSet(viewsets.GenericViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class AddDoersToTaskViewSet(viewsets.GenericViewSet):
     queryset = Task.objects.all()
@@ -123,6 +126,7 @@ class DeleteDoersFromTaskViewSet(viewsets.GenericViewSet):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+
 class GetTaskPreviewViewSet(viewsets.GenericViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskPreviewSerializer
@@ -132,6 +136,32 @@ class GetTaskPreviewViewSet(viewsets.GenericViewSet):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+
+class GetTaskLabelsViewSet(viewsets.GenericViewSet):
+    queryset = Task.objects.all()
+    serializer_class = LabelSerializer
+    permission_classes = [IsAdminUser | IsTaskBoardMember | IsTaskBoardAdmin | IsTaskBoardWorkSpaceOwner]
+
+    @action(detail=True, methods=['get'])
+    def labels(self, request, pk):
+        instance = self.get_object()
+        labels = instance.labels.all()
+        serializer = self.get_serializer(labels, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class GetAttachmentsOfTaskViewSet(viewsets.GenericViewSet):
+    queryset = Task.objects.all()
+    serializer_class = AttachmentSerializer
+    permission_classes = [IsAdminUser | IsTaskBoardMember | IsTaskBoardAdmin | IsTaskBoardWorkSpaceOwner]
+
+    @action(detail=True, methods=['get'])
+    def attachments(self, request, pk):
+        instance = self.get_object()
+        attachments = instance.attachments.all()
+        serializer = self.get_serializer(attachments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class AddAttachmentToTaskViewSet(viewsets.GenericViewSet):
