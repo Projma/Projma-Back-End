@@ -15,7 +15,10 @@ class TaskListAdmin(admin.ModelAdmin):
 
 
 class TaskAdmin(admin.ModelAdmin):
-    pass
+    model = Task
+    fields = ['title', 'description', 'start_date', 'end_date', \
+                'estimate', 'spend', 'out_of_estimate', 'tasklist', 'labels', 'doers', 'attachments']
+    read_only_fields = ['id', 'created_at', 'updated_at']
 
 
 class CheckListAdmin(admin.ModelAdmin):
@@ -26,7 +29,7 @@ class LabelAdmin(admin.ModelAdmin):
     pass
 
 
-class FileAdmin(admin.ModelAdmin):
+class AttachmentAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(WorkSpace, WorkSpaceAdmin)
@@ -35,4 +38,4 @@ admin.site.register(TaskList, TaskListAdmin)
 admin.site.register(Task, TaskAdmin)
 admin.site.register(CheckList, CheckListAdmin)
 admin.site.register(Label, LabelAdmin)
-admin.site.register(File, FileAdmin)
+admin.site.register(Attachment, AttachmentAdmin)

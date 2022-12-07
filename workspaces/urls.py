@@ -37,5 +37,7 @@ router.register('task', comment.NewCommentViewset, basename='task')
 router.register('comment', comment.ReplyCommentViewSet, basename='comment')
 router.register('comment', comment.EditCommentViewSet, basename='comment')
 router.register('comment', comment.DeleteCommentViewSet, basename='comment')
+router.register('task', task.AddAttachmentToTaskViewSet, basename='task')
+router.register('attachment', task.DeleteAttachmentFromTaskViewSet, basename='attachment')
 
 urlpatterns = router.urls

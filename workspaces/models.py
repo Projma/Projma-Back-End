@@ -117,10 +117,11 @@ class Label(models.Model):
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='labels')
 
 
-class File(models.Model):
-    file_url = models.URLField(max_length=1000, blank=True, null=True)
-    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='files')
-    created_at = models.DateTimeField(auto_now_add=True)
+class Attachment(models.Model):
+    file = models.FileField(upload_to='attachments/')
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='attachments')
+    user = models.ForeignKey(to=Profile, on_delete=models.CASCADE)
+    created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
 
 
