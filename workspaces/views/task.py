@@ -138,6 +138,32 @@ class GetTaskPreviewViewSet(viewsets.GenericViewSet):
         return Response(serializer.data)
 
 
+class GetTaskLabelsViewSet(viewsets.GenericViewSet):
+    queryset = Task.objects.all()
+    serializer_class = LabelSerializer
+    permission_classes = [IsAdminUser | IsTaskBoardMember | IsTaskBoardAdmin | IsTaskBoardWorkSpaceOwner]
+
+    @action(detail=True, methods=['get'])
+    def labels(self, request, pk):
+        instance = self.get_object()
+        labels = instance.labels.all()
+        serializer = self.get_serializer(labels, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class GetAttachmentsOfTaskViewSet(viewsets.GenericViewSet):
+    queryset = Task.objects.all()
+    serializer_class = AttachmentSerializer
+    permission_classes = [IsAdminUser | IsTaskBoardMember | IsTaskBoardAdmin | IsTaskBoardWorkSpaceOwner]
+
+    @action(detail=True, methods=['get'])
+    def attachments(self, request, pk):
+        instance = self.get_object()
+        attachments = instance.attachments.all()
+        serializer = self.get_serializer(attachments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class AddAttachmentToTaskViewSet(viewsets.GenericViewSet):
     queryset = Task.objects.all()
     serializer_class = AttachmentSerializer
@@ -172,17 +198,4 @@ class GetTaskLabelsViewSet(viewsets.GenericViewSet):
         instance = self.get_object()
         labels = instance.labels.all()
         serializer = self.get_serializer(labels, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class GetTaskAttachmentsViewSet(viewsets.GenericViewSet):
-    queryset = Task.objects.all()
-    serializer_class = AttachmentSerializer
-    permission_classes = [IsAdminUser | IsTaskBoardMember | IsTaskBoardAdmin | IsTaskBoardWorkSpaceOwner]
-
-    @action(detail=True, methods=['get'])
-    def attachments(self, request, pk):
-        instance = self.get_object()
-        attachments = instance.attachments.all()
-        serializer = self.get_serializer(attachments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
