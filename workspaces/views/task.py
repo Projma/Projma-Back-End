@@ -186,16 +186,3 @@ class DeleteAttachmentFromTaskViewSet(viewsets.GenericViewSet):
         at = self.get_object()
         at.delete()
         return Response(CreateTaskSerializer(instance=at.task).data, status=status.HTTP_200_OK)
-
-
-class GetTaskLabelsViewSet(viewsets.GenericViewSet):
-    queryset = Task.objects.all()
-    serializer_class = LabelSerializer
-    permission_classes = [IsAdminUser | IsTaskBoardMember | IsTaskBoardAdmin | IsTaskBoardWorkSpaceOwner]
-
-    @action(detail=True, methods=['get'])
-    def labels(self, request, pk):
-        instance = self.get_object()
-        labels = instance.labels.all()
-        serializer = self.get_serializer(labels, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
