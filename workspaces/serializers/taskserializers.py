@@ -15,12 +15,11 @@ class CreateTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = ['id', 'created_at', 'updated_at', 'title', 'description', 'start_date', 'end_date', \
-                  'estimate', 'spend', 'out_of_estimate', 'tasklist', 'labels', 'doers']
+                  'estimate', 'spend', 'out_of_estimate', 'tasklist', 'labels', 'doers', 'attachments']
         read_only_fields = ['id', 'created_at', 'updated_at', 'description', 'start_date', 'end_date', \
-                  'estimate', 'spend', 'out_of_estimate', 'tasklist', 'labels', 'doers']
+                  'estimate', 'spend', 'out_of_estimate', 'tasklist', 'labels', 'doers', 'attachments']
     
     def validate(self, data):
-        print(data)
         if self.instance:
             board = self.instance.tasklist.board
         return data
@@ -74,4 +73,4 @@ class UpdateTaskDoersSerializer(UpdateTaskSerializer):
         fields = ['id', 'created_at', 'updated_at', 'title', 'description', 'start_date', 'end_date', \
                   'estimate', 'spend', 'out_of_estimate', 'doers']
         read_only_fields = ['id', 'created_at', 'updated_at', 'title', 'description', 'start_date', 'end_date', \
-                  'estimate', 'spend', 'out_of_estimate', 'tasklist']
+                  'estimate', 'spend', 'out_of_estimate', 'tasklist', 'attachments']

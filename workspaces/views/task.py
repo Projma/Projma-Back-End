@@ -6,9 +6,11 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework import status
 from ..models import *
 from ..serializers.taskserializers import *
+from ..serializers.attachmentserializer import *
 from ..permissions.taskpermissions import *
 from ..permissions.tasklistpermissions import *
 from accounts.serializers import *
+from ..permissions.attachmentpermissions import *
 
 
 
@@ -130,3 +132,27 @@ class GetTaskPreviewViewSet(viewsets.GenericViewSet):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+
+class AddAttachmentToTaskViewSet(viewsets.GenericViewSet):
+    queryset = Task.objects.all()
+    serializer_class = AttachmentSerializer
+    permission_classes = [IsAdminUser | IsTaskBoardMember | IsTaskBoardAdmin | IsTaskBoardWorkSpaceOwner]
+    @action(detail=True, methods=['patch'])
+    def add_attachment_to_task(self, request, pk):
+        task = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(task=task, user=request.user.profile)
+        return Response(CreateTaskSerializer(instance=task).data, status=status.HTTP_200_OK)
+
+
+class DeleteAttachmentFromTaskViewSet(viewsets.GenericViewSet):
+    queryset = Attachment.objects.all()
+    serializer_class = AttachmentSerializer
+    permission_classes = [IsAdminUser | IsAttachmentBoardMember | IsAttachmentBoardAdmin | IsAttachmentBoardWorkSpaceOwner]
+    @action(detail=True, methods=['delete'])
+    def delete_attachment_from_task(self, request, pk):
+        at = self.get_object()
+        at.delete()
+        return Response(CreateTaskSerializer(instance=at.task).data, status=status.HTTP_200_OK)
