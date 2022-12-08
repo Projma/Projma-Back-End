@@ -62,10 +62,12 @@ class Board(models.Model):
 
 class TaskList(models.Model):
     title = models.CharField(max_length=256)
-    board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='tasklists')
+    board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='tasklists', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     order = models.IntegerField(default=0, null=False)
+
+    board_template = models.ForeignKey('BoardTemplate', on_delete=models.CASCADE, related_name='tasklists', blank=True, null=True)
 
     def save(self, *args, **kwargs):
         creating = False
@@ -114,7 +116,9 @@ class CheckList(models.Model):
 class Label(models.Model):
     title = models.CharField(max_length=256)
     color = ColorField()
-    board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='labels')
+    board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='labels', blank=True, null=True)
+
+    board_template = models.ForeignKey('BoardTemplate', on_delete=models.CASCADE, related_name='labels', blank=True, null=True)
 
 
 class Attachment(models.Model):
@@ -122,6 +126,14 @@ class Attachment(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='attachments')
     user = models.ForeignKey(to=Profile, on_delete=models.CASCADE)
     created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+
+
+class BoardTemplate(models.Model):
+    name = models.CharField(max_length=256, unique=True)
+    description = models.CharField(max_length=1000, blank=True, null=True)
+    background_pic = models.ImageField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
 
 
