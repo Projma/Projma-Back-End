@@ -35,10 +35,10 @@ class CreateOrReadCheckListViewSet(viewsets.GenericViewSet):
 class UpdateCheckListViewSet(UpdateModelMixin, viewsets.GenericViewSet):
     queryset = CheckList.objects.all()
     serializer_class = UpdateCheckListSerializer
-    permission_classes = [IsCheckListBoardMember | IsCheckListBoardAdmin | IsCheckListBoardWorkSpaceOwner]
+    permission_classes = [IsCheckListBoardMember | IsCheckListBoardAdmin | IsCheckListBoardWorkSpaceOwner | IsAdminUser]
 
 
 class DeleteCheckListViewSet(DestroyModelMixin, viewsets.GenericViewSet):
     queryset = CheckList.objects.all()
     serializer_class = CreateOrReadCheckListSerializer
-    permission_classes = [IsCheckListBoardMember | IsCheckListBoardAdmin | IsCheckListBoardWorkSpaceOwner]
+    permission_classes = [IsCheckListBoardMember | IsCheckListBoardAdmin | IsCheckListBoardWorkSpaceOwner | IsAdminUser]
