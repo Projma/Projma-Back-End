@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404 
 from rest_framework import viewsets
+from rest_framework.mixins import DestroyModelMixin
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser
@@ -39,6 +40,12 @@ class UpdateTaskViewSet(viewsets.GenericViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class DeleteTaskViewSet(DestroyModelMixin, viewsets.GenericViewSet):
+    queryset = Task.objects.all()
+    serializer_class = TaskOverviewSerializer
+    permission_classes = [IsAdminUser | IsTaskBoardAdmin | IsTaskBoardMember | IsTaskBoardWorkSpaceOwner]
 
 
 class AddLabelsToTaskViewSet(viewsets.GenericViewSet):
