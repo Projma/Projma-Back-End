@@ -31,7 +31,7 @@ class GetTaskSerializer(CreateTaskSerializer):
     labels = LabelSerializer(many=True)
     doers = ProfileOverviewSerializer(many=True)
     attachments = AttachmentSerializer(many=True)
-    comments = CommentSerializer(many=True)
+    comments = GetCommentSerializer(many=True)
     class Meta(CreateTaskSerializer.Meta):
         fields = CreateTaskSerializer.Meta.fields + ['comments']
 
