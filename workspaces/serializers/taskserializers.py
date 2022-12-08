@@ -39,7 +39,7 @@ class GetTaskSerializer(CreateTaskSerializer):
     def get_tasklist_name(self, obj):
         return obj.tasklist.title
 
-
+ 
 class UpdateTaskSerializer(serializers.ModelSerializer):
     doers = serializers.PrimaryKeyRelatedField(many=True, queryset=Profile.objects.all(), pk_field=serializers.IntegerField())
     labels = serializers.PrimaryKeyRelatedField(many=True, queryset=Label.objects.all())
