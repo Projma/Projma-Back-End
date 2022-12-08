@@ -2,6 +2,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from accounts.serializers import *
 from .labelserializers import *
+from .attachmentserializer import *
+from .commentserializers import *
 from ..models import *
 
 class TaskPreviewSerializer(serializers.ModelSerializer):
@@ -23,6 +25,15 @@ class CreateTaskSerializer(serializers.ModelSerializer):
         if self.instance:
             board = self.instance.tasklist.board
         return data
+
+
+class GetTaskSerializer(CreateTaskSerializer):
+    labels = LabelSerializer(many=True)
+    doers = ProfileOverviewSerializer(many=True)
+    attachments = AttachmentSerializer(many=True)
+    comments = CommentSerializer(many=True)
+    class Meta(CreateTaskSerializer.Meta):
+        fields = CreateTaskSerializer.Meta.fields + ['comments']
 
 
 class UpdateTaskSerializer(serializers.ModelSerializer):
