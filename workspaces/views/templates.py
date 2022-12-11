@@ -30,7 +30,7 @@ class TemplateViewSet(viewsets.GenericViewSet):
             label_color = label_param['color']
             labels.append(Label.objects.create(title=label_title, color=label_color, board_template=board_template))
 
-    @action(detail=False, methods=['get'], url_path='create-project-management-template')
+    @action(detail=False, methods=['post'], url_path='create-project-management-template')
     def create_project_management_template(self, request):
         template_params = {'name': 'Project Management', 'description': 'Project Management Template'}
         tasklists_params = [{'title': 'Project Resources'}, \
@@ -46,7 +46,7 @@ class TemplateViewSet(viewsets.GenericViewSet):
         self.create_template(template_params, tasklists_params, labels_params)
         return Response(status=status.HTTP_201_CREATED)
 
-    @action(detail=False, methods=['get'], url_path='create-kanban-template')
+    @action(detail=False, methods=['post'], url_path='create-kanban-template')
     def create_kanban_template(self, request):
         template_params = {'name': 'Kanban', 'description': 'Kanban Template'}
         tasklists_params = [{'title': 'Backlog'}, \
@@ -62,6 +62,23 @@ class TemplateViewSet(viewsets.GenericViewSet):
         self.create_template(template_params, tasklists_params, labels_params)
         return Response(status=status.HTTP_201_CREATED)
 
+    @action(detail=False, methods=['post'], url_path='create-agile-board-template')
+    def create_agile_board_template(self, request):
+        template_params = {'name': 'Agile Board', 'description': 'Agile Board Template'}
+        tasklists_params = [{'title': 'Done'}, \
+                {'title': 'Current Sprint'}, \
+                {'title': 'In Progress'}, \
+                {'title': 'On Hold'}, \
+                {'title': 'Next Up'}, \
+                {'title': 'Questions'}]
+        labels_params = [{'title': 'Demand Marketing', 'color': '#E221FF96'}, \
+                {'title': 'Planning', 'color': '#5EFF0F96'}, \
+                {'title': 'Happiness', 'color': '#FF5CE396'}, \
+                {'title': 'Government', 'color': '#14CFFF96'},\
+                {'title': 'Partners', 'color': '#1C94FF96'}]
+        self.create_template(template_params, tasklists_params, labels_params)
+        return Response(status=status.HTTP_201_CREATED)
+
     @action(detail=False, methods=['get'], url_path='project-management')
     def project_management(self, request):
         template = get_object_or_404(BoardTemplate, name='Project Management')
@@ -71,5 +88,11 @@ class TemplateViewSet(viewsets.GenericViewSet):
     @action(detail=False, methods=['get'], url_path='kanban')
     def kanban(self, request):
         template = get_object_or_404(BoardTemplate, name='Kanban')
+        serializer = self.get_serializer(template)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'], url_path='agile-board')
+    def agile_board(self, request):
+        template = get_object_or_404(BoardTemplate, name='Agile Board')
         serializer = self.get_serializer(template)
         return Response(serializer.data, status=status.HTTP_200_OK)
