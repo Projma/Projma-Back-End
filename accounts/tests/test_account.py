@@ -33,3 +33,22 @@ class TestCreateUser:
         assert response1.status_code == status.HTTP_201_CREATED
         assert response2.status_code == status.HTTP_400_BAD_REQUEST
 
+
+@pytest.mark.django_db
+class TestLoginUser:
+
+    def test_login_valid_user_returns_200(self, create_user, login_user):
+        create_user()
+        response = login_user()
+        assert response.status_code == status.HTTP_200_OK
+
+    def test_login_invalid_user_returns_401(self, create_user, login_user):
+        create_user(username='testuser1')
+        response = login_user(username='testuser2')
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_login_inactive_user_returns_401(self, create_user, login_user):
+        create_user(is_active=False)
+        response = login_user()
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
