@@ -3,15 +3,19 @@ from .models import *
 from .forms import *
 # Register your models here.
 class WorkSpaceAdmin(admin.ModelAdmin):
-    model = WorkSpace
-
+    model=WorkSpace
+    fields = ['id', 'name', 'description', 'type', 'owner', 'members']
+    readonly_fields = ['id']
 
 class BoardAdmin(admin.ModelAdmin):
     model = Board
-
+    fields = ['id', 'name', 'description', 'background_pic', 'workspace', 'admins', 'members', 'is_starred']
+    readonly_fields = ['id']
 
 class TaskListAdmin(admin.ModelAdmin):
-    pass
+    model = TaskList
+    fields = ['id', 'title', 'board', 'order']
+    readonly_fields = ['id']
 
 
 class TaskAdmin(admin.ModelAdmin):
@@ -22,19 +26,28 @@ class TaskAdmin(admin.ModelAdmin):
 
 
 class CheckListAdmin(admin.ModelAdmin):
-    pass
+    model = CheckList
+    fields = ['id', 'text', 'is_done', 'task']
+    readonly_fields = ['id']
 
 
 class LabelAdmin(admin.ModelAdmin):
-    pass
+    model = Label
+    fields = ['id', 'title', 'color', 'board']
+    readonly_fields = ['id']
 
 
 class AttachmentAdmin(admin.ModelAdmin):
-    pass
+    model = Attachment
+    fields = ['id', 'file', 'task', 'user']
+    readonly_fields = ['id']
 
 
 class CommentAdmin(admin.ModelAdmin):
-    pass
+    model = Comment
+    fields = ['id', 'text', 'sender', 'task', 'reply_to', 'created_at', 'updated_at']
+    readonly_fields = ['id', 'created_at', 'updated_at']
+
 
 admin.site.register(WorkSpace, WorkSpaceAdmin)
 admin.site.register(Board, BoardAdmin)
