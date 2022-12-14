@@ -13,6 +13,7 @@ from .serializers import *
 from .filters import *
 from .models import *
 from .Email import *
+from .permissions import *
 
 class UserViewSet(viewsets.GenericViewSet):
     queryset = User.objects.all()
@@ -57,24 +58,14 @@ class UserViewSet(viewsets.GenericViewSet):
         user.save()
         return Response({'message': 'User activated successfully'}, status=status.HTTP_200_OK)
     
-    @action(detail=False, methods=['get', 'patch'], permission_classes=[IsAuthenticated])
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def myaccount(self, request):
-        if request.method == 'GET':
-            serializer = UserSerializer(instance=request.user)
-            try:
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            except:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        elif request.method == 'PATCH':
-            instance = request.user
-            serializer = UserSerializer(instance, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = UserSerializer(instance=request.user)
+        try:
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
+ 
 
 class ForgotPasswordViewSet(viewsets.GenericViewSet):
     queryset = User.objects.all()
@@ -129,23 +120,14 @@ class ProfileViewset(viewsets.ModelViewSet):
     related_search_fields = ['user']
     search_fields = ['user__username', 'user__email']
 
-    @action(detail=False, methods=['get', 'patch'], permission_classes=[IsAuthenticated])
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def myprofile(self, request):
-        if request.method == 'GET':
-            serializer = ProfileSerializer(instance=request.user.profile)
-            try:
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            except:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        elif request.method == 'PATCH':
-            instance = request.user.profile
-            serializer = self.get_serializer(instance, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = ProfileSerializer(instance=request.user.profile)
+        try:
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
 
     @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated], url_path='change-password', serializer_class=ChangePasswordSerializer)
     def change_password(self, request):
@@ -166,11 +148,26 @@ class ProfileViewset(viewsets.ModelViewSet):
         serializer = PublicInfoProfileSerializer(instance=profile)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # @action(detail=False, methods=['patch'], url_path='myprofile',permission_classes=[IsAuthenticated])
-    # def editmyprofile(self, request):
-    #     instance = request.user.profile
-    #     serializer = self.get_serializer(instance, data=request.data, partial=partial)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_200_OK)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class EditProfileViewSet(viewsets.GenericViewSet):
+    queryset = Profile.objects.all()
+    serializer_class = EditProfileSerializer
+    permission_classes = [IsAdminUser | IsProfileUser]
+    @action(detail=True, methods=['patch'], url_path='edit-myprofile')
+    def edit_myprofile(self, request, pk):
+        prof = self.get_object()
+        serializer = self.get_serializer(instance=prof,data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class DeleteProfilePicViewSet(viewsets.GenericViewSet):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = [IsAdminUser | IsProfileUser]
+    @action(detail=True, methods=['patch'], url_path='delete-myprofile-pic')
+    def delete_myprofile_pic(self, request, pk):
+        prof = self.get_object()
+        prof.profile_pic = None
+        prof.save()
+        return Response(self.get_serializer(instance=prof).data, status=status.HTTP_200_OK)
