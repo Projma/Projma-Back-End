@@ -20,8 +20,8 @@ class TaskListAdmin(admin.ModelAdmin):
 
 class TaskAdmin(admin.ModelAdmin):
     model = Task
-    fields = ['title', 'description', 'start_date', 'end_date', \
-                'estimate', 'spend', 'out_of_estimate', 'tasklist', 'labels', 'doers']
+    fields = ['id', 'title', 'description', 'start_date', 'end_date', \
+                'estimate', 'spend', 'out_of_estimate', 'tasklist', 'labels', 'doers', 'order']
     readonly_fields = ['id', 'created_at', 'updated_at', 'out_of_estimate']
 
 
