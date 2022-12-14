@@ -26,13 +26,7 @@ class WorkSpace(models.Model):
     members = models.ManyToManyField(to=Profile, related_name='workspaces', blank=True)
 
     def __str__(self) -> str:
-        return f'{self.name} - {self.owner.user.user_name}'
-    # def save(self, *args, **kwargs) -> None:
-    #     super().save(*args, **kwargs)
-    #     if self.owner not in self.members.all():
-    #         self.members.add(self.owner)
-    #     # super().save(*args, **kwargs)
-    #     return
+        return f'{self.name} - {self.owner.user.username}'
 
 
 class Board(models.Model):
