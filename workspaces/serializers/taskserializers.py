@@ -9,8 +9,8 @@ from ..models import *
 class TaskPreviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ['id', 'title', 'tasklist', 'labels', 'doers']
-        read_only_fields = ['id', 'title', 'tasklist', 'labels', 'doers']
+        fields = ['id', 'title', 'tasklist', 'labels', 'doers', 'order']
+        read_only_fields = ['id', 'title', 'tasklist', 'labels', 'doers', 'order']
 
 
 class CreateTaskSerializer(serializers.ModelSerializer):
@@ -109,3 +109,7 @@ class TaskOverviewSerializer(serializers.ModelSerializer):
     
     def get_checked_checklists_num(self, task):
         return len(task.checklists.all().filter(is_done=True))
+
+
+class ReorderTasksSerializer(serializers.Serializer):
+    order = serializers.ListField(child = serializers.IntegerField())
