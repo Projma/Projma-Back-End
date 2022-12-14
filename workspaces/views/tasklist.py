@@ -49,7 +49,7 @@ class DeleteTaskListViewSet(viewsets.GenericViewSet):
 
 class ReorderTaskListsViewSet(viewsets.GenericViewSet):
     queryset = Board.objects.all()
-    serializer_class = ReorderTaskListSerializer
+    serializer_class = ReorderTaskListsSerializer
     permission_classes = [IsBoardMember | IsAdminUser | IsBoardAdmin | IsBoardWorkSpaceOwner]
     @action(detail=True, methods=['put'], url_path='reorder-tasklists')
     def reorder_tasklists(self, request, pk):

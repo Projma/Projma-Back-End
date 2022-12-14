@@ -12,7 +12,7 @@ class TaskListSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'board', 'order', 'tasks']
 
 
-class ReorderTaskListSerializer(serializers.Serializer):
+class ReorderTaskListsSerializer(serializers.Serializer):
     order = serializers.ListField(child = serializers.IntegerField())
 
 

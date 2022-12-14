@@ -175,3 +175,20 @@ class DeleteAttachmentFromTaskViewSet(viewsets.GenericViewSet):
         at = self.get_object()
         at.delete()
         return Response(CreateTaskSerializer(instance=at.task).data, status=status.HTTP_200_OK)
+
+
+class ReorderTaskListsViewSet(viewsets.GenericViewSet):
+    queryset = TaskList.objects.all()
+    serializer_class = ReorderTasksSerializer
+    permission_classes = [IsAdminUser | IsTaskListBoardMember | IsTaskListBoardAdmin | IsTaskListBoardWorkSpaceOwner]
+    @action(detail=True, methods=['put'], url_path='reorder-tasks')
+    def reorder_tasks(self, request, pk):
+        tl = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            tl.reorder_tasks(serializer.data['order'])
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(TaskPreviewSerializer(instance=tl.tasks.all(), many=True).data, status=status.HTTP_200_OK)
+
