@@ -32,8 +32,12 @@ class GetTaskSerializer(CreateTaskSerializer):
     doers = ProfileOverviewSerializer(many=True)
     attachments = AttachmentSerializer(many=True)
     comments = GetCommentSerializer(many=True)
+    tasklist_name = serializers.SerializerMethodField()
     class Meta(CreateTaskSerializer.Meta):
-        fields = CreateTaskSerializer.Meta.fields + ['comments']
+        fields = CreateTaskSerializer.Meta.fields + ['comments', 'tasklist_name']
+
+    def get_tasklist_name(self, obj):
+        return obj.tasklist.title
 
 
 class UpdateTaskSerializer(serializers.ModelSerializer):
