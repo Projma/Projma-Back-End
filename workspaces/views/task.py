@@ -66,7 +66,8 @@ class AddLabelsToTaskViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(instance=task, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        label_serializer = LabelSerializer(instance=task.labels.all(), many=True)
+        return Response(label_serializer.data, status=status.HTTP_201_CREATED)
 
 
 class DeleteLabelsFromTaskViewSet(viewsets.GenericViewSet):
@@ -87,7 +88,8 @@ class DeleteLabelsFromTaskViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(instance=task, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        label_serializer = LabelSerializer(instance=task.labels.all(), many=True)
+        return Response(label_serializer.data, status=status.HTTP_201_CREATED)
 
 
 class AddDoersToTaskViewSet(viewsets.GenericViewSet):
