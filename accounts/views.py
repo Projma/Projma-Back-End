@@ -152,10 +152,10 @@ class ProfileViewset(viewsets.ModelViewSet):
 class EditProfileViewSet(viewsets.GenericViewSet):
     queryset = Profile.objects.all()
     serializer_class = EditProfileSerializer
-    permission_classes = [IsAdminUser | IsProfileUser]
-    @action(detail=True, methods=['patch'], url_path='edit-myprofile')
-    def edit_myprofile(self, request, pk):
-        prof = self.get_object()
+    permission_classes = [IsAdminUser | IsAuthenticated]
+    @action(detail=False, methods=['patch'], url_path='edit-myprofile')
+    def edit_myprofile(self, request):
+        prof = request.user.profile
         serializer = self.get_serializer(instance=prof,data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -164,10 +164,10 @@ class EditProfileViewSet(viewsets.GenericViewSet):
 class DeleteProfilePicViewSet(viewsets.GenericViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    permission_classes = [IsAdminUser | IsProfileUser]
-    @action(detail=True, methods=['patch'], url_path='delete-myprofile-pic')
-    def delete_myprofile_pic(self, request, pk):
-        prof = self.get_object()
+    permission_classes = [IsAdminUser | IsAuthenticated]
+    @action(detail=False, methods=['patch'], url_path='delete-myprofile-pic')
+    def delete_myprofile_pic(self, request):
+        prof = request.user.profile
         prof.profile_pic = None
         prof.save()
         return Response(self.get_serializer(instance=prof).data, status=status.HTTP_200_OK)
