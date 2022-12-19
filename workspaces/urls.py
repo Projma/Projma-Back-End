@@ -1,5 +1,5 @@
 from rest_framework.routers import DefaultRouter
-from .views import board, workspace, tasklist, label, task, checklist, comment, templates
+from .views import board, workspace, tasklist, label, task, checklist, templates, comment
 
 
 router = DefaultRouter()
