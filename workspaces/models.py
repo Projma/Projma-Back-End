@@ -28,17 +28,38 @@ class WorkSpace(models.Model):
     def __str__(self) -> str:
         return f'{self.name} - {self.owner.user.username}'
 
+    # def save(self, *args, **kwargs) -> None:
+    #     super().save(*args, **kwargs)
+    #     if self.owner not in self.members.all():
+    #         self.members.add(self.owner)
+    #     # super().save(*args, **kwargs)
+    #     return
+
 
 class Board(models.Model):
     name = models.CharField(max_length=256)
     description = models.CharField(max_length=1000, blank=True, null=True)
     background_pic = models.ImageField(blank=True, null=True)
-    workspace = models.ForeignKey(WorkSpace, on_delete=models.CASCADE, related_name='boards')
+    workspace = models.ForeignKey(WorkSpace, on_delete=models.CASCADE, related_name='boards', null=True)
     admins = models.ManyToManyField(Profile, related_name='administrating_boards', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     members = models.ManyToManyField(Profile, related_name='boards', blank=True)
     is_starred = models.BooleanField(default=False)
+    is_template = models.BooleanField(default=False)
+
+    def save(self, **kwargs) -> None:
+        is_template = kwargs.get('is_template')
+        workspace = kwargs.get('workspace')
+        print(is_template, self.is_template)
+        print(workspace, self.workspace)
+        if not self.is_template:
+            if self.workspace is None:
+                raise Exception("Board must have a workspace")
+        else:
+            if self.workspace is not None:
+                raise Exception("Board template can't have a workspace")
+        super().save(**kwargs)
 
     def reorder_tasklists(self, neworder):
         ids = [tl.id for tl in self.tasklists.all()]
@@ -64,8 +85,6 @@ class TaskList(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     order = models.IntegerField(default=0, null=False)
-
-    board_template = models.ForeignKey('BoardTemplate', on_delete=models.CASCADE, related_name='tasklists', blank=True, null=True)
 
     def save(self, *args, **kwargs):
         creating = self.pk==None
@@ -147,8 +166,6 @@ class Label(models.Model):
     color = ColorField()
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='labels', blank=True, null=True)
 
-    board_template = models.ForeignKey('BoardTemplate', on_delete=models.CASCADE, related_name='labels', blank=True, null=True)
-
 
 class Attachment(models.Model):
     file = models.FileField(upload_to='attachments/')
@@ -158,12 +175,12 @@ class Attachment(models.Model):
     updated_at = models.DateField(auto_now=True)
 
 
-class BoardTemplate(models.Model):
-    name = models.CharField(max_length=256, unique=True)
-    description = models.CharField(max_length=1000, blank=True, null=True)
-    background_pic = models.ImageField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
+# class BoardTemplate(models.Model):
+#     name = models.CharField(max_length=256, unique=True)
+#     description = models.CharField(max_length=1000, blank=True, null=True)
+#     background_pic = models.ImageField(blank=True, null=True)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateField(auto_now=True)
 
 
 # class TaskLabel(models.Model):
