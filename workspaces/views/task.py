@@ -56,6 +56,7 @@ class AddLabelsToTaskViewSet(viewsets.GenericViewSet):
     def add_labels_to_task(self, request, pk):
         task = self.get_object()
         data = request.data
+        addinglabels = request.data['labels'].copy()
         try:
             for prelabel in task.labels.all():
                 if prelabel.id not in data['labels']:
@@ -66,7 +67,8 @@ class AddLabelsToTaskViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(instance=task, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        added_labels_serializer = LabelSerializer(instance=task.labels.all().filter(pk__in=addinglabels), many=True)
+        return Response(added_labels_serializer.data, status=status.HTTP_201_CREATED)
 
 
 class DeleteLabelsFromTaskViewSet(viewsets.GenericViewSet):
@@ -87,7 +89,8 @@ class DeleteLabelsFromTaskViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(instance=task, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        label_serializer = LabelSerializer(instance=task.labels.all(), many=True)
+        return Response(label_serializer.data, status=status.HTTP_201_CREATED)
 
 
 class AddDoersToTaskViewSet(viewsets.GenericViewSet):
@@ -175,3 +178,20 @@ class DeleteAttachmentFromTaskViewSet(viewsets.GenericViewSet):
         at = self.get_object()
         at.delete()
         return Response(CreateTaskSerializer(instance=at.task).data, status=status.HTTP_200_OK)
+
+
+class ReorderTaskListsViewSet(viewsets.GenericViewSet):
+    queryset = TaskList.objects.all()
+    serializer_class = ReorderTasksSerializer
+    permission_classes = [IsAdminUser | IsTaskListBoardMember | IsTaskListBoardAdmin | IsTaskListBoardWorkSpaceOwner]
+    @action(detail=True, methods=['put'], url_path='reorder-tasks')
+    def reorder_tasks(self, request, pk):
+        tl = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            tl.reorder_tasks(serializer.data['order'])
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(TaskPreviewSerializer(instance=tl.tasks.all(), many=True).data, status=status.HTTP_200_OK)
+

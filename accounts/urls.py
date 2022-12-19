@@ -8,7 +8,12 @@ userrouter = UserRouter()
 userrouter.register('users', UserViewSet, basename='user')
 
 router = DefaultRouter()
+router.register('profile', EditProfileViewSet, basename='profile')
+router.register('profile', DeleteProfilePicViewSet, basename='profile')
 router.register('profile', ProfileViewset, basename='profile')
+# for url in router.urls:
+#     print(url)
+
 
 urlpatterns = userrouter.urls
 urlpatterns += router.urls

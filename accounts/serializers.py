@@ -91,3 +91,18 @@ class ProfileOverviewSerializer(serializers.ModelSerializer):
     
     def get_username(self, prof):
         return prof.user.username
+
+class EditProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    class Meta:
+        model = Profile
+        fields = ['profile_pic', 'phone', 'telegram_id', 'bio', 'birth_date', 'user']
+    
+    def update(self, instance:Profile, validated_data):
+        usr = instance.user
+        prof = instance
+        usr_dict = validated_data.pop('user', dict())
+        prof_dict = validated_data
+        Profile.objects.all().filter(pk=instance.user).update(**prof_dict)
+        User.objects.all().filter(pk=instance.user.pk).update(**usr_dict)
+        return Profile.objects.all().get(pk=instance.user.pk)

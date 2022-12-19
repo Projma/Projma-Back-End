@@ -27,6 +27,7 @@ class WorkSpace(models.Model):
 
     def __str__(self) -> str:
         return f'{self.name} - {self.owner.user.username}'
+
     # def save(self, *args, **kwargs) -> None:
     #     super().save(*args, **kwargs)
     #     if self.owner not in self.members.all():
@@ -86,13 +87,26 @@ class TaskList(models.Model):
     order = models.IntegerField(default=0, null=False)
 
     def save(self, *args, **kwargs):
-        creating = False
-        if self.pk == None:
-            creating = True
+        creating = self.pk==None
         super().save(*args, **kwargs)
         if creating:
             self.order = self.pk
+            self.save()
         return
+
+    def reorder_tasks(self, neworder):
+        ids = [t.id for t in self.tasks.all()]
+        if len(neworder) != len(ids):
+            raise Exception("Invalid Order")
+        for pk in neworder:
+            if pk not in ids:
+                raise Exception("Invalid Order")
+
+        for i in range(len(neworder)):
+            pk = neworder[i]
+            t = self.tasks.all().get(pk=pk)
+            t.order = i+1
+            t.save()
 
     def __str__(self) -> str:
         return f'{self.title} - {self.board.name}'
@@ -109,12 +123,18 @@ class Task(models.Model):
     tasklist = models.ForeignKey(TaskList, on_delete=models.CASCADE, related_name='tasks')
     labels = models.ManyToManyField(to='Label', related_name='tasks', blank=True)
     doers = models.ManyToManyField(to=Profile, related_name='tasks', blank=True)
+    order = models.IntegerField(default=0, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
 
     def save(self, *args, **kwargs):
+        creating = self.pk == None
         self.out_of_estimate = self.spend - self.estimate
         super().save(*args, **kwargs)
+        if creating:
+            self.order = self.pk
+            self.save()
+        return
 
     def __str__(self) -> str:
         return f'{self.title}'
