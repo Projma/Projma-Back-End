@@ -24,7 +24,7 @@ class BoardAdminViewSet(viewsets.GenericViewSet):
         serializer = BoardAdminSerializer(instance=board, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['delete'], url_path='delete-board')
     def delete_board(self, request, pk):
