@@ -29,7 +29,8 @@ class WorkspaceViewSet(viewsets.GenericViewSet):
         if workspace is None:
             return Response('Invalid invite link', status=status.HTTP_400_BAD_REQUEST)
         try:
-            if request.user.profile in workspace.members.all():
+            qs = workspace.members.all()
+            if request.user.profile in qs or request.user.profile == workspace.owner:
                 return Response('You are already a member of this workspace', status=status.HTTP_400_BAD_REQUEST)
             workspace.members.add(request.user.profile)
             return Response('You have been added to the workspace successfully', status=status.HTTP_200_OK)
