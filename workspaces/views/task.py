@@ -56,6 +56,7 @@ class AddLabelsToTaskViewSet(viewsets.GenericViewSet):
     def add_labels_to_task(self, request, pk):
         task = self.get_object()
         data = request.data
+        addinglabels = request.data['labels'].copy()
         try:
             for prelabel in task.labels.all():
                 if prelabel.id not in data['labels']:
@@ -66,8 +67,8 @@ class AddLabelsToTaskViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(instance=task, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        label_serializer = LabelSerializer(instance=task.labels.all(), many=True)
-        return Response(label_serializer.data, status=status.HTTP_201_CREATED)
+        added_labels_serializer = LabelSerializer(instance=task.labels.all().filter(pk__in=addinglabels), many=True)
+        return Response(added_labels_serializer.data, status=status.HTTP_201_CREATED)
 
 
 class DeleteLabelsFromTaskViewSet(viewsets.GenericViewSet):
