@@ -92,7 +92,7 @@ class TestProfile:
             response = api_client.get('/accounts/profile/myprofile/')
             assert response.status_code == status.HTTP_200_OK
             assert response.data['bio'] is None
-            response = api_client.patch('/accounts/profile/myprofile/', {'bio': 'test bio'})
+            response = api_client.patch('/accounts/profile/edit-myprofile/', {'bio': 'test bio'})
             assert response.status_code == status.HTTP_200_OK
             assert response.data['bio'] == 'test bio'
 
