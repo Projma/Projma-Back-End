@@ -92,9 +92,9 @@ class TestProfile:
             response = api_client.get('/accounts/profile/myprofile/')
             assert response.status_code == status.HTTP_200_OK
             assert response.data['bio'] is None
-            response = api_client.patch('/accounts/profile/edit-myprofile/', {'bio': 'test bio'})
+            response = api_client.patch('/accounts/profile/edit-myprofile/', {'bio': 'bio test'})
             assert response.status_code == status.HTTP_200_OK
-            assert response.data['bio'] == 'test bio'
+            assert response.data['bio'] == 'bio test'
 
         def test_change_password_with_new_pass_returns_200(self, create_user, login_user, authenticate_user):
             api_client = TestProfile.signup_and_signin_process(create_user, login_user, authenticate_user)
