@@ -71,7 +71,6 @@ class TestJoinBoard:
         response = api_client.post(f'/workspaces/board/join-to-board/{invite_link}/')
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    @pytest.mark.skip
     def test_board_join_with_invalid_invite_link_returns_404(self, api_client, create_account, create_board):
         response = create_board()
         assert response.status_code == status.HTTP_201_CREATED
@@ -83,4 +82,4 @@ class TestJoinBoard:
         invite_link = response.data + 'A'
         api_client = create_account(username='newuser', password='newpassword64655gf51', email='newuser@domain.com')
         response = api_client.post(f'/workspaces/board/join-to-board/{invite_link}/')
-        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
