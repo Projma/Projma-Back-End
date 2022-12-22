@@ -66,3 +66,7 @@ class BoardOverviewSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'description', 'background_pic', 'workspace', 'admins', 
                     'created_at', 'updated_at', 'members', 'tasklists', 'labels']
         read_only_fields = ['id', 'workspace', 'labels']
+
+
+class BoardIdsSerializer(serializers.Serializer):
+    board_ids = serializers.ListField(child = serializers.IntegerField(), read_only=True)

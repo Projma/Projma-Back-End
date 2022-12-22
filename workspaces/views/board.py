@@ -212,3 +212,20 @@ class GetBoardOverviewViewSet(viewsets.GenericViewSet):
         board = self.get_object()
         serializer = self.get_serializer(instance=board)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class ToggleBoardStarViewSet(viewsets.GenericViewSet):
+    queryset = Board.objects.all()
+    serializer_class = BoardIdsSerializer
+    permission_classes = [IsAdminUser | IsBoardMember | IsBoardAdmin | IsBoardWorkSpaceOwner]
+
+    @action(detail=True, methods=['post'], url_path='toggle-myboard-star')
+    def toggle_board_star(self, request, pk):
+        board = self.get_object()
+        user = request.user
+        if board in user.profile.starred_boards.all():
+            user.profile.starred_boards.remove(board)
+        else:
+            user.profile.starred_boards.add(board)
+        serializer = self.get_serializer(
+            instance={'board_ids': user.profile.starred_boards.all().values_list('id', flat=True)})
+        return Response(serializer.data, status=status.HTTP_200_OK)
