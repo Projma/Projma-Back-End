@@ -71,6 +71,12 @@ class UserDashboardViewset(viewsets.GenericViewSet):
     def myowning_workspaces(self, request):
         serializer = WorkSpaceOwnerSerializer(instance=list(request.user.profile.owning_workspaces.all()), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=['get'], url_path='mystarred-boards')
+    def mystarred_boards(self, request):
+        prof = request.user.profile
+        serializer = BoardMemberSerializer(instance=prof.starred_boards.all(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class WorkSpaceOwnerViewSet(viewsets.GenericViewSet):
@@ -176,9 +182,14 @@ class WorkSpaceMemberViewSet(viewsets.GenericViewSet):
         serializer = BoardMemberSerializer(instance=self.get_object().boards.all().filter(members__user=request.user), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+class WorkSpaceStarredBoardsViewSet(viewsets.GenericViewSet):
+    queryset = WorkSpace.objects.all()
+    serializer_class = BoardMemberSerializer
+    permission_classes = [IsWorkSpaceMember | IsAdminUser | IsWorkSpaceOwner]
+
     @action(detail=True, methods=['get'], url_path='workspace-starred-boards', serializer_class=BoardMemberSerializer)
     def workspace_boards(self, request, pk):
         ws = self.get_object()
         userstarredboards = request.user.profile.starred_boards.all().filter(workspace=ws)
-        serializer = BoardMemberSerializer(instance=userstarredboards, many=True)
+        serializer = self.get_serializer(instance=userstarredboards, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
