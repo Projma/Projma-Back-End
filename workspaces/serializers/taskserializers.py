@@ -47,7 +47,7 @@ class UpdateTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = ['id', 'created_at', 'updated_at', 'title', 'description', 'start_date', 'end_date', \
-                  'estimate', 'spend', 'out_of_estimate', 'tasklist', 'labels', 'doers']
+                  'estimate', 'spend', 'out_of_estimate', 'tasklist', 'labels', 'doers', 'order']
         read_only_fields = ['id', 'created_at', 'updated_at', 'out_of_estimate']
         
     def validate_doers(self, value):
@@ -78,17 +78,25 @@ class UpdateTaskLabelsSerializer(UpdateTaskSerializer):
     class Meta:
         model = Task
         fields = ['id', 'created_at', 'updated_at', 'title', 'description', 'start_date', 'end_date', \
-                  'estimate', 'spend', 'out_of_estimate', 'labels',]
+                  'estimate', 'spend', 'out_of_estimate', 'labels', 'order']
         read_only_fields = ['id', 'created_at', 'updated_at', 'title', 'description', 'start_date', 'end_date', \
-                  'estimate', 'spend', 'out_of_estimate', 'tasklist', 'attachments']
+                  'estimate', 'spend', 'out_of_estimate', 'tasklist', 'attachments', 'order']
     
 class UpdateTaskDoersSerializer(UpdateTaskSerializer):
     class Meta:
         model = Task
         fields = ['id', 'created_at', 'updated_at', 'title', 'description', 'start_date', 'end_date', \
-                  'estimate', 'spend', 'out_of_estimate', 'doers']
+                  'estimate', 'spend', 'out_of_estimate', 'doers', 'order']
         read_only_fields = ['id', 'created_at', 'updated_at', 'title', 'description', 'start_date', 'end_date', \
-                  'estimate', 'spend', 'out_of_estimate', 'tasklist', 'attachments']
+                  'estimate', 'spend', 'out_of_estimate', 'tasklist', 'attachments', 'order']
+
+class MoveTaskSerialzier(UpdateTaskSerializer): #UpdateTaskTaskListSerializer
+    class Meta:
+        model = Task
+        fields = ['id', 'created_at', 'updated_at', 'title', 'description', 'start_date', 'end_date', \
+                  'estimate', 'spend', 'out_of_estimate', 'tasklist', 'order']
+        read_only_fields = ['id', 'created_at', 'updated_at', 'title', 'description', 'start_date', 'end_date', \
+                  'estimate', 'spend', 'out_of_estimate', 'attachments', 'doers']
 
 class TaskOverviewSerializer(serializers.ModelSerializer):
     checklists_num = serializers.SerializerMethodField()
@@ -99,8 +107,8 @@ class TaskOverviewSerializer(serializers.ModelSerializer):
     doers = ProfileOverviewSerializer(read_only=True, many=True)
     class Meta:
         model = Task
-        fields = ['id', 'title', 'labels', 'tasklist', 'doers', 'checklists_num', 'attachments_num', 'comments_num', 'checked_checklists_num']
-        read_only_fields = ['id', 'title', 'labels', 'tasklist', 'doers', 'checklists_num', 'attachments_num', 'comments_num', 'checked_checklists_num']
+        fields = ['id', 'title', 'labels', 'tasklist', 'doers', 'order', 'checklists_num', 'attachments_num', 'comments_num', 'checked_checklists_num']
+        read_only_fields = ['id', 'title', 'labels', 'tasklist', 'doers', 'order', 'checklists_num', 'attachments_num', 'comments_num', 'checked_checklists_num']
     
     def get_checklists_num(self, task):
         return len(task.checklists.all())
