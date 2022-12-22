@@ -210,6 +210,7 @@ class GetBoardOverviewViewSet(viewsets.GenericViewSet):
     @action(detail=True, methods=['get'], url_path='get-board-overview')
     def get_board_overview(self, request, pk):
         board = self.get_object()
+        LogUserRecentBoards.set_lastseen(profile=request.user.profile, board=board)
         serializer = self.get_serializer(instance=board)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

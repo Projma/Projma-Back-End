@@ -43,6 +43,9 @@ class UserDashboardViewset(viewsets.GenericViewSet):
     serializer_class = WorkSpaceMemberSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_recent_boards_limit(self):
+        return 10
+
     @action(methods=['post'], detail=False, url_path='create-workspace', serializer_class=WorkSpaceOwnerSerializer)
     def create_workspace(self, request):
         serializer = WorkSpaceOwnerSerializer(data=request.data)
@@ -76,6 +79,16 @@ class UserDashboardViewset(viewsets.GenericViewSet):
     def mystarred_boards(self, request):
         prof = request.user.profile
         serializer = BoardMemberSerializer(instance=prof.starred_boards.all(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=['get'], url_path='myrecent-boards')
+    def myrecent_boards(self, request):
+        prof = request.user.profile
+        recentboardids = LogUserRecentBoards.objects. \
+            filter(profile=prof).order_by('-lastseen')[:self.get_recent_boards_limit()].values_list('board', flat=True)
+        
+        recentboards = [Board.objects.get(id=bid) for bid in recentboardids]
+        serializer = BoardMemberSerializer(instance=recentboards, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

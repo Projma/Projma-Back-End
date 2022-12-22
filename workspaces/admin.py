@@ -48,6 +48,11 @@ class CommentAdmin(admin.ModelAdmin):
     fields = ['id', 'text', 'sender', 'task', 'reply_to', 'created_at', 'updated_at']
     readonly_fields = ['id', 'created_at', 'updated_at']
 
+class LogUserRecentBoardsAdmin(admin.ModelAdmin):
+    model = LogUserRecentBoards
+    fields = ['id', 'profile', 'board', 'lastseen']
+    readonly_fields = ['id', 'profile', 'board', 'lastseen']
+
 
 admin.site.register(WorkSpace, WorkSpaceAdmin)
 admin.site.register(Board, BoardAdmin)
@@ -57,3 +62,4 @@ admin.site.register(CheckList, CheckListAdmin)
 admin.site.register(Label, LabelAdmin)
 admin.site.register(Attachment, AttachmentAdmin)
 admin.site.register(Comment, CommentAdmin)
+admin.site.register(LogUserRecentBoards, LogUserRecentBoardsAdmin)
