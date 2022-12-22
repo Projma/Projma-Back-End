@@ -208,7 +208,10 @@ class MoveTaskViewSet(viewsets.GenericViewSet):
         newtl = TaskList.objects.get(pk=serializer.validated_data['tasklist'].id)
         taskorder = serializer.validated_data['order']
         newtltasks = newtl.tasks.all().filter(~Q(id=t.id)).order_by('order')
-        neworder = list(newtltasks[:taskorder].values_list('id', flat=True)) + [t.id] + list(newtltasks[taskorder:].values_list('id', flat=True))
+        try:
+            neworder = list(newtltasks[:taskorder-1].values_list('id', flat=True)) + [t.id] + list(newtltasks[taskorder-1:].values_list('id', flat=True))
+        except:
+            return Response(f"the order {taskorder} is not valid for this tasklist", status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
         t.tasklist.reorder_tasks(neworder)
         return Response(serializer.data, status=status.HTTP_200_OK)
