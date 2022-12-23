@@ -107,8 +107,13 @@ class TaskOverviewSerializer(serializers.ModelSerializer):
     doers = ProfileOverviewSerializer(read_only=True, many=True)
     class Meta:
         model = Task
-        fields = ['id', 'title', 'labels', 'tasklist', 'doers', 'order', 'checklists_num', 'attachments_num', 'comments_num', 'checked_checklists_num']
-        read_only_fields = ['id', 'title', 'labels', 'tasklist', 'doers', 'order', 'checklists_num', 'attachments_num', 'comments_num', 'checked_checklists_num']
+        fields = ['id', 'title', 'description', 'start_date', 'end_date', 'spend', 'estimate', 'out_of_estimate',\
+                  'labels', 'tasklist', 'doers', 'order', 'attachments', 'checklists_num', 'attachments_num',\
+                  'comments_num', 'checked_checklists_num']
+        read_only_fields = ['id', 'title', 'description', 'start_date', 'end_date', 'spend', 'estimate', 'out_of_estimate',\
+                            'labels', 'tasklist', 'doers', 'attachments', 'order', 'checklists_num', 'attachments_num',\
+                            'comments_num', 'checked_checklists_num']
+                            
     
     def get_checklists_num(self, task):
         return len(task.checklists.all())
