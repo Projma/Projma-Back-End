@@ -1,5 +1,4 @@
 from django.shortcuts import get_object_or_404 
-from django.db.models import QuerySet
 from rest_framework import viewsets
 from rest_framework.mixins import DestroyModelMixin
 from rest_framework.response import Response
@@ -183,7 +182,7 @@ class DeleteAttachmentFromTaskViewSet(viewsets.GenericViewSet):
         return Response(CreateTaskSerializer(instance=at.task).data, status=status.HTTP_200_OK)
 
 
-class ReorderTaskListsViewSet(viewsets.GenericViewSet):
+class ReorderTasksViewSet(viewsets.GenericViewSet):
     queryset = TaskList.objects.all()
     serializer_class = ReorderTasksSerializer
     permission_classes = [IsAdminUser | IsTaskListBoardMember | IsTaskListBoardAdmin | IsTaskListBoardWorkSpaceOwner]
@@ -232,3 +231,24 @@ class FilterBoardViewSet(viewsets.GenericViewSet):
                     tasks.append(task)
             tl['tasks'] = tasks
         return Response(board_cpy, status=status.HTTP_200_OK)
+
+
+class MoveTaskViewSet(viewsets.GenericViewSet):
+    queryset = Task.objects.all()
+    serializer_class = MoveTaskSerialzier
+    permission_classes = [IsAdminUser | IsTaskBoardMember | IsTaskBoardAdmin | IsTaskBoardWorkSpaceOwner]
+    @action(detail=True, methods=['patch'], url_path='move-task')
+    def move_task(self, request, pk):
+        t = self.get_object()
+        serializer = self.get_serializer(instance=t, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        newtl = TaskList.objects.get(pk=serializer.validated_data['tasklist'].id)
+        taskorder = serializer.validated_data['order']
+        newtltasks = newtl.tasks.all().filter(~Q(id=t.id)).order_by('order')
+        try:
+            neworder = list(newtltasks[:taskorder-1].values_list('id', flat=True)) + [t.id] + list(newtltasks[taskorder-1:].values_list('id', flat=True))
+        except:
+            return Response(f"the order {taskorder} is not valid for this tasklist", status=status.HTTP_400_BAD_REQUEST)
+        serializer.save()
+        t.tasklist.reorder_tasks(neworder)
+        return Response(serializer.data, status=status.HTTP_200_OK)

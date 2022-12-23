@@ -43,6 +43,9 @@ class UserDashboardViewset(viewsets.GenericViewSet):
     serializer_class = WorkSpaceMemberSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_recent_boards_limit(self):
+        return 10
+
     @action(methods=['post'], detail=False, url_path='create-workspace', serializer_class=WorkSpaceOwnerSerializer)
     def create_workspace(self, request):
         serializer = WorkSpaceOwnerSerializer(data=request.data)
@@ -70,6 +73,22 @@ class UserDashboardViewset(viewsets.GenericViewSet):
     @action(detail=False, methods=['get'], url_path='myowning-workspaces', serializer_class=WorkSpaceOwnerSerializer)
     def myowning_workspaces(self, request):
         serializer = WorkSpaceOwnerSerializer(instance=list(request.user.profile.owning_workspaces.all()), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=['get'], url_path='mystarred-boards')
+    def mystarred_boards(self, request):
+        prof = request.user.profile
+        serializer = BoardMemberSerializer(instance=prof.starred_boards.all(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=['get'], url_path='myrecent-boards')
+    def myrecent_boards(self, request):
+        prof = request.user.profile
+        recentboardids = LogUserRecentBoards.objects. \
+            filter(profile=prof).order_by('-lastseen')[:self.get_recent_boards_limit()].values_list('board', flat=True)
+        
+        recentboards = [Board.objects.get(id=bid) for bid in recentboardids]
+        serializer = BoardMemberSerializer(instance=recentboards, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -176,9 +195,14 @@ class WorkSpaceMemberViewSet(viewsets.GenericViewSet):
         serializer = BoardMemberSerializer(instance=self.get_object().boards.all().filter(members__user=request.user), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+class WorkSpaceStarredBoardsViewSet(viewsets.GenericViewSet):
+    queryset = WorkSpace.objects.all()
+    serializer_class = BoardMemberSerializer
+    permission_classes = [IsWorkSpaceMember | IsAdminUser | IsWorkSpaceOwner]
+
     @action(detail=True, methods=['get'], url_path='workspace-starred-boards', serializer_class=BoardMemberSerializer)
     def workspace_boards(self, request, pk):
         ws = self.get_object()
         userstarredboards = request.user.profile.starred_boards.all().filter(workspace=ws)
-        serializer = BoardMemberSerializer(instance=userstarredboards, many=True)
+        serializer = self.get_serializer(instance=userstarredboards, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
