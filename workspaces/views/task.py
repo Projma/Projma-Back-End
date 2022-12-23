@@ -1,5 +1,4 @@
 from django.shortcuts import get_object_or_404 
-from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.mixins import DestroyModelMixin
 from rest_framework.response import Response
@@ -8,10 +7,12 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework import status
 from ..models import *
 from ..serializers.taskserializers import *
+from ..serializers.boardserializers import *
 from ..serializers.attachmentserializer import *
 from ..serializers.labelserializers import *
 from ..permissions.taskpermissions import *
 from ..permissions.tasklistpermissions import *
+from ..filters import *
 from accounts.serializers import *
 from ..permissions.attachmentpermissions import *
 
@@ -195,6 +196,42 @@ class ReorderTasksViewSet(viewsets.GenericViewSet):
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(TaskPreviewSerializer(instance=tl.tasks.all(), many=True).data, status=status.HTTP_200_OK)
+
+
+class FilterBoardViewSet(viewsets.GenericViewSet):
+    serializer_class = BoardOverviewSerializer
+    permission_classes = [IsAdminUser | IsBoardMember | IsBoardAdmin | IsBoardWorkSpaceOwner]
+    filter_backends = [TaskFilter]
+    related_filter_fields = ['labels', 'doers']
+    filter_fields = ['<=end_date', '=labels', '=doers']
+
+    def get_queryset(self):
+        board_id = self.kwargs.get('b_id')
+        board = get_object_or_404(Board, pk=board_id)
+        self.check_object_permissions(self.request, board)
+        qs = None
+        for tl in board.tasklists.all():
+            if qs:
+                qs = qs | tl.tasks.all()
+            else:
+                qs = tl.tasks.all()
+        return qs
+
+    @action(detail=False, methods=['get'], url_path='filter')
+    def filter(self, request, *args, **kwargs):
+        board_id = self.kwargs.get('b_id')
+        board = get_object_or_404(Board, pk=board_id)
+        board_serializer = BoardOverviewSerializer(instance=board)
+        board_cpy = board_serializer.data.copy()
+        filtered_tasks = self.filter_queryset(self.get_queryset())
+        for tl in board_cpy['tasklists']:
+            tasks = []
+            for task in tl['tasks']:
+                if filtered_tasks.filter(pk=task['id']).exists():
+                    tasks.append(task)
+            tl['tasks'] = tasks
+        return Response(board_cpy, status=status.HTTP_200_OK)
+
 
 class MoveTaskViewSet(viewsets.GenericViewSet):
     queryset = Task.objects.all()
