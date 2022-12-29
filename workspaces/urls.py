@@ -48,6 +48,7 @@ router.register('comment', comment.DeleteCommentViewSet, basename='comment')
 router.register('task', task.AddAttachmentToTaskViewSet, basename='task')
 router.register('attachment', task.DeleteAttachmentFromTaskViewSet, basename='attachment')
 router.register('templates', templates.TemplateViewSet, basename='templates')
+router.register('templates', templates.CreateBoardFromTemplateViewSet, basename='templates')
 
 
 urlpatterns = router.urls
