@@ -28,7 +28,9 @@ class BoardAdminViewSet(viewsets.GenericViewSet):
 
     @action(detail=True, methods=['delete'], url_path='delete-board')
     def delete_board(self, request, pk):
-        board = self.get_object()
+        board = get_object_or_404(Board, pk=pk)
+        if board.workspace:
+            board = self.get_object()
         board.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

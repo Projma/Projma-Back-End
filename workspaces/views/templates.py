@@ -1,10 +1,14 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from ..models import Board, TaskList, Label
+from ..models import Board, TaskList, Label, WorkSpace
 from ..serializers.boardtemplateserializer import *
+from ..serializers.boardserializers import BoardOverviewSerializer, BoardAdminSerializer
+from ..serializers.tasklistserializers import TaskListSerializer
+from ..serializers.labelserializers import LabelSerializer
 
 
 class TemplateViewSet(ListModelMixin, RetrieveModelMixin, viewsets.GenericViewSet):
@@ -43,9 +47,9 @@ class TemplateViewSet(ListModelMixin, RetrieveModelMixin, viewsets.GenericViewSe
                 {'title': 'Pending'}, \
                 {'title': 'Blocked'}, \
                 {'title': 'Done'}]
-        labels_params = [{'title': 'Copy Request', 'color': '#D6FF3680'}, \
-                {'title': 'Priority', 'color': '#FF805980'}, \
-                {'title': 'Design Team', 'color': '#C712BA87'}]
+        labels_params = [{'title': 'Copy Request', 'color': '#D6FF36'}, \
+                {'title': 'Priority', 'color': '#FF8980'}, \
+                {'title': 'Design Team', 'color': '#C71287'}]
         self.create_template(template_params, tasklists_params, labels_params)
         return Response(status=status.HTTP_201_CREATED)
 
@@ -59,9 +63,9 @@ class TemplateViewSet(ListModelMixin, RetrieveModelMixin, viewsets.GenericViewSe
                 {'title': 'Code Review'}, \
                 {'title': 'Testing'},
                 {'title': 'Done'}]
-        labels_params = [{'title': 'In Queue', 'color': '#FF78FA96'}, \
-                {'title': 'In Progress', 'color': '#FFCD2696'}, \
-                {'title': 'Completed', 'color': '#66FF0F96'}]
+        labels_params = [{'title': 'In Queue', 'color': '#FF7896'}, \
+                {'title': 'In Progress', 'color': '#FFCD26'}, \
+                {'title': 'Completed', 'color': '#66FF96'}]
         self.create_template(template_params, tasklists_params, labels_params)
         return Response(status=status.HTTP_201_CREATED)
 
@@ -75,10 +79,10 @@ class TemplateViewSet(ListModelMixin, RetrieveModelMixin, viewsets.GenericViewSe
                 {'title': 'Next Up'}, \
                 {'title': 'Questions'}]
         labels_params = [{'title': 'Demand Marketing', 'color': '#E221FF96'}, \
-                {'title': 'Planning', 'color': '#5EFF0F96'}, \
-                {'title': 'Happiness', 'color': '#FF5CE396'}, \
-                {'title': 'Government', 'color': '#14CFFF96'},\
-                {'title': 'Partners', 'color': '#1C94FF96'}]
+                {'title': 'Planning', 'color': '#5EFF96'}, \
+                {'title': 'Happiness', 'color': '#FF396'}, \
+                {'title': 'Government', 'color': '#14FF96'},\
+                {'title': 'Partners', 'color': '#1C9F96'}]
         self.create_template(template_params, tasklists_params, labels_params)
         return Response(status=status.HTTP_201_CREATED)
 
@@ -92,3 +96,36 @@ class TemplateViewSet(ListModelMixin, RetrieveModelMixin, viewsets.GenericViewSe
         labels_params = []
         self.create_template(template_params, tasklists_params, labels_params)
         return Response(status=status.HTTP_201_CREATED)
+
+
+class CreateBoardFromTemplateViewSet(viewsets.GenericViewSet):
+    serializer_class = BoardOverviewSerializer
+
+    @action(detail=True, methods=['get'], url_path='create-board-from-template/(?P<w_id>[^/.]+)')
+    def create_board_from_template(self, request, pk, w_id):
+        template = get_object_or_404(Board, pk=pk)
+        workspace = get_object_or_404(WorkSpace, pk=w_id)
+        if workspace.owner != request.user.profile:
+            return Response("Only owner of workspace can create board", status=status.HTTP_403_FORBIDDEN)
+        tasklists = template.tasklists.all()
+        labels = template.labels.all()
+        template_dict = template.__dict__
+        if template_dict['background_pic'] == '':
+            template_dict['background_pic'] = None
+        serializer = BoardAdminSerializer(data=template_dict)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(is_template=False, workspace=workspace)
+        board = get_object_or_404(Board, pk=serializer.data['id'])
+        for tl in tasklists:
+            tasklist_dict = get_object_or_404(TaskList, pk=tl.id).__dict__
+            tasklist_serializer = TaskListSerializer(data=tasklist_dict)
+            tasklist_serializer.is_valid(raise_exception=True)
+            tasklist_serializer.save(board=board)
+        print(labels)
+        for l in labels:
+            label_dict = get_object_or_404(Label, pk=l.id).__dict__
+            label_serializer = LabelSerializer(data=label_dict)
+            label_serializer.is_valid(raise_exception=True)
+            label_serializer.save(board=board)
+        serializer = BoardOverviewSerializer(board)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
