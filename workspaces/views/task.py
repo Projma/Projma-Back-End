@@ -168,7 +168,7 @@ class AddAttachmentToTaskViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(task=task, user=request.user.profile)
-        return Response(CreateTaskSerializer(instance=task).data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class DeleteAttachmentFromTaskViewSet(viewsets.GenericViewSet):
