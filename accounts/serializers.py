@@ -103,6 +103,10 @@ class EditProfileSerializer(serializers.ModelSerializer):
         prof = instance
         usr_dict = validated_data.pop('user', dict())
         prof_dict = validated_data
-        Profile.objects.all().filter(pk=instance.user).update(**prof_dict)
-        User.objects.all().filter(pk=instance.user.pk).update(**usr_dict)
+        profser = ProfileSerializer(instance=prof, data=prof_dict, partial=True)
+        usrser = UserSerializer(instance=usr, data=usr_dict, partial=True)
+        profser.is_valid(raise_exception=True)
+        usrser.is_valid(raise_exception=True)
+        profser.save()
+        usrser.save()
         return Profile.objects.all().get(pk=instance.user.pk)
