@@ -15,7 +15,7 @@ class Command(BaseCommand):
 
     templates = {
         "project management": BaseTemplate(
-            t_params={'name': 'Project Management', 'description': 'Project Management Template'},
+            t_params={'name': 'Project Management', 'description': 'Project Management Template', 'background_pic': '../../template/static/project-management-pic.jpg'},
             tl_params=[{'title': 'Project Resources'}, \
                 {'title': 'Questions For Next Meeting'}, \
                 {'title': 'Project Progress'}, \
@@ -28,7 +28,7 @@ class Command(BaseCommand):
                 {'title': 'Design Team', 'color': '#C71287'}]
         ),
         "kanban":BaseTemplate(
-            t_params={'name': 'Kanban', 'description': 'Kanban Template'},
+            t_params={'name': 'Kanban', 'description': 'Kanban Template', 'background_pic': '../../template/static/kanban-pic.jpg'},
             tl_params=[{'title': 'Backlog'}, \
                 {'title': 'Design'}, \
                 {'title': 'To Do'}, \
@@ -41,7 +41,7 @@ class Command(BaseCommand):
                 {'title': 'Completed', 'color': '#66FF96'}]
         ),
         "agile board": BaseTemplate(
-            t_params={'name': 'Agile Board', 'description': 'Agile Board Template'},
+            t_params={'name': 'Agile Board', 'description': 'Agile Board Template', 'background_pic': '../../template/static/agile-board-pic.jpg'},
             tl_params=[{'title': 'Done'}, \
                 {'title': 'Current Sprint'}, \
                 {'title': 'In Progress'}, \
@@ -55,7 +55,7 @@ class Command(BaseCommand):
                 {'title': 'Partners', 'color': '#1C9F96'}]
         ),
         "simple template": BaseTemplate(
-            t_params = {'name': 'Simple Template', 'description': 'Simple Board Template'},
+            t_params = {'name': 'Simple Template', 'description': 'Simple Board Template', 'background_pic': '../../template/static/simple-pic.jpg'},
             tl_params = [{'title': 'Brainstorm'}, \
                 {'title': 'To Do'}, \
                 {'title': 'Doing'},\

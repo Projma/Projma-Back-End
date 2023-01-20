@@ -13,13 +13,14 @@ from ..serializers.labelserializers import LabelSerializer
 
 def create_template(template_params, tasklists_params, labels_params):
     '''
-    template_params = {name:..., description:...}
+    template_params = {name:..., description:..., background_pic:...}
     tasklists_params = [{title:...}, ...]
     labels_params = [{title:..., color:...}, ...]
     '''
     template_name = template_params.get('name')
     template_description = template_params.get('description')
-    board_template = Board.objects.create(name=template_name, description=template_description, is_template=True)
+    template_background_pic = template_params.get('background_pic')
+    board_template = Board.objects.create(name=template_name, description=template_description, background_pic=template_background_pic, is_template=True)
     tasklists = []
     labels = []
     for tasklist_param in tasklists_params:
