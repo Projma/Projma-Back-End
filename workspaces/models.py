@@ -51,8 +51,6 @@ class Board(models.Model):
     def save(self, **kwargs) -> None:
         is_template = kwargs.get('is_template')
         workspace = kwargs.get('workspace')
-        print(is_template, self.is_template)
-        print(workspace, self.workspace)
         if not self.is_template:
             if self.workspace is None:
                 raise Exception("Board must have a workspace")
