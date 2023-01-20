@@ -17,9 +17,9 @@ class CreateTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = ['id', 'created_at', 'updated_at', 'title', 'description', 'start_date', 'end_date', \
-                  'estimate', 'spend', 'out_of_estimate', 'tasklist', 'labels', 'doers', 'attachments']
+                  'estimate', 'spend', 'out_of_estimate', 'tasklist', 'labels', 'doers', 'attachments', 'order']
         read_only_fields = ['id', 'created_at', 'updated_at', 'description', 'start_date', 'end_date', \
-                  'estimate', 'spend', 'out_of_estimate', 'tasklist', 'labels', 'doers', 'attachments']
+                  'estimate', 'spend', 'out_of_estimate', 'tasklist', 'labels', 'doers', 'attachments', 'order']
     
     def validate(self, data):
         if self.instance:
