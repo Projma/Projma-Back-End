@@ -15,51 +15,51 @@ class Command(BaseCommand):
 
     templates = {
         "project management": BaseTemplate(
-            t_params={'name': 'Project Management', 'description': 'Project Management Template', 'background_pic': '../../template/static/project-management-pic.jpg'},
-            tl_params=[{'title': 'Project Resources'}, \
-                {'title': 'Questions For Next Meeting'}, \
-                {'title': 'Project Progress'}, \
-                {'title': 'To Do'}, \
-                {'title': 'Pending'}, \
-                {'title': 'Blocked'}, \
-                {'title': 'Done'}],
-            l_params=[{'title': 'Copy Request', 'color': '#D6FF36'}, \
-                {'title': 'Priority', 'color': '#FF8980'}, \
-                {'title': 'Design Team', 'color': '#C71287'}]
+            t_params={'name': 'مدیریت پروژه', 'description': 'قالب مدیریت پروژه', 'background_pic': '../../template/static/project-management-pic.jpg'},
+            tl_params=[{'title': 'منابع پروژه'}, \
+                {'title': 'سوالات جلسه بعدی'}, \
+                {'title': 'پیشرفت پروژه'}, \
+                {'title': 'انجام دادن'}, \
+                {'title': 'در انتظار'}, \
+                {'title': 'مسدود'}, \
+                {'title': 'انجام شده'}],
+            l_params=[{'title': 'درخواست کپی', 'color': '#D6FF36'}, \
+                {'title': 'اولویت', 'color': '#FF8980'}, \
+                {'title': 'تیم طراحی', 'color': '#C71287'}]
         ),
         "kanban":BaseTemplate(
-            t_params={'name': 'Kanban', 'description': 'Kanban Template', 'background_pic': '../../template/static/kanban-pic.jpg'},
-            tl_params=[{'title': 'Backlog'}, \
-                {'title': 'Design'}, \
-                {'title': 'To Do'}, \
-                {'title': 'Doing'}, \
-                {'title': 'Code Review'}, \
-                {'title': 'Testing'},
-                {'title': 'Done'}],
-            l_params=[{'title': 'In Queue', 'color': '#FF7896'}, \
-                {'title': 'In Progress', 'color': '#FFCD26'}, \
-                {'title': 'Completed', 'color': '#66FF96'}]
+            t_params={'name': 'کنبان(kanban)', 'description': 'قالب کنبان', 'background_pic': '../../template/static/kanban-pic.jpg'},
+            tl_params=[{'title': 'جمع شدن'}, \
+                {'title': 'طراحی'}, \
+                {'title': 'انجام دادن'}, \
+                {'title': 'در حال انجام'}, \
+                {'title': 'بررسی کد'}, \
+                {'title': 'آزمایش کردن'},
+                {'title': 'انجام شده'}],
+            l_params=[{'title': 'در صف', 'color': '#FF7896'}, \
+                {'title': 'در حال پیشرفت', 'color': '#FFCD26'}, \
+                {'title': 'تکمیل شده', 'color': '#66FF96'}]
         ),
         "agile board": BaseTemplate(
-            t_params={'name': 'Agile Board', 'description': 'Agile Board Template', 'background_pic': '../../template/static/agile-board-pic.jpg'},
-            tl_params=[{'title': 'Done'}, \
-                {'title': 'Current Sprint'}, \
-                {'title': 'In Progress'}, \
-                {'title': 'On Hold'}, \
-                {'title': 'Next Up'}, \
-                {'title': 'Questions'}],
-            l_params=[{'title': 'Demand Marketing', 'color': '#E21F96'}, \
-                {'title': 'Planning', 'color': '#5EFF96'}, \
-                {'title': 'Happiness', 'color': '#F3F396'}, \
-                {'title': 'Government', 'color': '#14FF96'},\
-                {'title': 'Partners', 'color': '#1C9F96'}]
+            t_params={'name': 'صفحه چابک', 'description': 'قالب صفحه چابک', 'background_pic': '../../template/static/agile-board-pic.jpg'},
+            tl_params=[{'title': 'انجام شده'}, \
+                {'title': 'اسپرینت فعلی'}, \
+                {'title': 'در حال پیش رفت'}, \
+                {'title': 'در انتظار'}, \
+                {'title': 'بعدی'}, \
+                {'title': 'سوالات'}],
+            l_params=[{'title': 'بازاریابی تقاضا', 'color': '#E21F96'}, \
+                {'title': 'برنامه ریزی', 'color': '#5EFF96'}, \
+                {'title': 'خوشحالی', 'color': '#F3F396'}, \
+                {'title': 'دولت', 'color': '#14FF96'},\
+                {'title': 'شرکا', 'color': '#1C9F96'}]
         ),
         "simple template": BaseTemplate(
-            t_params = {'name': 'Simple Template', 'description': 'Simple Board Template', 'background_pic': '../../template/static/simple-pic.jpg'},
-            tl_params = [{'title': 'Brainstorm'}, \
-                {'title': 'To Do'}, \
-                {'title': 'Doing'},\
-                {'title': 'Done'}],
+            t_params = {'name': 'صفحه ساده', 'description': 'قالب صفحه ساده', 'background_pic': '../../template/static/simple-pic.jpg'},
+            tl_params = [{'title': 'ایده پردازی'}, \
+                {'title': 'انجام دادن'}, \
+                {'title': 'در حال انجام'},\
+                {'title': 'انجام شده'}],
             l_params = []
         )
     }
