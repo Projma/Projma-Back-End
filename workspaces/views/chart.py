@@ -31,10 +31,11 @@ class ChartViewSet(viewsets.ViewSet):
         qs = Task.objects.filter(tasklist__board__id=b_id)\
             .values('doers__user__username')\
             .annotate(count=Count('doers')).all()
+        all_tasks = Task.objects.filter(tasklist__board__id=b_id).count()
         result = self.merge_querysets(qs.all(), b_members, 'doers__user__username')
         chart = Chart('تعداد کار واگذار شده به هر فرد', 'فرد', 'تعداد')
         for key, value in result.items():
-            chart.add_data([key], [value])
+            chart.add_data([key, 'تمام کار ها'], [value, all_tasks])
         return Response(chart.data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'], url_path='my-assign-tasks-for-all-boards(?P<user_id>[^/.]+)')
