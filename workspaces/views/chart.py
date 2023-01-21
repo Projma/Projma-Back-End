@@ -31,10 +31,11 @@ class ChartViewSet(viewsets.ViewSet):
         qs = Task.objects.filter(tasklist__board__id=b_id)\
             .values('doers__user__username')\
             .annotate(count=Count('doers')).all()
+        all_tasks = Task.objects.filter(tasklist__board__id=b_id).count()
         result = self.merge_querysets(qs.all(), b_members, 'doers__user__username')
         chart = Chart('تعداد کار واگذار شده به هر فرد', 'فرد', 'تعداد')
         for key, value in result.items():
-            chart.add_data([key], [value])
+            chart.add_data([key, 'تمام کار ها'], [value, all_tasks])
         return Response(chart.data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'], url_path='my-assign-tasks-for-all-boards(?P<user_id>[^/.]+)')
@@ -43,6 +44,7 @@ class ChartViewSet(viewsets.ViewSet):
         if not user_id:
             return Response({'error': 'User id is required'}, status=status.HTTP_400_BAD_REQUEST)
         my_boards = (Board.objects.filter(members__user__id=user_id).values('name').all() | Board.objects.filter(admins__user__id=user_id).values('name').all()).distinct()
+        all_board_tasks = {b['name']: Task.objects.filter(tasklist__board__name=b['name']).count() for b in my_boards}
         my_boards = [b['name'] for b in my_boards]
         qs = Task.objects.filter(doers__user__id=user_id)\
             .values('tasklist__board__name')\
@@ -50,5 +52,5 @@ class ChartViewSet(viewsets.ViewSet):
         result = self.merge_querysets(qs.all(), my_boards, 'tasklist__board__name')
         chart = Chart('تعداد فعالیت من برای هر برد', 'برد', 'تعداد')
         for key, value in result.items():
-            chart.add_data([key], [value])
+            chart.add_data([key, 'تمام کارهای برد'], [value, all_board_tasks[key]])
         return Response(chart.data, status=status.HTTP_200_OK)
