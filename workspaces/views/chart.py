@@ -36,3 +36,19 @@ class ChartViewSet(viewsets.ViewSet):
         for key, value in result.items():
             chart.add_data([key], [value])
         return Response(chart.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'], url_path='my-assign-tasks-for-all-boards(?P<user_id>[^/.]+)')
+    def my_assign_tasks_for_all_boards(self, request, *args, **kwargs):
+        user_id = kwargs.get('user_id')
+        if not user_id:
+            return Response({'error': 'User id is required'}, status=status.HTTP_400_BAD_REQUEST)
+        my_boards = (Board.objects.filter(members__user__id=user_id).values('name').all() | Board.objects.filter(admins__user__id=user_id).values('name').all()).distinct()
+        my_boards = [b['name'] for b in my_boards]
+        qs = Task.objects.filter(doers__user__id=user_id)\
+            .values('tasklist__board__name')\
+            .annotate(count=Count('tasklist__board')).all()
+        result = self.merge_querysets(qs.all(), my_boards, 'tasklist__board__name')
+        chart = Chart('تعداد فعالیت من برای هر برد', 'برد', 'تعداد')
+        for key, value in result.items():
+            chart.add_data([key], [value])
+        return Response(chart.data, status=status.HTTP_200_OK)
