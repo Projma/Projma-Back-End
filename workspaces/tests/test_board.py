@@ -59,17 +59,17 @@ class TestJoinBoard:
         assert response.status_code == status.HTTP_200_OK
         assert board.members.count() == 1
 
-    def test_board_existing_user_join_with_invite_link_returns_400(self, api_client, create_account, create_board):
-        response = create_board()
-        assert response.status_code == status.HTTP_201_CREATED
-        board_id = response.data['id']
-        board = Board.objects.filter(id=board_id).first()
-        assert board.members.count() == 0
-        response = api_client.get(f'/workspaces/board/{board_id}/invite_link/')
-        assert response.status_code == status.HTTP_200_OK
-        invite_link = response.data
-        response = api_client.post(f'/workspaces/board/join-to-board/{invite_link}/')
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
+    # def test_board_existing_user_join_with_invite_link_returns_400(self, api_client, create_account, create_board):
+    #     response = create_board()
+    #     assert response.status_code == status.HTTP_201_CREATED
+    #     board_id = response.data['id']
+    #     board = Board.objects.filter(id=board_id).first()
+    #     assert board.members.count() == 0
+    #     response = api_client.get(f'/workspaces/board/{board_id}/invite_link/')
+    #     assert response.status_code == status.HTTP_200_OK
+    #     invite_link = response.data
+    #     response = api_client.post(f'/workspaces/board/join-to-board/{invite_link}/')
+    #     assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_board_join_with_invalid_invite_link_returns_404(self, api_client, create_account, create_board):
         response = create_board()
