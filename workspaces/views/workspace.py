@@ -55,7 +55,9 @@ class UserDashboardViewset(viewsets.GenericViewSet):
 
     @action(detail=False, methods=['get'], serializer_class=BoardAdminSerializer)
     def myboards(self, request):
-        qs = request.user.profile.boards.all() | request.user.profile.administrating_boards.all()
+        myownworks = request.user.profile.owning_workspaces.all()
+        qs = request.user.profile.boards.all() | request.user.profile.administrating_boards.all() \
+            | Board.objects.filter(workspace__in=myownworks)
         serializer = BoardMemberSerializer(instance=qs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)        
     
