@@ -15,7 +15,7 @@ class Command(BaseCommand):
 
     templates = {
         "project management": BaseTemplate(
-            t_params={'name': 'مدیریت پروژه', 'description': 'قالب مدیریت پروژه', 'background_pic': '../../template/static/project-management-pic.jpg'},
+            t_params={'name': 'مدیریت پروژه', 'description': 'قالب مدیریت پروژه', 'background_pic': 'background_pics/project-management-pic.jpg'},
             tl_params=[{'title': 'منابع پروژه'}, \
                 {'title': 'سوالات جلسه بعدی'}, \
                 {'title': 'پیشرفت پروژه'}, \
@@ -28,7 +28,7 @@ class Command(BaseCommand):
                 {'title': 'تیم طراحی', 'color': '#C71287'}]
         ),
         "kanban":BaseTemplate(
-            t_params={'name': 'کنبان(kanban)', 'description': 'قالب کنبان', 'background_pic': '../../template/static/kanban-pic.jpg'},
+            t_params={'name': 'کنبان(kanban)', 'description': 'قالب کنبان', 'background_pic': 'background_pics/kanban-pic.jpg'},
             tl_params=[{'title': 'جمع شدن'}, \
                 {'title': 'طراحی'}, \
                 {'title': 'انجام دادن'}, \
@@ -41,7 +41,7 @@ class Command(BaseCommand):
                 {'title': 'تکمیل شده', 'color': '#66FF96'}]
         ),
         "agile board": BaseTemplate(
-            t_params={'name': 'صفحه چابک', 'description': 'قالب صفحه چابک', 'background_pic': '../../template/static/agile-board-pic.jpg'},
+            t_params={'name': 'صفحه چابک', 'description': 'قالب صفحه چابک', 'background_pic': 'background_pics/agile-board-pic.jpg'},
             tl_params=[{'title': 'انجام شده'}, \
                 {'title': 'اسپرینت فعلی'}, \
                 {'title': 'در حال پیش رفت'}, \
@@ -55,7 +55,7 @@ class Command(BaseCommand):
                 {'title': 'شرکا', 'color': '#1C9F96'}]
         ),
         "simple template": BaseTemplate(
-            t_params = {'name': 'صفحه ساده', 'description': 'قالب صفحه ساده', 'background_pic': '../../template/static/simple-pic.jpg'},
+            t_params = {'name': 'صفحه ساده', 'description': 'قالب صفحه ساده', 'background_pic': 'background_pics/simple-pic.jpg'},
             tl_params = [{'title': 'ایده پردازی'}, \
                 {'title': 'انجام دادن'}, \
                 {'title': 'در حال انجام'},\
