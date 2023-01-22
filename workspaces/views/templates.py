@@ -43,11 +43,9 @@ class TemplateViewSet(ListModelMixin, RetrieveModelMixin, viewsets.GenericViewSe
 
 class CreateBoardFromTemplateViewSet(viewsets.GenericViewSet):
     serializer_class = BoardOverviewSerializer
-    permission_classes = [IsAuthenticated]
 
     @action(detail=True, methods=['get'], url_path='create-board-from-template/(?P<w_id>[^/.]+)')
     def create_board_from_template(self, request, pk, w_id):
-        self.check_object_permissions(request, request.user.profile)
         template = get_object_or_404(Board, pk=pk)
         workspace = get_object_or_404(WorkSpace, pk=w_id)
         if workspace.owner != request.user.profile:
