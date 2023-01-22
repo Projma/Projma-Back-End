@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from ..models import Board, TaskList, Label, WorkSpace
@@ -42,9 +43,11 @@ class TemplateViewSet(ListModelMixin, RetrieveModelMixin, viewsets.GenericViewSe
 
 class CreateBoardFromTemplateViewSet(viewsets.GenericViewSet):
     serializer_class = BoardOverviewSerializer
+    permission_classes = [IsAuthenticated]
 
     @action(detail=True, methods=['get'], url_path='create-board-from-template/(?P<w_id>[^/.]+)')
     def create_board_from_template(self, request, pk, w_id):
+        self.check_object_permissions(request, request.user.profile)
         template = get_object_or_404(Board, pk=pk)
         workspace = get_object_or_404(WorkSpace, pk=w_id)
         if workspace.owner != request.user.profile:
@@ -54,10 +57,14 @@ class CreateBoardFromTemplateViewSet(viewsets.GenericViewSet):
         template_dict = template.__dict__
         if template_dict['background_pic'] == '':
             template_dict['background_pic'] = None
+        b_pic = template_dict['background_pic']
+        template_dict['background_pic'] = None
         serializer = BoardAdminSerializer(data=template_dict)
         serializer.is_valid(raise_exception=True)
         serializer.save(is_template=False, workspace=workspace)
         board = get_object_or_404(Board, pk=serializer.data['id'])
+        board.background_pic = b_pic
+        board.save()
         for tl in tasklists:
             tasklist_dict = get_object_or_404(TaskList, pk=tl.id).__dict__
             tasklist_serializer = TaskListSerializer(data=tasklist_dict)
