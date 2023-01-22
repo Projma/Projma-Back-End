@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import environ
+import os
 from pathlib import Path
 from datetime import timedelta
 
@@ -135,6 +136,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -175,14 +180,13 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'projmacloud',
-    'API_KEY': '529966568459517',
-    'API_SECRET': 'K2zrPRn37aSQ_mI_FUX3ZZpRJTc',
-    'api_proxy': 'http://proxy.server:3128',
-}
+# CLOUDINARY_STORAGE = {
+#     'CLOUD_NAME': 'projmacloud',
+#     'API_KEY': '529966568459517',
+#     'API_SECRET': 'K2zrPRn37aSQ_mI_FUX3ZZpRJTc',
+#     'api_proxy': 'http://proxy.server:3128',
+# }
+# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-MEDIA_URL = '/media/'
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 CORS_ORIGIN_ALLOW_ALL = True
