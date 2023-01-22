@@ -135,8 +135,10 @@ class RemoveOrJoinToBoardViewSet(viewsets.GenericViewSet):
         if board is None:
             return Response('Invalid invite link', status=status.HTTP_400_BAD_REQUEST)
         try:
-            qs = board.members.all() | board.admins.all()
-            if user.profile in qs or user.profile == board.workspace.owner:
+            # qs = board.members.all() | board.admins.all()
+            qs = board.members.all()
+            # if user.profile in qs or user.profile == board.workspace.owner:
+            if user.profile in qs:
                 return Response('User is already a member of this board', status=status.HTTP_400_BAD_REQUEST)
             board.members.add(user.profile)
             return Response('User added to the board successfully', status=status.HTTP_200_OK)
