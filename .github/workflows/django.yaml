@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres_main:
-        image: postgres:12
+        image: postgres:14
         env:
           POSTGRES_USER: projmateam
           POSTGRES_PASSWORD: classicguys
