@@ -14,13 +14,6 @@ class TaskListAdmin(admin.ModelAdmin):
     readonly_fields = ['id']
 
 
-class TaskAdmin(admin.ModelAdmin):
-    model = Task
-    fields = ['id', 'title', 'description', 'start_date', 'end_date', \
-                'estimate', 'spend', 'out_of_estimate', 'tasklist', 'labels', 'doers', 'order']
-    readonly_fields = ['id', 'created_at', 'updated_at', 'out_of_estimate']
-
-
 class CheckListAdmin(admin.ModelAdmin):
     model = CheckList
     fields = ['id', 'text', 'is_done', 'task']
@@ -52,7 +45,6 @@ class LogUserRecentBoardsAdmin(admin.ModelAdmin):
 
 admin.site.register(WorkSpace, WorkSpaceAdmin)
 admin.site.register(TaskList, TaskListAdmin)
-admin.site.register(Task, TaskAdmin)
 admin.site.register(CheckList, CheckListAdmin)
 admin.site.register(Label, LabelAdmin)
 admin.site.register(Attachment, AttachmentAdmin)
