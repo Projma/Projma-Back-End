@@ -22,6 +22,7 @@ djangorestframework==3.14.0
 djangorestframework-simplejwt==5.2.2
 drf-yasg==1.21.4
 exceptiongroup==1.0.4
+gunicorn==20.1.0
 idna==3.4
 importlib-metadata==5.0.0
 inflection==0.5.1
