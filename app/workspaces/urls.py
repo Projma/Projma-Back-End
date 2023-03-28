@@ -1,5 +1,5 @@
 from rest_framework.routers import DefaultRouter
-from .views import workspace, label, task, checklist, templates, comment, chart
+from .views import workspace, label, checklist, templates, comment, chart
 
 router = DefaultRouter()
 
@@ -9,20 +9,9 @@ router.register('workspaceowner', workspace.WorkSpaceOwnerViewSet, basename='wor
 router.register('workspacemember', workspace.WorkSpaceMemberViewSet, basename='workspacemember')
 router.register('dashboard', workspace.UserDashboardViewset, basename='dashboard')
 router.register('board', label.CreateLabelViewSet, basename='board')
-router.register('tasklist', task.CreateTaskViewSet, basename='tasklist')
 router.register('label', label.UpdateLabelViewSet, basename='board')
 router.register('label', label.DeleteLabelViewSet, basename='board')
-router.register('tasklist', task.ReorderTasksViewSet, basename='board')
-router.register('task/(?P<b_id>[^/.]+)', task.FilterBoardViewSet, basename='board')
-router.register('task', task.UpdateTaskViewSet, basename='task')
-router.register('task', task.MoveTaskViewSet, basename='task')
-router.register('task', task.AddLabelsToTaskViewSet, basename='task')
-router.register('task', task.DeleteLabelsFromTaskViewSet, basename='task')
-router.register('task', task.AddDoersToTaskViewSet, basename='task')
-router.register('task', task.DeleteDoersFromTaskViewSet, basename='task')
-router.register('task', task.GetTaskViewSet, basename='task')
-router.register('task', task.GetTaskPreviewViewSet, basename='task')
-router.register('task', task.DeleteTaskViewSet, basename='task')
+
 router.register('task', checklist.CreateOrReadCheckListViewSet, basename='checklist')
 router.register('task/update-checklist', checklist.UpdateCheckListViewSet, basename='checklist')
 router.register('task/delete-checklist', checklist.DeleteCheckListViewSet, basename='checklist')
@@ -30,8 +19,7 @@ router.register('task', comment.NewCommentViewset, basename='task')
 router.register('comment', comment.ReplyCommentViewSet, basename='comment')
 router.register('comment', comment.EditCommentViewSet, basename='comment')
 router.register('comment', comment.DeleteCommentViewSet, basename='comment')
-router.register('task', task.AddAttachmentToTaskViewSet, basename='task')
-router.register('attachment', task.DeleteAttachmentFromTaskViewSet, basename='attachment')
+
 router.register('templates', templates.TemplateViewSet, basename='templates')
 router.register('templates', templates.CreateBoardFromTemplateViewSet, basename='templates')
 router.register('chart', chart.ChartViewSet, basename='chart')

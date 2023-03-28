@@ -34,6 +34,7 @@ urlpatterns = [
     path('workspaces/', include('workspaces.urls')),
     path('board/', include('board.urls')),
     path('tasklist/', include('tasklist.urls')),
+    path('task/', include('task.urls')),
     path('adminapi/', include('cruds.urls')),
 
     path('swagger/', schema_view.with_ui('swagger')),
