@@ -1,4 +1,5 @@
-from .models import WorkSpace, Board
+from .models import WorkSpace
+from board.models import Board
 
 
 def encode(object) -> str:

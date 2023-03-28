@@ -1,5 +1,6 @@
 from django import forms
 from .models import *
+from board.models import Board
 
 class WorkSpaceForm(forms.ModelForm):
     class Meta:

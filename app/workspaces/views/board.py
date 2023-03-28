@@ -11,6 +11,7 @@ from ..models import *
 from ..serializers.boardserializers import *
 from ..permissions.boardpermissions import *
 from accounts.serializers import *
+from board.models import Board
 
 
 class BoardAdminViewSet(viewsets.GenericViewSet):

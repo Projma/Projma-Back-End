@@ -8,6 +8,7 @@ from ..models import *
 from ..serializers.tasklistserializers import *
 from ..permissions.tasklistpermissions import *
 from accounts.serializers import *
+from board.models import Board
 
 
 class CreateTaskListViewSet(viewsets.GenericViewSet):
