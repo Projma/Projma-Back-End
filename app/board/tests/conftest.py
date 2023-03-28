@@ -7,7 +7,7 @@ PASSWORD = 'testpassword'
 EMAIL = 'test@domain.com'
 WORKSPACE_NAME = 'test_workspace'
 WORKSPACE_TYPE = 'education'
-TASKLIST_NAME = 'test_tasklist'
+BOARD_NAME = 'test_board'
 
 class UserConf:
     def create_user(api_client):
@@ -49,11 +49,17 @@ class WorkSpaceConf:
         return _create_workspace
 
 
-class TaskListConf:
-    def create_tasklist(api_client:APIClient):
-        def _create_tasklist(board_id, title=TASKLIST_NAME):
-            return api_client.post(f'/workspaces/board/{board_id}/create-tasklist/', {'title': title})
-        return _create_tasklist
+class BoardConf:
+    def create_board(api_client:APIClient):
+        def _create_board(name=BOARD_NAME, authenticated=True, admins=[], members=[]):
+            client = UserConf.create_account(api_client)
+            if not authenticated:
+                client.credentials(HTT_AUTHORIZATION='')
+            workspace_response = WorkSpaceConf.create_workspace(client)(authenticated=authenticated)
+            workspace_id = workspace_response.data['id']
+            return client.post(f'/workspaces/workspaceowner/{workspace_id}/create-board/', {'name': name, 'admins': admins, 'members': members})
+        return _create_board
+
 
 
 @pytest.fixture
@@ -71,11 +77,12 @@ def create_workspace(api_client:APIClient):
     return _create_workspace
 
 @pytest.fixture
-def create_tasklist(api_client:APIClient):
-    '''you should create board first then call it. it returns the response(tasklist object)'''
-    def _create_tasklist(board_id, title=TASKLIST_NAME):
-        return TaskListConf.create_tasklist(api_client)(board_id, title)
-    return _create_tasklist
+def create_board(api_client:APIClient):
+    '''First creates an account then creates a workspace then creates a board and returns the response(board object)'''
+    def _create_board(name=BOARD_NAME, authenticated=True):
+        return BoardConf.create_board(api_client)(name, authenticated)
+    return _create_board
+
 
 @pytest.fixture
 def api_client():
