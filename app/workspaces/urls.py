@@ -1,5 +1,5 @@
 from rest_framework.routers import DefaultRouter
-from .views import workspace, tasklist, label, task, checklist, templates, comment, chart
+from .views import workspace, label, task, checklist, templates, comment, chart
 
 router = DefaultRouter()
 
@@ -9,13 +9,9 @@ router.register('workspaceowner', workspace.WorkSpaceOwnerViewSet, basename='wor
 router.register('workspacemember', workspace.WorkSpaceMemberViewSet, basename='workspacemember')
 router.register('dashboard', workspace.UserDashboardViewset, basename='dashboard')
 router.register('board', label.CreateLabelViewSet, basename='board')
-router.register('board', tasklist.CreateTaskListViewSet, basename='board')
-router.register('board', tasklist.ReorderTaskListsViewSet, basename='board')
 router.register('tasklist', task.CreateTaskViewSet, basename='tasklist')
 router.register('label', label.UpdateLabelViewSet, basename='board')
 router.register('label', label.DeleteLabelViewSet, basename='board')
-router.register('tasklist', tasklist.UpdateTaskListViewSet, basename='board')
-router.register('tasklist', tasklist.DeleteTaskListViewSet, basename='board')
 router.register('tasklist', task.ReorderTasksViewSet, basename='board')
 router.register('task/(?P<b_id>[^/.]+)', task.FilterBoardViewSet, basename='board')
 router.register('task', task.UpdateTaskViewSet, basename='task')
