@@ -7,10 +7,6 @@ class WorkSpaceAdmin(admin.ModelAdmin):
     fields = ['id', 'name', 'description', 'type', 'owner', 'members']
     readonly_fields = ['id']
 
-class BoardAdmin(admin.ModelAdmin):
-    model = Board
-    fields = ['id', 'name', 'description', 'background_pic', 'workspace', 'admins', 'members', 'is_starred']
-    readonly_fields = ['id']
 
 class TaskListAdmin(admin.ModelAdmin):
     model = TaskList
@@ -55,7 +51,6 @@ class LogUserRecentBoardsAdmin(admin.ModelAdmin):
 
 
 admin.site.register(WorkSpace, WorkSpaceAdmin)
-admin.site.register(Board, BoardAdmin)
 admin.site.register(TaskList, TaskListAdmin)
 admin.site.register(Task, TaskAdmin)
 admin.site.register(CheckList, CheckListAdmin)
