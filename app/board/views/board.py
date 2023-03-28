@@ -6,9 +6,9 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.filters import SearchFilter
 from rest_framework import status
-from ..invite_link import encode, decode
+from workspaces.invite_link import encode, decode
 from ..models import *
-from ..permissions.boardpermissions import *
+from workspaces.permissions.boardpermissions import *
 from accounts.serializers import *
 from board.serializers.boardserializers import *
 from board.models import Board
