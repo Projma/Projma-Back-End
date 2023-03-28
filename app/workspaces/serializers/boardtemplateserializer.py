@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from ..models import Board
-from .boardserializers import TaskListOverviewSerializer
 from .labelserializers import LabelSerializer
+from board.serializers.boardserializers import TaskListOverviewSerializer
 
 
 class BoardTemplateSerializer(serializers.ModelSerializer):

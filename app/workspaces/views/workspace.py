@@ -7,7 +7,7 @@ from rest_framework import status
 from ..invite_link import encode, decode
 from ..models import *
 from ..serializers.workspaceserializers import *
-from ..serializers.boardserializers import *
+from board.serializers.boardserializers import *
 from ..permissions.workspacepermissions import *
 from accounts.serializers import *
 

@@ -1,5 +1,5 @@
 from rest_framework import status
-from workspaces.models import Board
+from board.models import Board
 import pytest
 
 
