@@ -7,7 +7,8 @@ from rest_framework import status
 from ..models import *
 from ..serializers.commentserializers import *
 from ..permissions.commentpermissions import *
-from ..permissions.taskpermissions import *
+from task.permissions.taskpermissions import *
+from task.models import Task
 from accounts.serializers import *
 
 class NewCommentViewset(viewsets.GenericViewSet):
