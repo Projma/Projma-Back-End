@@ -32,6 +32,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('workspaces/', include('workspaces.urls')),
+    path('board/', include('board.urls')),
     path('adminapi/', include('cruds.urls')),
 
     path('swagger/', schema_view.with_ui('swagger')),

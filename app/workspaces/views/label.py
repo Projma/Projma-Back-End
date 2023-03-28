@@ -8,6 +8,7 @@ from ..models import *
 from ..serializers.labelserializers import *
 from ..permissions.labelpermissions import *
 from accounts.serializers import *
+from board.models import Board
 
 
 class CreateLabelViewSet(viewsets.GenericViewSet):

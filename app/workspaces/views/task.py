@@ -7,13 +7,13 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework import status
 from ..models import *
 from ..serializers.taskserializers import *
-from ..serializers.boardserializers import *
 from ..serializers.attachmentserializer import *
 from ..serializers.labelserializers import *
 from ..permissions.taskpermissions import *
 from ..permissions.tasklistpermissions import *
 from ..filters import *
 from accounts.serializers import *
+from board.serializers.boardserializers import *
 from ..permissions.attachmentpermissions import *
 
 

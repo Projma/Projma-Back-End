@@ -1,4 +1,4 @@
-from .boardpermissions import *
+from board.permissions.boardpermissions import *
 
 class IsCheckListBoardMember(IsBoardMember):
     def has_object_permission(self, request, view, obj):

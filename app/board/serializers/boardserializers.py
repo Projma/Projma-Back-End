@@ -1,8 +1,9 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from accounts.serializers import *
-from .tasklistserializers import *
-from .labelserializers import *
+from board.models import Board
+from workspaces.serializers.tasklistserializers import *
+from workspaces.serializers.labelserializers import *
 from ..models import *
 
 

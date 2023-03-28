@@ -1,4 +1,4 @@
-from .boardpermissions import *
+from board.permissions.boardpermissions import *
 
 
 class IsAttachmentBoardMember(IsBoardMember):

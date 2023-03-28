@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'accounts',
     'workspaces',
     'cruds',
+    'board',
 ]
 
 MIDDLEWARE = [
