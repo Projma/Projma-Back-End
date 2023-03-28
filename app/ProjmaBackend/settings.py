@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'workspaces',
     'cruds',
     'board',
+    'tasklist',
 ]
 
 MIDDLEWARE = [
