@@ -8,12 +8,6 @@ class WorkSpaceAdmin(admin.ModelAdmin):
     readonly_fields = ['id']
 
 
-class TaskListAdmin(admin.ModelAdmin):
-    model = TaskList
-    fields = ['id', 'title', 'board', 'order']
-    readonly_fields = ['id']
-
-
 class CheckListAdmin(admin.ModelAdmin):
     model = CheckList
     fields = ['id', 'text', 'is_done', 'task']
@@ -44,7 +38,6 @@ class LogUserRecentBoardsAdmin(admin.ModelAdmin):
 
 
 admin.site.register(WorkSpace, WorkSpaceAdmin)
-admin.site.register(TaskList, TaskListAdmin)
 admin.site.register(CheckList, CheckListAdmin)
 admin.site.register(Label, LabelAdmin)
 admin.site.register(Attachment, AttachmentAdmin)
