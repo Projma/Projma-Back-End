@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'cruds',
     'board',
     'tasklist',
+    'task',
 ]
 
 MIDDLEWARE = [
