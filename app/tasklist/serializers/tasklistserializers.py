@@ -1,8 +1,8 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from accounts.serializers import *
-from ..models import *
-from workspaces.serializers.taskserializers import *
+from tasklist.models import TaskList
+from task.serializers.taskserializers import TaskOverviewSerializer
 
 
 class TaskListSerializer(serializers.ModelSerializer):
