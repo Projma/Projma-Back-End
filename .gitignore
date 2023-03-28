@@ -5,6 +5,8 @@
 .vscode/
 .env
 *.env
+*.env.dev
+*.env.prod
 db.sqlite3
 env/
 
