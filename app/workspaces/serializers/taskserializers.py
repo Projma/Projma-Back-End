@@ -5,6 +5,7 @@ from .labelserializers import *
 from .attachmentserializer import *
 from .commentserializers import *
 from ..models import *
+from tasklist.models import TaskList
 
 class TaskPreviewSerializer(serializers.ModelSerializer):
     class Meta:

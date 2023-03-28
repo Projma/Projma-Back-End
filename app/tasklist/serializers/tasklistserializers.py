@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from accounts.serializers import *
 from ..models import *
-from .taskserializers import *
+from workspaces.serializers.taskserializers import *
 
 
 class TaskListSerializer(serializers.ModelSerializer):
