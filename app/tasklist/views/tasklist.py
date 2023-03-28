@@ -8,7 +8,7 @@ from ..models import *
 # from ..serializers.tasklistserializers import *
 from tasklist.serializers.tasklistserializers import *
 # from ..permissions.tasklistpermissions import *
-from workspaces.permissions.tasklistpermissions import *
+from tasklist.permissions.tasklistpermissions import *
 from accounts.serializers import *
 from board.models import Board
 

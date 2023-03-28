@@ -10,7 +10,7 @@ from ..serializers.taskserializers import *
 from ..serializers.attachmentserializer import *
 from ..serializers.labelserializers import *
 from ..permissions.taskpermissions import *
-from ..permissions.tasklistpermissions import *
+from tasklist.permissions.tasklistpermissions import *
 from ..filters import *
 from accounts.serializers import *
 from board.serializers.boardserializers import *
