@@ -64,7 +64,8 @@ class BoardConf:
 class TaskListConf:
     def create_tasklist(api_client:APIClient):
         def _create_tasklist(board_id, title=TASKLIST_NAME):
-            return api_client.post(f'/workspaces/board/{board_id}/create-tasklist/', {'title': title})
+            # return api_client.post(f'/workspaces/board/{board_id}/create-tasklist/', {'title': title})
+            return api_client.post(f'/board/tasklist/{board_id}/create-tasklist/', {'title': title})
         return _create_tasklist
 
 

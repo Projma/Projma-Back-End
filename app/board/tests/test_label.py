@@ -8,7 +8,8 @@ class TestCreateLabel:
         response = create_board()
         assert response.status_code == status.HTTP_201_CREATED
         board_id = response.data['id']
-        response = api_client.post(f'/workspaces/board/{board_id}/create-label/', {'title': 'test label', 'color': '#000000'})
+        # response = api_client.post(f'/workspaces/board/{board_id}/create-label/', {'title': 'test label', 'color': '#000000'})
+        response = api_client.post(f'/board/label/{board_id}/create-label/', {'title': 'test label', 'color': '#000000'})
         assert response.status_code == status.HTTP_201_CREATED
         assert response.data['title'] == 'test label'
 
@@ -16,7 +17,8 @@ class TestCreateLabel:
         response = create_board()
         assert response.status_code == status.HTTP_201_CREATED
         board_id = response.data['id']
-        response = api_client.post(f'/workspaces/board/{board_id}/create-label/', {'title': '', 'color': '#000000'})
+        # response = api_client.post(f'/workspaces/board/{board_id}/create-label/', {'title': '', 'color': '#000000'})
+        response = api_client.post(f'/board/label/{board_id}/create-label/', {'title': '', 'color': '#000000'})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
@@ -26,11 +28,13 @@ class TestUpdateLabel:
         response = create_board()
         assert response.status_code == status.HTTP_201_CREATED
         board_id = response.data['id']
-        response = api_client.post(f'/workspaces/board/{board_id}/create-label/', {'title': 'test label', 'color': '#000000'})
+        # response = api_client.post(f'/workspaces/board/{board_id}/create-label/', {'title': 'test label', 'color': '#000000'})
+        response = api_client.post(f'/board/label/{board_id}/create-label/', {'title': 'test label', 'color': '#000000'})
         assert response.status_code == status.HTTP_201_CREATED
         label_id = response.data['id']
         new_title = 'new_title'
-        response = api_client.patch(f'/workspaces/label/{label_id}/update-label/', {'title': new_title})
+        # response = api_client.patch(f'/workspaces/label/{label_id}/update-label/', {'title': new_title})
+        response = api_client.patch(f'/board/label/{label_id}/update-label/', {'title': new_title})
         assert response.status_code == status.HTTP_200_OK
         assert response.data['title'] == new_title
 
@@ -41,10 +45,12 @@ class TestDeleteLabel:
         response = create_board()
         assert response.status_code == status.HTTP_201_CREATED
         board_id = response.data['id']
-        response = api_client.post(f'/workspaces/board/{board_id}/create-label/', {'title': 'test label', 'color': '#000000'})
+        # response = api_client.post(f'/workspaces/board/{board_id}/create-label/', {'title': 'test label', 'color': '#000000'})
+        response = api_client.post(f'/board/label/{board_id}/create-label/', {'title': 'test label', 'color': '#000000'})
         assert response.status_code == status.HTTP_201_CREATED
         label_id = response.data['id']
-        response = api_client.delete(f'/workspaces/label/{label_id}/delete-label/')
+        # response = api_client.delete(f'/workspaces/label/{label_id}/delete-label/')
+        response = api_client.delete(f'/board/label/{label_id}/delete-label/')
         assert response.status_code == status.HTTP_204_NO_CONTENT
 
 
@@ -56,9 +62,11 @@ class TestBoardLabels:
         board_id = response.data['id']
         board = Board.objects.filter(pk=board_id).first()
         assert board.labels.count() == 0
-        response = api_client.post(f'/workspaces/board/{board_id}/create-label/', {'title': 'test label', 'color': '#000000'})
+        # response = api_client.post(f'/workspaces/board/{board_id}/create-label/', {'title': 'test label', 'color': '#000000'})
+        response = api_client.post(f'/board/label/{board_id}/create-label/', {'title': 'test label', 'color': '#000000'})
         assert response.status_code == status.HTTP_201_CREATED
         assert board.labels.count() == 1
-        response = api_client.get(f'/workspaces/board/{board_id}/get-board-labels/')
+        # response = api_client.get(f'/workspaces/board/{board_id}/get-board-labels/')
+        response = api_client.get(f'/board/{board_id}/get-board-labels/')
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) == 1

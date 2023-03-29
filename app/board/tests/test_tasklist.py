@@ -1,6 +1,6 @@
 from rest_framework import status
 from board.models import TaskList
-from conftest import TASKLIST_NAME
+from .conftest import TASKLIST_NAME
 import pytest
 
 
@@ -28,7 +28,8 @@ class TestUpdateTaskList:
         assert response.status_code == status.HTTP_201_CREATED
         assert response.data['title'] == TASKLIST_NAME
         tasklist_id = response.data['id']
-        response = api_client.patch(f'/workspaces/tasklist/{tasklist_id}/update-tasklist/', data={'title': 'New Title'})
+        # response = api_client.patch(f'/workspaces/tasklist/{tasklist_id}/update-tasklist/', data={'title': 'New Title'})
+        response = api_client.patch(f'/board/tasklist/{tasklist_id}/update-tasklist/', data={'title': 'New Title'})
         assert response.status_code == status.HTTP_200_OK
         assert response.data['title'] == 'New Title'
 
@@ -43,7 +44,8 @@ class TestDeleteTaskList:
         tasklist = TaskList.objects.filter(pk=tasklist_id)
         assert response.status_code == status.HTTP_201_CREATED
         assert len(tasklist) == 1
-        response = api_client.delete(f'/workspaces/tasklist/{tasklist_id}/delete-tasklist/')
+        # response = api_client.delete(f'/workspaces/tasklist/{tasklist_id}/delete-tasklist/')
+        response = api_client.delete(f'/board/tasklist/{tasklist_id}/delete-tasklist/')
         assert response.status_code == status.HTTP_204_NO_CONTENT
         tasklist = TaskList.objects.filter(pk=tasklist_id)
         assert len(tasklist) == 0
@@ -58,6 +60,7 @@ class TestBoardTaskLists:
         assert response1.status_code == status.HTTP_201_CREATED
         response2 = create_tasklist(board_id, title='TaskList 2')
         assert response2.status_code == status.HTTP_201_CREATED
-        response = api_client.get(f'/workspaces/board/{board_id}/get-board-tasklists/')
+        # response = api_client.get(f'/workspaces/board/{board_id}/get-board-tasklists/')
+        response = api_client.get(f'/board/{board_id}/get-board-tasklists/')
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) == 2

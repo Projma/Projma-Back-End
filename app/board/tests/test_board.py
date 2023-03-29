@@ -21,7 +21,8 @@ class TestUpdateBoard:
         assert response.status_code == status.HTTP_201_CREATED
         board_id = response.data['id']
         new_name = 'new_name'
-        response = api_client.patch(f'/workspaces/boardsadminapi/{board_id}/edit-board/', {'name': new_name})
+        # response = api_client.patch(f'/workspaces/boardsadminapi/{board_id}/edit-board/', {'name': new_name})
+        response = api_client.patch(f'/board/boardsadminapi/{board_id}/edit-board/', {'name': new_name})
         assert response.status_code == status.HTTP_200_OK
         assert response.data['name'] == new_name
 
@@ -32,7 +33,8 @@ class TestDeleteBoard:
         response = create_board()
         assert response.status_code == status.HTTP_201_CREATED
         board_id = response.data['id']
-        response = api_client.delete(f'/workspaces/boardsadminapi/{board_id}/delete-board/')
+        # response = api_client.delete(f'/workspaces/boardsadminapi/{board_id}/delete-board/')
+        response = api_client.delete(f'/board/boardsadminapi/{board_id}/delete-board/')
         assert response.status_code == status.HTTP_204_NO_CONTENT
 
 
@@ -42,7 +44,8 @@ class TestJoinBoard:
         response = create_board()
         assert response.status_code == status.HTTP_201_CREATED
         board_id = response.data['id']
-        response = api_client.get(f'/workspaces/board/{board_id}/invite_link/')
+        # response = api_client.get(f'/workspaces/board/{board_id}/invite_link/')
+        response = api_client.get(f'/board/{board_id}/invite-link/')
         assert response.status_code == status.HTTP_200_OK
 
     def test_board_new_user_join_with_invite_link_returns_200(self, api_client, create_account, create_board):
@@ -51,11 +54,13 @@ class TestJoinBoard:
         board_id = response.data['id']
         board = Board.objects.filter(id=board_id).first()
         assert board.members.count() == 0
-        response = api_client.get(f'/workspaces/board/{board_id}/invite_link/')
+        # response = api_client.get(f'/workspaces/board/{board_id}/invite_link/')
+        response = api_client.get(f'/board/{board_id}/invite-link/')
         assert response.status_code == status.HTTP_200_OK
         invite_link = response.data
         api_client = create_account(username='newuser', password='newpassword64655gf51', email='newuser@domain.com')
-        response = api_client.post(f'/workspaces/board/join-to-board/{invite_link}/')
+        # response = api_client.post(f'/workspaces/board/join-to-board/{invite_link}/')
+        response = api_client.post(f'/board/join-to-board/{invite_link}/')
         assert response.status_code == status.HTTP_200_OK
         assert board.members.count() == 1
 
@@ -77,9 +82,11 @@ class TestJoinBoard:
         board_id = response.data['id']
         board = Board.objects.filter(id=board_id).first()
         assert board.members.count() == 0
-        response = api_client.get(f'/workspaces/board/{board_id}/invite_link/')
+        # response = api_client.get(f'/workspaces/board/{board_id}/invite_link/')
+        response = api_client.get(f'/board/{board_id}/invite-link/')
         assert response.status_code == status.HTTP_200_OK
         invite_link = response.data + 'A'
         api_client = create_account(username='newuser', password='newpassword64655gf51', email='newuser@domain.com')
-        response = api_client.post(f'/workspaces/board/join-to-board/{invite_link}/')
+        # response = api_client.post(f'/workspaces/board/join-to-board/{invite_link}/')
+        response = api_client.post(f'/board/join-to-board/{invite_link}/')
         assert response.status_code == status.HTTP_400_BAD_REQUEST
