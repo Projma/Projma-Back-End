@@ -1,5 +1,6 @@
 from rest_framework.routers import DefaultRouter
 from board.views.board import *
+from board.views.tasklist import *
 
 router = DefaultRouter()
 
@@ -13,5 +14,9 @@ router.register('board', GetBoardOverviewViewSet, basename='board')
 router.register('board', ToggleBoardStarViewSet, basename='board')
 router.register('boardsadminapi', BoardAdminViewSet, basename='boardsadminapi')
 router.register('boardsmemberapi', BoardMembershipViewSet, basename='boardsmemberapi')
+router.register('board', CreateTaskListViewSet, basename='board')
+router.register('board', ReorderTaskListsViewSet, basename='board')
+router.register('tasklist', UpdateTaskListViewSet, basename='board')
+router.register('tasklist', DeleteTaskListViewSet, basename='board')
 
 urlpatterns = router.urls

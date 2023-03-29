@@ -6,11 +6,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from ..models import Label, WorkSpace
-from tasklist.models import TaskList
-from board.models import Board
+from board.models import Board, TaskList
 from ..serializers.boardtemplateserializer import *
 from board.serializers.boardserializers import BoardOverviewSerializer, BoardAdminSerializer
-from tasklist.serializers.tasklistserializers import TaskListSerializer
+from board.serializers.tasklistserializers import TaskListSerializer
 from ..serializers.labelserializers import LabelSerializer
 
 

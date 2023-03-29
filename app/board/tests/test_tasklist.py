@@ -1,5 +1,5 @@
 from rest_framework import status
-from tasklist.models import TaskList
+from board.models import TaskList
 from conftest import TASKLIST_NAME
 import pytest
 

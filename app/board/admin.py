@@ -1,5 +1,5 @@
 from django.contrib import admin
-from board.models import Board, LogUserRecentBoards
+from board.models import Board, LogUserRecentBoards, TaskList
 # Register your models here.
 
 
@@ -13,6 +13,13 @@ class LogUserRecentBoardsAdmin(admin.ModelAdmin):
     model = LogUserRecentBoards
     fields = ['id', 'profile', 'board', 'lastseen']
     readonly_fields = ['id', 'profile', 'board', 'lastseen']
+
+class TaskListAdmin(admin.ModelAdmin):
+    model = TaskList
+    fields = ['id', 'title', 'board', 'order']
+    readonly_fields = ['id']
+
+admin.site.register(TaskList, TaskListAdmin)
 
 
 admin.site.register(LogUserRecentBoards, LogUserRecentBoardsAdmin)
