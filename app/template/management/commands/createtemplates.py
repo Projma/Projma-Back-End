@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from ...views.templates import create_template
+from ...views.template import create_template
 from ...models import Board
 
 

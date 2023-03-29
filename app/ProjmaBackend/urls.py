@@ -33,7 +33,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('workspaces/', include('workspaces.urls')),
     path('board/', include('board.urls')),
-    path('tasklist/', include('tasklist.urls')),
+    path('template/', include('template.urls')),
     path('task/', include('task.urls')),
     path('adminapi/', include('cruds.urls')),
 
