@@ -39,7 +39,7 @@ class ChartViewSet(viewsets.ViewSet):
             chart.add_data([key, 'تمام کار ها'], [value, all_tasks])
         return Response(chart.data, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=['get'], url_path='my-assign-tasks-for-all-boards(?P<user_id>[^/.]+)')
+    @action(detail=False, methods=['get'], url_path='my-assign-tasks-for-all-boards/(?P<user_id>[^/.]+)')
     def my_assign_tasks_for_all_boards(self, request, *args, **kwargs):
         user_id = kwargs.get('user_id')
         if not user_id:

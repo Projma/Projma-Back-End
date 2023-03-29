@@ -120,7 +120,7 @@ class BoardInviteLinkViewSet(viewsets.GenericViewSet):
     serializer_class = BoardAdminSerializer
     permission_classes = [IsBoardAdmin | IsAdminUser | IsBoardWorkSpaceOwner]
 
-    @action(detail=True, methods=['get'], url_path='')
+    @action(detail=True, methods=['get'], url_path='invite-link')
     def invite_link(self, request, pk):
         board = self.get_object()
         invite_link = encode(board)
