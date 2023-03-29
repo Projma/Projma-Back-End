@@ -1,6 +1,6 @@
 from django.db import models
 from accounts.models import Profile
-from board.models import TaskList
+from board.models import TaskList, Label
 
 # Create your models here.
 
@@ -13,7 +13,7 @@ class Task(models.Model):
     spend = models.FloatField(blank=True, null=True, default=0.0)
     out_of_estimate = models.FloatField(blank=True, null=True)
     tasklist = models.ForeignKey(TaskList, on_delete=models.CASCADE, related_name='tasks')
-    labels = models.ManyToManyField(to='Label', related_name='tasks', blank=True)
+    labels = models.ManyToManyField(to=Label, related_name='tasks', blank=True)
     doers = models.ManyToManyField(to=Profile, related_name='tasks', blank=True)
     order = models.IntegerField(default=0, null=False)
     created_at = models.DateTimeField(auto_now_add=True)

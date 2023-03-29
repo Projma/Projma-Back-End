@@ -39,7 +39,7 @@ class EditCommentViewSet(viewsets.GenericViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [IsAdminUser | IsCommentSender]
-    @action(detail=True, methods=['patch'], url_path='eddit-comment')
+    @action(detail=True, methods=['patch'], url_path='edit-comment')
     def eddit_comment(self, request, pk):
         com = self.get_object()
         serializer = CommentSerializer(instance=com, data=request.data, partial=True)

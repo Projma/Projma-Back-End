@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'colorfield',
     'accounts',
     'workspaces',
-    'cruds',
     'board',
     'task',
     'template',
