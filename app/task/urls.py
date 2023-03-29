@@ -27,3 +27,5 @@ router.register('task', NewCommentViewset, basename='task')
 router.register('comment', ReplyCommentViewSet, basename='comment')
 router.register('comment', EditCommentViewSet, basename='comment')
 router.register('comment', DeleteCommentViewSet, basename='comment')
+
+urlpatterns = router.urls

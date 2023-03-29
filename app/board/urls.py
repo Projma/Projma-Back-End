@@ -1,7 +1,7 @@
 from rest_framework.routers import DefaultRouter
 from board.views.board import *
-from board.views.tasklist import *
 from board.views.label import *
+from board.views.tasklist import *
 
 router = DefaultRouter()
 
