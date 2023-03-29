@@ -4,9 +4,9 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser
 from rest_framework import status
-from tasklist.models import TaskList
-from tasklist.serializers.tasklistserializers import *
-from tasklist.permissions.tasklistpermissions import *
+from board.models import TaskList
+from board.serializers.tasklistserializers import *
+from board.permissions.tasklistpermissions import *
 from accounts.serializers import *
 from board.models import Board
 

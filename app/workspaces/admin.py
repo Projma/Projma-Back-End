@@ -14,12 +14,6 @@ class CheckListAdmin(admin.ModelAdmin):
     readonly_fields = ['id']
 
 
-class LabelAdmin(admin.ModelAdmin):
-    model = Label
-    fields = ['id', 'title', 'color', 'board']
-    readonly_fields = ['id']
-
-
 class AttachmentAdmin(admin.ModelAdmin):
     model = Attachment
     fields = ['id', 'file', 'task', 'user']
@@ -33,6 +27,5 @@ class CommentAdmin(admin.ModelAdmin):
 
 admin.site.register(WorkSpace, WorkSpaceAdmin)
 admin.site.register(CheckList, CheckListAdmin)
-admin.site.register(Label, LabelAdmin)
 admin.site.register(Attachment, AttachmentAdmin)
 admin.site.register(Comment, CommentAdmin)

@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from accounts.serializers import *
-from tasklist.models import TaskList
+from board.models import TaskList
 from task.serializers.taskserializers import TaskOverviewSerializer
 
 
