@@ -71,24 +71,6 @@ class Attachment(models.Model):
     updated_at = models.DateField(auto_now=True)
 
 
-class LogUserRecentBoards(models.Model):
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    board = models.ForeignKey(Board, on_delete=models.CASCADE)
-    lastseen = models.DateTimeField(auto_now=True)
-    
-    class Meta:
-        unique_together = ('profile', 'board',)
-
-    @classmethod
-    def set_lastseen(cls, profile, board):
-        log, created = cls.objects.get_or_create(profile=profile, board=board)
-        log.save()
-    
-    def __str__(self):
-        return f'{self.profile.user.username} - {self.board.name}'
-        
-
-
 # class BoardTemplate(models.Model):
 #     name = models.CharField(max_length=256, unique=True)
 #     description = models.CharField(max_length=1000, blank=True, null=True)
