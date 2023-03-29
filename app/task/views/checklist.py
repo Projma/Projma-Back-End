@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAdminUser
 from rest_framework.decorators import action
 from ..models import CheckList
-from ..serializers.checklistserializers import *
+from task.serializers.checklistserializers import *
 from ..permissions.checklistpermissions import *
 # from ..permissions.taskpermissions import *
 from task.permissions.taskpermissions import *
