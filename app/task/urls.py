@@ -1,5 +1,7 @@
 from rest_framework.routers import DefaultRouter
 from task.views.task import *
+from task.views.checklist import *
+from task.views.comment import *
 
 router = DefaultRouter()
 
@@ -17,3 +19,11 @@ router.register('task', GetTaskPreviewViewSet, basename='task')
 router.register('task', DeleteTaskViewSet, basename='task')
 router.register('task', AddAttachmentToTaskViewSet, basename='task')
 router.register('attachment', DeleteAttachmentFromTaskViewSet, basename='attachment')
+
+router.register('task', CreateOrReadCheckListViewSet, basename='checklist')
+router.register('task/update-checklist', UpdateCheckListViewSet, basename='checklist')
+router.register('task/delete-checklist', DeleteCheckListViewSet, basename='checklist')
+router.register('task', NewCommentViewset, basename='task')
+router.register('comment', ReplyCommentViewSet, basename='comment')
+router.register('comment', EditCommentViewSet, basename='comment')
+router.register('comment', DeleteCommentViewSet, basename='comment')
