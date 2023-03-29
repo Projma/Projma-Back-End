@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from accounts.serializers import *
-from .labelserializers import *
+from board.serializers.labelserializers import *
 from ..models import *
 
 class CommentSerializer(serializers.ModelSerializer):

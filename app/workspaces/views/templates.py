@@ -10,7 +10,7 @@ from board.models import Board, TaskList
 from ..serializers.boardtemplateserializer import *
 from board.serializers.boardserializers import BoardOverviewSerializer, BoardAdminSerializer
 from board.serializers.tasklistserializers import TaskListSerializer
-from ..serializers.labelserializers import LabelSerializer
+from board.serializers.labelserializers import LabelSerializer
 
 
 def create_template(template_params, tasklists_params, labels_params):
