@@ -1,4 +1,5 @@
 from django.db import models
+from colorfield.fields import ColorField
 from accounts.models import Profile
 from workspaces.models import WorkSpace
 
@@ -60,7 +61,6 @@ class LogUserRecentBoards(models.Model):
     
     def __str__(self):
         return f'{self.profile.user.username} - {self.board.name}'
-        
 
 
 class TaskList(models.Model):
@@ -94,3 +94,10 @@ class TaskList(models.Model):
 
     def __str__(self) -> str:
         return f'{self.title} - {self.board.name}'
+
+
+class Label(models.Model):
+    title = models.CharField(max_length=256)
+    color = ColorField()
+    board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='labels', blank=True, null=True)
+

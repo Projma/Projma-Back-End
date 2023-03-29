@@ -1,5 +1,4 @@
 from django.db import models
-from colorfield.fields import ColorField
 from accounts.models import Profile
 from django.db.models import signals
 from django.dispatch import receiver
@@ -55,12 +54,6 @@ class CheckList(models.Model):
 
     def __str__(self) -> str:
         return super().__str__()
-
-
-class Label(models.Model):
-    title = models.CharField(max_length=256)
-    color = ColorField()
-    board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='labels', blank=True, null=True)
 
 
 class Attachment(models.Model):
