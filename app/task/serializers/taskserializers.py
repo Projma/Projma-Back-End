@@ -1,11 +1,11 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from accounts.serializers import *
-from workspaces.serializers.labelserializers import *
-from workspaces.serializers.attachmentserializer import *
-from workspaces.serializers.commentserializers import *
+from board.serializers.labelserializers import *
+from task.serializers.attachmentserializers import *
+from task.serializers.commentserializers import *
 from task.models import Task
-from tasklist.models import TaskList
+from board.models import TaskList
 
 class TaskPreviewSerializer(serializers.ModelSerializer):
     class Meta:
