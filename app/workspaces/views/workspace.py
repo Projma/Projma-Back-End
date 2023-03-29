@@ -5,7 +5,9 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import status
 from ..invite_link import encode, decode
-from ..models import *
+# from ..models import *
+from workspaces.models import WorkSpace
+from board.models import Board, LogUserRecentBoards
 from ..serializers.workspaceserializers import *
 from board.serializers.boardserializers import *
 from ..permissions.workspacepermissions import *
