@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from ..models import Label, WorkSpace
 from board.models import Board, TaskList
-from ..serializers.boardtemplateserializer import *
+from ..serializers.boardtemplateserializers import *
 from board.serializers.boardserializers import BoardOverviewSerializer, BoardAdminSerializer
 from board.serializers.tasklistserializers import TaskListSerializer
 from board.serializers.labelserializers import LabelSerializer
