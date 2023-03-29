@@ -35,33 +35,6 @@ class WorkSpace(models.Model):
     #     return
 
 
-class Comment(models.Model):
-    text = models.TextField()
-    sender = models.ForeignKey(to=Profile, on_delete=models.CASCADE, related_name='comments')
-    task = models.ForeignKey(to=Task, on_delete=models.CASCADE, related_name='comments')
-    reply_to = models.ForeignKey(to='Comment', on_delete=models.CASCADE, related_name='replies', blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
-
-    def __str__(self) -> str:
-        return f'{self.text}'
-
-
-class CheckList(models.Model):
-    text = models.CharField(max_length=512)
-    is_done = models.BooleanField(default=False)
-    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='checklists')
-
-    def __str__(self) -> str:
-        return super().__str__()
-
-
-class Attachment(models.Model):
-    file = models.FileField(upload_to='attachments/')
-    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='attachments')
-    user = models.ForeignKey(to=Profile, on_delete=models.CASCADE)
-    created_at = models.DateField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
 
 
 # class BoardTemplate(models.Model):
