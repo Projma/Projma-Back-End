@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-  # workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   build:
@@ -46,9 +46,10 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-    # - name: Build and push
-    #   uses: docker/build-push-action@v4
-    #   with:
-    #     context: .
-    #     push: true
-    #     tags: ${{ secrets.DOCKERHUB_USERNAME }}/projmabackend:1.0.0
+    - name: Build and push
+      uses: docker/build-push-action@v4
+      with:
+        context: app/
+        file: app/Dockerfile.prod
+        push: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/projmabackend:1.0.0
