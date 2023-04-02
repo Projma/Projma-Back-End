@@ -21,6 +21,7 @@ class Event(models.Model):
         ('holidays', 'تعطیلات'),
         ('meeting', 'جلسه')
     ]
+
     title = models.CharField(max_length=256)
     description = models.TextField(blank=True, null=True)
     event_time = models.DateTimeField()
