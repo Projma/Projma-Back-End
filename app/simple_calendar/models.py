@@ -22,6 +22,10 @@ class Event(models.Model):
         ('meeting', 'جلسه')
     ]
 
+    EVENT_TYPE_CHOICES = [
+        ('holidays', 'تعطیلات'),
+        ('meeting', 'جلسه')
+    ]
     title = models.CharField(max_length=256)
     description = models.TextField(blank=True, null=True)
     event_time = models.DateTimeField()
@@ -38,6 +42,13 @@ class Event(models.Model):
         elif not self.event_type and not self.custom_event_type:
             raise ValidationError(self.Error_Messages[1])
         return super().save(*args, **kwargs)
+
+    def clean(self) -> None:
+        super().clean()
+        if self.event_type and self.custom_event_type:
+            raise ValidationError("you can't select an event type and enter a custom event type together.")
+        elif not self.event_type and not self.custom_event_type:
+            raise ValidationError("you must select an event type or enter a custom event type.")
 
     def __str__(self) -> str:
         return f'{self.title}'
