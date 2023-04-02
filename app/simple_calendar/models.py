@@ -1,8 +1,16 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from colorfield.fields import ColorField
+from board.models import Board
 
 # Create your models here.
+
+class SimpleCalendar(models.Model):
+    board = models.OneToOneField(to=Board, on_delete=models.CASCADE, related_name='calendar')
+
+    def __str__(self) -> str:
+        return f'{self.board.name} calendar'
+
 
 class Event(models.Model):
     EVENT_TYPE_CHOICES = [
@@ -16,6 +24,7 @@ class Event(models.Model):
     event_color = ColorField()
     event_type = models.CharField(choices=EVENT_TYPE_CHOICES, blank=True, max_length=64)
     custom_event_type = models.CharField(max_length=64, blank=True)
+    calendar = models.ForeignKey(to=SimpleCalendar, on_delete=models.CASCADE, related_name='events')
 
     def clean(self) -> None:
         super().clean()
