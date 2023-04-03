@@ -35,6 +35,7 @@ urlpatterns = [
     path('board/', include('board.urls')),
     path('template/', include('template.urls')),
     path('task/', include('task.urls')),
+    path('calendar/', include('simple_calendar.urls')),
 
     path('swagger/', schema_view.with_ui('swagger')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
