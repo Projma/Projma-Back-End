@@ -13,6 +13,8 @@ class SimpleCalendar(models.Model):
 
 
 class Event(models.Model):
+    Error_Messages = ["you can't select an event type and enter a custom event type together.",
+                      "you must select an event type or enter a custom event type."]
     EVENT_TYPE_CHOICES = [
         ('holidays', 'تعطیلات'),
         ('meeting', 'جلسه')
@@ -26,12 +28,12 @@ class Event(models.Model):
     custom_event_type = models.CharField(max_length=64, blank=True)
     calendar = models.ForeignKey(to=SimpleCalendar, on_delete=models.CASCADE, related_name='events')
 
-    def clean(self) -> None:
-        super().clean()
+    def save(self, *args, **kwargs) -> None:
         if self.event_type and self.custom_event_type:
-            raise ValidationError("you can't select an event type and enter a custom event type together.")
+            raise ValidationError(self.Error_Messages[0])
         elif not self.event_type and not self.custom_event_type:
-            raise ValidationError("you must select an event type or enter a custom event type.")
+            raise ValidationError(self.Error_Messages[1])
+        return super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return f'{self.title}'
