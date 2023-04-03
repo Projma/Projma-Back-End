@@ -1,15 +1,16 @@
 from datetime import timedelta, datetime, timezone
-from django.db.models import QuerySet
 from django.forms.models import model_to_dict
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework import viewsets
 from rest_framework import mixins
+from rest_framework.permissions import IsAdminUser
 from task.models import Task
 from ..models import SimpleCalendar, Event
 from ..serializers.simplecalendarserializers import  SimpleCalendarSerializer
 from ..serializers.eventserializers import EventSerializer
+from ..permissions.calendarpermissions import *
 
 
 class SimpleCalendarViewSet(mixins.CreateModelMixin,
@@ -18,10 +19,11 @@ class SimpleCalendarViewSet(mixins.CreateModelMixin,
                             viewsets.GenericViewSet):
     queryset = SimpleCalendar.objects.all()
     serializer_class = SimpleCalendarSerializer
+    permission_classes = [IsAdminUser | IsCalendarBoardMember | IsCalendarBoardAdmin | IsCalendarBoardWorkSpaceOwner]
 
     @action(detail=True, methods=['get'], url_path='events', serializer_class=EventSerializer)
     def get_period_events(self, request, pk):
-        def get_event_occurrences(start, end, event: Event) -> QuerySet:
+        def get_event_occurrences(start, end, event: Event):
             import math
             event_repetition = event.repeat_duration
             event_time = event.event_time.astimezone(timezone.utc)
