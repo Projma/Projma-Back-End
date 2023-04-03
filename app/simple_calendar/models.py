@@ -1,3 +1,4 @@
+from datetime import timezone
 from django.db import models
 from django.core.exceptions import ValidationError
 from colorfield.fields import ColorField
@@ -29,6 +30,7 @@ class Event(models.Model):
     calendar = models.ForeignKey(to=SimpleCalendar, on_delete=models.CASCADE, related_name='events')
 
     def save(self, *args, **kwargs) -> None:
+        self.event_time = self.event_time.astimezone(timezone.utc)
         if self.event_type and self.custom_event_type:
             raise ValidationError(self.Error_Messages[0])
         elif not self.event_type and not self.custom_event_type:
