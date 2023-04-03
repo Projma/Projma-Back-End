@@ -6,6 +6,7 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework import viewsets
 from rest_framework import mixins
+from task.models import Task
 from ..models import SimpleCalendar, Event
 from ..serializers.simplecalendarserializers import  SimpleCalendarSerializer
 from ..serializers.eventserializers import EventSerializer
@@ -20,7 +21,7 @@ class SimpleCalendarViewSet(mixins.CreateModelMixin,
 
     @action(detail=True, methods=['get'], url_path='events', serializer_class=EventSerializer)
     def get_period_events(self, request, pk):
-        def get_event_occurrences(start, end, event: Event, calendar) -> QuerySet:
+        def get_event_occurrences(start, end, event: Event) -> QuerySet:
             import math
             event_repetition = event.repeat_duration
             event_time = event.event_time.astimezone(timezone.utc)
@@ -41,14 +42,30 @@ class SimpleCalendarViewSet(mixins.CreateModelMixin,
                 query.append(event_cpy)
                 i += 1
             return query
+        def convert_date_to_datetime(date):
+            return datetime(date.year, date.month, date.day, 23, 59, 59)
+        def convert_task_to_event(task: Task):
+            event = Event(title=task.title, description=task.description,
+                          event_color="#B325be", event_type=Event.EVENT_TYPE_CHOICES[0][1])
+            event.event_time = convert_date_to_datetime(task.end_date)
+            event.calendar = calendar
+            # event.pk = task.pk
+            return event
+        calendar = self.get_object()
         try:
             start = datetime.strptime(request.GET.get('start'), "%Y-%m-%d %H:%M:%S")
             end = datetime.strptime(request.GET.get('end'), "%Y-%m-%d %H:%M:%S")
         except TypeError as e:
             return Response(e.args + ('you may miss the start and end params in query',), status=status.HTTP_400_BAD_REQUEST)
-        calendar = self.get_object()
         queryset = []
         for event in list(calendar.events.all()):
-            queryset += get_event_occurrences(start, end, event, calendar)
+            queryset += get_event_occurrences(start, end, event)
+        board = calendar.board
+        tasklists = board.tasklists.all()
+        for tl in tasklists:
+            tasks = tl.tasks.all()
+            for task in tasks:
+                if start <= convert_date_to_datetime(task.end_date) <= end:
+                    queryset.append(convert_task_to_event(task))
         serializer = EventSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
