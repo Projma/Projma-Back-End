@@ -3,8 +3,10 @@ from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAdminUser
 from ..models import Event
 from ..serializers.eventserializers import EventSerializer
+from ..permissions.eventpermissions import *
 
 
 class EventViewSet(mixins.CreateModelMixin,
@@ -14,6 +16,7 @@ class EventViewSet(mixins.CreateModelMixin,
                    viewsets.GenericViewSet):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
+    permission_classes = [IsAdminUser | IsEventBoardAdmin | IsEventBoardMember | IsEventBoardWorkSpaceOwner]
 
     def create(self, request, *args, **kwargs):
         try:
