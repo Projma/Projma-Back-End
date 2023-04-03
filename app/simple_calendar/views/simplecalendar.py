@@ -1,5 +1,6 @@
 from datetime import timedelta, datetime, timezone
 from django.db.models import QuerySet
+from django.forms.models import model_to_dict
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
@@ -19,7 +20,7 @@ class SimpleCalendarViewSet(mixins.CreateModelMixin,
 
     @action(detail=True, methods=['get'], url_path='events', serializer_class=EventSerializer)
     def get_period_events(self, request, pk):
-        def get_event_occurrences(start, end, event: Event) -> QuerySet:
+        def get_event_occurrences(start, end, event: Event, calendar) -> QuerySet:
             import math
             event_repetition = event.repeat_duration
             event_time = event.event_time.astimezone(timezone.utc)
@@ -30,14 +31,14 @@ class SimpleCalendarViewSet(mixins.CreateModelMixin,
                 if start <= event_time <= end:
                     query.append(event)
                 return query
-            i = math.ceil((max((event_time - start).total_seconds() / 86400, 0)) / event_repetition)
-            j = math.floor((max((end - event_time).total_seconds() / 86400, 0)) / event_repetition)
+            i = math.ceil(((event_time - start).total_seconds() / 86400) / event_repetition) if event_time < start else 0
+            j = math.floor(((end - event_time).total_seconds() / 86400) / event_repetition) if end > event_time else -1
             while i <= j:
-                cpy_data = {**event}
-                print(cpy_data)
-                cpy_data['event_time'] += timedelta(days=i*event_repetition)
-                print(cpy_data)
-                query.create(cpy_data)
+                event_cpy = model_to_dict(event)
+                event_cpy['calendar'] = calendar
+                event_cpy = Event(**event_cpy)
+                event_cpy.event_time += timedelta(days=i*event_repetition)
+                query.append(event_cpy)
                 i += 1
             return query
         try:
@@ -48,6 +49,6 @@ class SimpleCalendarViewSet(mixins.CreateModelMixin,
         calendar = self.get_object()
         queryset = []
         for event in list(calendar.events.all()):
-            queryset += get_event_occurrences(start, end, event)
+            queryset += get_event_occurrences(start, end, event, calendar)
         serializer = EventSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
