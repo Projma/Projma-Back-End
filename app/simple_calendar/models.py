@@ -17,6 +17,7 @@ class Event(models.Model):
     Error_Messages = ["you can't select an event type and enter a custom event type together.",
                       "you must select an event type or enter a custom event type."]
     EVENT_TYPE_CHOICES = [
+        ('task', 'فعالیت'),
         ('holidays', 'تعطیلات'),
         ('meeting', 'جلسه')
     ]
