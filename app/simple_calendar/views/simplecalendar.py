@@ -21,7 +21,7 @@ class SimpleCalendarViewSet(mixins.CreateModelMixin,
     serializer_class = SimpleCalendarSerializer
     permission_classes = [IsAdminUser | IsCalendarBoardMember | IsCalendarBoardAdmin | IsCalendarBoardWorkSpaceOwner]
 
-    @action(detail=True, methods=['get'], url_path='events', serializer_class=EventSerializer)
+    @action(detail=True, methods=['get'], url_path='events', url_name='events', serializer_class=EventSerializer)
     def get_period_events(self, request, pk):
         def get_event_occurrences(start, end, event: Event):
             import math
@@ -34,7 +34,7 @@ class SimpleCalendarViewSet(mixins.CreateModelMixin,
                 if start <= event_time <= end:
                     query.append(event)
                 return query
-            i = math.ceil(((event_time - start).total_seconds() / 86400) / event_repetition) if event_time < start else 0
+            i = math.ceil(((start - event_time).total_seconds() / 86400) / event_repetition) if event_time < start else 0
             j = math.floor(((end - event_time).total_seconds() / 86400) / event_repetition) if end > event_time else -1
             while i <= j:
                 event_cpy = model_to_dict(event)
