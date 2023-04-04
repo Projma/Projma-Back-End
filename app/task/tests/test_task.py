@@ -1,5 +1,4 @@
 from rest_framework import status
-from board.models import Board
 import pytest
 
 @pytest.mark.django_db

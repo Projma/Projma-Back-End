@@ -57,8 +57,10 @@ class BoardConf:
             if not authenticated:
                 client.credentials(HTT_AUTHORIZATION='')
             workspace_response = WorkSpaceConf.create_workspace(client)(authenticated=authenticated)
-            workspace_id = workspace_response.data['id']
-            return client.post(f'/workspaces/workspaceowner/{workspace_id}/create-board/', {'name': name, 'admins': admins, 'members': members})
+            if workspace_response.status_code == 201:
+                workspace_id = workspace_response.data['id']
+                return client.post(f'/workspaces/workspaceowner/{workspace_id}/create-board/', {'name': name, 'admins': admins, 'members': members})
+            return workspace_response
         return _create_board
 
 class TaskListConf:

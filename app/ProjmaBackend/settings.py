@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'board',
     'task',
     'template',
+    'simple_calendar'
 ]
 
 MIDDLEWARE = [
