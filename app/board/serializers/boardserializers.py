@@ -65,7 +65,7 @@ class BoardOverviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Board
         fields = ['id', 'name', 'description', 'background_pic', 'workspace', 'admins', 
-                    'created_at', 'updated_at', 'members', 'tasklists', 'labels']
+                    'created_at', 'updated_at', 'members', 'tasklists', 'labels', 'calendar']
         read_only_fields = ['id', 'workspace', 'labels']
 
 
