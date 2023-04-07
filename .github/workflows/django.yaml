@@ -55,3 +55,21 @@ jobs:
         file: app/Dockerfile.prod
         push: true
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/projmabackend:1.0.0
+  #  deploy:
+
+  #   needs: publish
+    
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     -
+  #       name: Checkout
+  #       uses: actions/checkout@v3
+  #     -
+  #       name: Set up SSH
+  #       uses: webfactory/ssh-agent@v0.7.0
+  #       with:
+  #         ssh-private-key: ${{ secrets.SSH_KEY }}
+  #     -
+  #       name: Set up on server
+  #       run: |
+  #         ssh -o StrictHostKeyChecking=no -i ${{ env.SSH_AUTH_SOCK }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "sudo docker ps -q | xargs sudo docker stop | xargs sudo docker rm && sudo docker pull farzanrahmani/projmafrontend:latest && sudo docker run -d -p 80:80 mohammad2782/projmabackend:1.0.0"
