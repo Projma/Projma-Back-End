@@ -5,11 +5,13 @@ from .models import *
 class SimpleCalendarAdmin(admin.ModelAdmin):
     model = SimpleCalendar
     fields = ['id', 'board']
+    readonly_fields = ['id']
 
 class EventAdmin(admin.ModelAdmin):
     model = Event
-    fields = ['title', 'description', 'event_time', 'repeat_duration', 'event_color', 
+    fields = ['id', 'title', 'description', 'event_time', 'repeat_duration', 'event_color', 
               'event_type', 'custom_event_type', 'calendar']
+    readonly_fields = ['id']
 
 
 admin.site.register(SimpleCalendar, SimpleCalendarAdmin)
