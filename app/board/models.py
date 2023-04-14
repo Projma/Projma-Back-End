@@ -101,3 +101,8 @@ class Label(models.Model):
     color = ColorField()
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='labels', blank=True, null=True)
 
+
+class Poll(models.Model):
+    question = models.CharField(max_length=1024)
+    description = models.CharField(max_length=1000, null=True, blank=True)
+    is_open = models.BooleanField(default=True)
