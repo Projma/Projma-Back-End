@@ -106,3 +106,11 @@ class Poll(models.Model):
     question = models.CharField(max_length=1024)
     description = models.CharField(max_length=1000, null=True, blank=True)
     is_open = models.BooleanField(default=True)
+    is_multianswer = models.BooleanField(default=False)
+
+
+class PollAnswer(models.Model):
+    text = models.CharField(max_length=512)
+    poll = models.ForeignKey(Poll, on_delete=models.CASCADE, related_name='answers')
+    voter = models.ManyToManyField(Profile, related_name='votes')
+    count = models.PositiveBigIntegerField(default=0)
