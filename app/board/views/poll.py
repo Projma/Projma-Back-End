@@ -8,7 +8,7 @@ from rest_framework.mixins import CreateModelMixin, DestroyModelMixin
 from board.serializers.pollserializers import *
 from rest_framework.decorators import action
 from board.models import Poll, Board
-from ProjmaBackend.settings import HOST
+
 
 class PollViewSet(CreateModelMixin, 
                   DestroyModelMixin, 
@@ -21,10 +21,12 @@ class PollViewSet(CreateModelMixin,
     def retract_all_votes(self, request, pk):
         poll = self.get_object()
         if poll.is_open:
+            host = request.get_host()
+            scheme = request.scheme + '://'
             user = request.user.profile
             poll_ans = user.votes.filter(poll=poll)
             for ans in poll_ans:
-                url = HOST + reverse('poll-answers-detail', args=[ans.pk]) + 'retract-vote/'
+                url = scheme  + host + reverse('poll-answers-detail', args=[ans.pk]) + 'retract-vote/'
                 response = request_lib.delete(url, headers=request.headers, params=request.query_params)
                 if response.status_code != status.HTTP_204_NO_CONTENT:
                     return response

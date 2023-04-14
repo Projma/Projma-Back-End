@@ -24,7 +24,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
 environ.Env.read_env(env_file=BASE_DIR / '../.env.dev')
 SECRET_KEY = env('SECRET_KEY')
-HOST = env('HOST')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
