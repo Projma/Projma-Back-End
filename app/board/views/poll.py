@@ -4,14 +4,15 @@ from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
-from rest_framework.mixins import CreateModelMixin, DestroyModelMixin
+from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, RetrieveModelMixin
 from board.serializers.pollserializers import *
 from rest_framework.decorators import action
 from board.models import Poll, Board
 
 
 class PollViewSet(CreateModelMixin, 
-                  DestroyModelMixin, 
+                  DestroyModelMixin,
+                  RetrieveModelMixin,
                   viewsets.GenericViewSet):
 
     serializer_class = PollSerializer
@@ -32,6 +33,16 @@ class PollViewSet(CreateModelMixin,
                     return response
             return Response("", status=status.HTTP_204_NO_CONTENT)
         return Response("Poll is closed. You can not retract your votes", status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, url_path='show-result', methods=['get'])
+    def show_result(self, request, pk):
+        poll = self.get_object()
+        if poll.is_known:
+            serializer = KnownPollSerializer(poll)
+        else:
+            serializer = UnknownPollSerializer(poll)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class PollAnswerViewSet(CreateModelMixin,
                         DestroyModelMixin,
