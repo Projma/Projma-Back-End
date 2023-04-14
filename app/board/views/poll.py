@@ -6,8 +6,10 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, RetrieveModelMixin
 from board.serializers.pollserializers import *
+from rest_framework.permissions import IsAdminUser
 from rest_framework.decorators import action
 from board.models import Poll, Board
+from board.permissions.pollpermissions import *
 
 
 class PollViewSet(CreateModelMixin, 
@@ -17,6 +19,7 @@ class PollViewSet(CreateModelMixin,
 
     serializer_class = PollSerializer
     queryset = Poll.objects.all()
+    permission_classes = [IsAdminUser | IsPollBoardAdminPermission | IsPollBoardMemberPermission | IsPollAnswerWorkSpaceOwnerPermission]
 
     @action(detail=True, url_path='retract-all-votes', methods=['delete'])
     def retract_all_votes(self, request, pk):
@@ -59,6 +62,7 @@ class PollAnswerViewSet(CreateModelMixin,
 
     serializer_class = PollAnswerSerializer
     queryset = PollAnswer.objects.all()
+    permission_classes = [IsAdminUser | IsPollAnswerBoardAdminPermission | IsPollAnswerBoardMemberPermission | IsPollAnswerWorkSpaceOwnerPermission]
 
     @action(detail=True, url_path='vote', methods=['post'])
     def vote(self, request, pk):
