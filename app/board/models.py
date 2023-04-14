@@ -112,5 +112,5 @@ class Poll(models.Model):
 class PollAnswer(models.Model):
     text = models.CharField(max_length=512)
     poll = models.ForeignKey(Poll, on_delete=models.CASCADE, related_name='answers')
-    voter = models.ManyToManyField(Profile, related_name='votes')
+    voters = models.ManyToManyField(Profile, related_name='votes')
     count = models.PositiveBigIntegerField(default=0)
