@@ -3,10 +3,16 @@ from board.models import Poll, PollAnswer
 
 
 class PollSerializer(serializers.ModelSerializer):
+    answers = serializers.SerializerMethodField()
     class Meta:
         model = Poll
-        fields = ['id', 'question', 'description', 'is_open', 'is_multianswer']
-        read_only_fields = ['id']
+        fields = ['id', 'question', 'description', 'is_open', 'is_multianswer', 'answers']
+        read_only_fields = ['id', 'answers']
+
+    def get_answers(self, poll):
+        if poll.is_known:
+            return PollKnownAnswerSerializer(many=True)
+        return PollUnknownAnswerSerializer(many=True)
 
 
 class PollKnownAnswerSerializer(serializers.ModelSerializer):
