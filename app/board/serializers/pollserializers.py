@@ -2,19 +2,6 @@ from rest_framework import serializers
 from board.models import Poll, PollAnswer
 
 
-class PollSerializer(serializers.ModelSerializer):
-    answers = serializers.SerializerMethodField()
-    class Meta:
-        model = Poll
-        fields = ['id', 'question', 'description', 'is_open', 'is_multianswer', 'answers']
-        read_only_fields = ['id', 'answers']
-
-    def get_answers(self, poll):
-        if poll.is_known:
-            return PollKnownAnswerSerializer(many=True)
-        return PollUnknownAnswerSerializer(many=True)
-
-
 class PollKnownAnswerSerializer(serializers.ModelSerializer):
     voters = serializers.SerializerMethodField()
     class Meta:
@@ -31,3 +18,10 @@ class PollUnknownAnswerSerializer(serializers.ModelSerializer):
         model = PollAnswer
         fields = ['id', 'text', 'poll', 'count']
         read_only_fields = ['id', 'poll']
+
+
+class PollSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Poll
+        fields = ['id', 'board', 'question', 'description', 'is_open', 'is_multianswer', 'is_known']
+        read_only_fields = ['id']
