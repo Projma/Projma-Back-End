@@ -15,3 +15,11 @@ class PollViewSet(CreateModelMixin,
 
     serializer_class = PollSerializer
     queryset = Poll.objects.all()
+
+
+class PollAnswerViewSet(CreateModelMixin,
+                        DestroyModelMixin,
+                        viewsets.GenericViewSet):
+
+    serializer_class = PollAnswerSerializer
+    queryset = PollAnswer.objects.all()

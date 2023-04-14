@@ -25,5 +25,6 @@ router.register('label', UpdateLabelViewSet, basename='board')
 router.register('label', DeleteLabelViewSet, basename='board')
 
 router.register('poll', PollViewSet, basename='poll')
+router.register('poll-answer', PollAnswerViewSet, basename='poll-answer')
 
 urlpatterns = router.urls
