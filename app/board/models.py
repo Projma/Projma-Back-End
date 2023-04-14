@@ -107,6 +107,7 @@ class Poll(models.Model):
     description = models.CharField(max_length=1000, null=True, blank=True)
     is_open = models.BooleanField(default=True)
     is_multianswer = models.BooleanField(default=False)
+    is_known = models.BooleanField(default=True)
 
 
 class PollAnswer(models.Model):

@@ -17,7 +17,7 @@ class PollKnownAnswerSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'poll']
 
     def get_voters(self, answer: PollAnswer):
-        return answer.voters.values('id', 'username')
+        return answer.voters.user.values('id', 'username')
 
 
 class PollUnknownAnswerSerializer(serializers.ModelSerializer):
