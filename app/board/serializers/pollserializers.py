@@ -8,6 +8,7 @@ class PollSerializer(serializers.ModelSerializer):
         fields = ['id', 'question', 'description', 'is_open', 'is_multianswer']
         read_only_fields = ['id']
 
+
 class PollKnownAnswerSerializer(serializers.ModelSerializer):
     voters = serializers.SerializerMethodField()
     class Meta:
@@ -17,3 +18,10 @@ class PollKnownAnswerSerializer(serializers.ModelSerializer):
 
     def get_voters(self, answer: PollAnswer):
         return answer.voters.values('id', 'username')
+
+
+class PollUnknownAnswerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PollAnswer
+        fields = ['id', 'text', 'poll', 'count']
+        read_only_fields = ['id', 'poll']
