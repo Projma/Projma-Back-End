@@ -1,12 +1,14 @@
+import requests as request_lib
+from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
-from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, RetrieveModelMixin
+from rest_framework.mixins import CreateModelMixin, DestroyModelMixin
 from board.serializers.pollserializers import *
 from rest_framework.decorators import action
 from board.models import Poll, Board
-
+from ProjmaBackend.settings import HOST
 
 class PollViewSet(CreateModelMixin, 
                   DestroyModelMixin, 
@@ -15,6 +17,19 @@ class PollViewSet(CreateModelMixin,
     serializer_class = PollSerializer
     queryset = Poll.objects.all()
 
+    @action(detail=True, url_path='retract-all-votes', methods=['delete'])
+    def retract_all_votes(self, request, pk):
+        poll = self.get_object()
+        if poll.is_open:
+            user = request.user.profile
+            poll_ans = user.votes.filter(poll=poll)
+            for ans in poll_ans:
+                url = HOST + reverse('poll-answers-detail', args=[ans.pk]) + 'retract-vote/'
+                response = request_lib.delete(url, headers=request.headers, params=request.query_params)
+                if response.status_code != status.HTTP_204_NO_CONTENT:
+                    return response
+            return Response("", status=status.HTTP_204_NO_CONTENT)
+        return Response("Poll is closed. You can not retract your votes", status=status.HTTP_204_NO_CONTENT)
 
 class PollAnswerViewSet(CreateModelMixin,
                         DestroyModelMixin,
