@@ -10,7 +10,6 @@ from board.models import Poll, Board
 
 class PollViewSet(CreateModelMixin, 
                   DestroyModelMixin, 
-                  RetrieveModelMixin,
                   viewsets.GenericViewSet):
 
     serializer_class = PollSerializer
@@ -23,3 +22,16 @@ class PollAnswerViewSet(CreateModelMixin,
 
     serializer_class = PollAnswerSerializer
     queryset = PollAnswer.objects.all()
+
+    @action(detail=True, url_path='vote', methods=['post'])
+    def vote(self, request, pk):
+        poll_ans = self.get_object()
+        if poll_ans.poll.is_open:
+            user = request.user.profile
+            if poll_ans.voters.filter(user=user.pk).count() > 0:
+                return Response("You can not vote for a single option more than once.", status=status.HTTP_400_BAD_REQUEST)
+            poll_ans.voters.add(user)
+            poll_ans.count += 1
+            poll_ans.save()
+            return Response("Ok", status=status.HTTP_200_OK)
+        return Response("Poll is closed.", status=status.HTTP_400_BAD_REQUEST)
