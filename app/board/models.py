@@ -105,6 +105,7 @@ class Label(models.Model):
 class Poll(models.Model):
     question = models.CharField(max_length=1024)
     description = models.CharField(max_length=1000, null=True, blank=True)
+    board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='polls')
     is_open = models.BooleanField(default=True)
     is_multianswer = models.BooleanField(default=False)
     is_known = models.BooleanField(default=True)
