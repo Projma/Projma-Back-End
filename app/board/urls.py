@@ -2,6 +2,7 @@ from rest_framework.routers import DefaultRouter
 from board.views.board import *
 from board.views.label import *
 from board.views.tasklist import *
+from board.views.poll import *
 
 router = DefaultRouter()
 
@@ -22,5 +23,8 @@ router.register('tasklist', DeleteTaskListViewSet, basename='board')
 router.register('label', CreateLabelViewSet, basename='board')
 router.register('label', UpdateLabelViewSet, basename='board')
 router.register('label', DeleteLabelViewSet, basename='board')
+
+router.register('poll', PollViewSet, basename='poll')
+router.register('poll-answers', PollAnswerViewSet, basename='poll-answers')
 
 urlpatterns = router.urls

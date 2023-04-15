@@ -101,3 +101,18 @@ class Label(models.Model):
     color = ColorField()
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='labels', blank=True, null=True)
 
+
+class Poll(models.Model):
+    question = models.CharField(max_length=1024)
+    description = models.CharField(max_length=1000, null=True, blank=True)
+    board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='polls')
+    is_open = models.BooleanField(default=True)
+    is_multianswer = models.BooleanField(default=False)
+    is_known = models.BooleanField(default=True)
+
+
+class PollAnswer(models.Model):
+    text = models.CharField(max_length=512)
+    poll = models.ForeignKey(Poll, on_delete=models.CASCADE, related_name='answers')
+    voters = models.ManyToManyField(Profile, related_name='votes')
+    count = models.PositiveBigIntegerField(default=0)
