@@ -65,4 +65,7 @@ class Meeting(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     creator = models.ForeignKey(to=Profile, on_delete=models.CASCADE, related_name='created_meetings')
+    calendar = models.ForeignKey(to=SimpleCalendar, on_delete=models.CASCADE, related_name='meetings')
+    color = ColorField()
+
     
