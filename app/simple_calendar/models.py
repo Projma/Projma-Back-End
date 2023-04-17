@@ -3,6 +3,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from colorfield.fields import ColorField
 from board.models import Board
+from accounts.models import Profile
 
 # Create your models here.
 
@@ -41,3 +42,27 @@ class Event(models.Model):
 
     def __str__(self) -> str:
         return f'{self.title}'
+
+class Meeting(models.Model):
+    NOTSTARTED = 'NOTSTARTED'
+    HOLDING = 'HOLDONG'
+    FINISHED = 'FINISHED'
+    STATUS_CHOICES = [
+        (NOTSTARTED, 'Not Started'),
+        (HOLDING, 'Holding'),
+        (FINISHED, 'Finished')
+    ]
+
+    title = models.CharField(max_length=256)
+    description = models.TextField(blank=True, null=True)
+    start = models.DateTimeField()
+    end = models.DateTimeField()
+    from_date = models.DateField()
+    until_date = models.DateField()
+    repeat = models.PositiveIntegerField(default = 0)
+    link = models.CharField(max_length=512)
+    status = models.CharField(max_length=10, choices = STATUS_CHOICES, default = NOTSTARTED)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    creator = models.ForeignKey(to=Profile, on_delete=models.CASCADE, related_name='created_meetings')
+    
