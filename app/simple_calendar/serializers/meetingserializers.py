@@ -7,4 +7,4 @@ class MeetingSerializer(serializers.ModelSerializer):
         model = Meeting
         fields = ['id', 'title', 'description', 'start', 'end', 'from_date', 'until_date', 'repeat',
                   'link', 'status', 'created_at', 'updated_at', 'creator', 'calendar', 'color']
-        read_only_fields = ['id', 'status', 'created_at', 'updated_at', 'creator', 'calendar']
+        read_only_fields = ['id', 'status', 'created_at', 'updated_at', 'creator', 'calendar', 'link']
