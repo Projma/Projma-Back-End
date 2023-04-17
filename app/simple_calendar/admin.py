@@ -18,9 +18,10 @@ class EventAdmin(admin.ModelAdmin):
 class MeetingAdmin(admin.ModelAdmin):
     model = Meeting
     fields = ['id', 'title', 'description', 'start', 'end', 'from_date', 'until_date', 'repeat',
-              'link', 'status', 'created_at', 'updated_at', 'creator', 'calendar', 'color']
+              'link', 'status', 'created_at', 'updated_at', 'color']
     readonly_fields = ['id', 'created_at', 'updated_at']
 
 
 admin.site.register(SimpleCalendar, SimpleCalendarAdmin)
 admin.site.register(Event, EventAdmin)
+admin.site.register(Meeting, MeetingAdmin)
