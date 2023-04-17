@@ -59,13 +59,14 @@ class Meeting(models.Model):
     end = models.DateTimeField()
     from_date = models.DateField()
     until_date = models.DateField()
-    repeat = models.PositiveIntegerField(default = 0)
-    link = models.CharField(max_length=512)
-    status = models.CharField(max_length=10, choices = STATUS_CHOICES, default = NOTSTARTED)
+    repeat = models.PositiveIntegerField(default=0)
+    link = models.CharField(max_length=512, blank=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=NOTSTARTED)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     creator = models.ForeignKey(to=Profile, on_delete=models.CASCADE, related_name='created_meetings')
     calendar = models.ForeignKey(to=SimpleCalendar, on_delete=models.CASCADE, related_name='meetings')
     color = ColorField()
+
 
     
