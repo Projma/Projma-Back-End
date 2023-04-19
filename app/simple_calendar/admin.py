@@ -18,7 +18,7 @@ class EventAdmin(admin.ModelAdmin):
 class MeetingAdmin(admin.ModelAdmin):
     model = Meeting
     fields = ['id', 'title', 'description', 'start', 'end', 'from_date', 'until_date', 'repeat',
-              'link', 'status', 'created_at', 'updated_at', 'color']
+              'link', 'status', 'created_at', 'updated_at', 'color', 'calendar', 'creator']
     readonly_fields = ['id', 'created_at', 'updated_at']
 
 
