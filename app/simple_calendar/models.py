@@ -3,6 +3,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from colorfield.fields import ColorField
 from board.models import Board
+from django.db.models import Q
 from accounts.models import Profile
 
 # Create your models here.
@@ -12,6 +13,19 @@ class SimpleCalendar(models.Model):
 
     def __str__(self) -> str:
         return f'{self.board.name} calendar'
+
+    def get_meetings(self, from_date=None, until_date=None, contain_repeats=False):
+        single_meets = self.meetings.filter(repeat=0)
+        periodic_meets = self.meetings.all().exclude(repeat=0)
+        if not (from_date is None):
+            single_meets = single_meets.filter(from_date__gte=from_date)
+            periodic_meets = periodic_meets.exclude(until_date__lt=from_date)
+        if not (until_date is None):
+            single_meets = single_meets.filter(until_date__lte=until_date)
+            periodic_meets = periodic_meets.exclude(from_date__gt=until_date)
+        return  single_meets | periodic_meets
+
+
 
 
 class Event(models.Model):
@@ -43,6 +57,7 @@ class Event(models.Model):
     def __str__(self) -> str:
         return f'{self.title}'
 
+
 class Meeting(models.Model):
     NOTSTARTED = 'NOTSTARTED'
     HOLDING = 'HOLDONG'
@@ -55,8 +70,8 @@ class Meeting(models.Model):
 
     title = models.CharField(max_length=256)
     description = models.TextField(blank=True, null=True)
-    start = models.DateTimeField()
-    end = models.DateTimeField()
+    start = models.TimeField()
+    end = models.TimeField()
     from_date = models.DateField()
     until_date = models.DateField()
     repeat = models.PositiveIntegerField(default=0)
