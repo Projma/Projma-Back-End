@@ -1,5 +1,6 @@
 import json
 import requests
+from ProjmaBackend.settings import SKYROOM_USERNAME
 
 
 class APIException(Exception):
@@ -12,6 +13,7 @@ class HTTPException(Exception):
 
 class SkyroomAPI(object):
     def __init__(self, apikey, **request_kwargs):
+        self.room_base_link = f'https://www.skyroom.online/ch/{SKYROOM_USERNAME}/'
         self.host = 'www.skyroom.online'
         self.apikey = apikey
         self.headers = {
@@ -118,5 +120,5 @@ class SkyroomAPI(object):
     def removeUserRooms(self, params=None):
         return self._request('removeUserRooms', params)
 
-    def getLoginUrl(self, params=None):
-        return self._request('getLoginUrl', params)
+    def createLoginUrl(self, params=None):
+        return self._request('createLoginUrl', params)
