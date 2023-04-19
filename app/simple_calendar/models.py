@@ -5,8 +5,8 @@ from colorfield.fields import ColorField
 from board.models import Board
 from django.db.models import Q
 from accounts.models import Profile
+from django.core.validators import MinLengthValidator
 
-# Create your models here.
 
 class SimpleCalendar(models.Model):
     board = models.OneToOneField(to=Board, on_delete=models.CASCADE, related_name='calendar')
@@ -68,7 +68,7 @@ class Meeting(models.Model):
         (FINISHED, 'Finished')
     ]
 
-    title = models.CharField(max_length=256)
+    title = models.CharField(max_length=110, validators=[MinLengthValidator(3)])
     description = models.TextField(blank=True, null=True)
     start = models.TimeField()
     end = models.TimeField()
@@ -76,6 +76,7 @@ class Meeting(models.Model):
     until_date = models.DateField()
     repeat = models.PositiveIntegerField(default=0)
     link = models.CharField(max_length=512, blank=True)
+    room_id = models.IntegerField(null=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=NOTSTARTED)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
