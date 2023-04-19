@@ -8,5 +8,6 @@ router.register('event', event.EventViewSet, basename='event')
 router.register('meeting', meeting.CreateMeetingViewSet, basename='meeting')
 router.register('meeting', meeting.UpdateMeetingViewSet, basename='meeting')
 router.register('meeting', meeting.DeleteMeetingViewSet, basename='meeting')
+router.register('meeting', meeting.GetCalendarMeetings, basename='meeting')
 
 urlpatterns = router.urls
