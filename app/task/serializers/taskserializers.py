@@ -56,7 +56,8 @@ class UpdateTaskSerializer(serializers.ModelSerializer):
         if self.instance:
             board = self.instance.tasklist.board
             for doer in value:
-                if doer not in board.members.all():
+                print(board.admins)
+                if doer not in (board.members.all() | board.admins.all()).all().distinct():
                     raise serializers.ValidationError({"doers": "username = " + str(doer.user.username) + " does not exist in this board"})
         return value
     
