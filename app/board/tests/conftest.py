@@ -11,6 +11,7 @@ WORKSPACE_TYPE = 'education'
 BOARD_NAME = 'test_board'
 TASKLIST_NAME = 'test_tasklist'
 POLL_QUESTION = 'Question'
+POLL_ANSWER_TEXT = 'Text'
 
 class UserConf:
     def create_user(api_client):
@@ -81,6 +82,12 @@ class PollConf:
             return api_client.post(url, {'board': board_id, 'question': question, 'is_open': is_open, 'is_multianswer': is_multianswer, 'is_known': is_known})
         return _create_poll
 
+    def create_answer(api_client:APIClient):
+        def _create_answer(poll_id, text=POLL_ANSWER_TEXT, order=1):
+            url = reverse('poll-answers-list')
+            return api_client.post(url, {'poll': poll_id, 'text': text, 'order': order})
+        return _create_answer
+
 
 @pytest.fixture
 def create_account(api_client:APIClient):
@@ -116,6 +123,13 @@ def create_poll(api_client:APIClient):
     def _create_poll(board_id, question=POLL_QUESTION, is_open=True, is_multianswer=False, is_known=True):
         return PollConf.create_poll(api_client)(board_id, question, is_open, is_multianswer, is_known)
     return _create_poll
+
+@pytest.fixture
+def create_answer(api_client:APIClient):
+    '''you should create board then create poll after that call it. it returns the response(pollanswer object)'''
+    def _create_answer(poll_id, text=POLL_ANSWER_TEXT, order=1):
+        return PollConf.create_answer(api_client)(poll_id, text, order)
+    return _create_answer
 
 @pytest.fixture
 def api_client():

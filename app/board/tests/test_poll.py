@@ -52,3 +52,30 @@ class TestDeletePoll:
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
+@pytest.mark.django_db
+class TestCreateAnswer:
+    def test_create_valid_answer_returns_201(self, create_board, create_poll, create_answer):
+        response = create_board()
+        assert response.status_code == status.HTTP_201_CREATED
+
+        board_id = response.data['id']
+        response = create_poll(board_id)
+        assert response.status_code == status.HTTP_201_CREATED
+
+        poll_id = response.data['id']
+        response = create_answer(poll_id)
+        assert response.status_code == status.HTTP_201_CREATED
+
+    def test_create_invalid_answer_returns_400(self, create_board, create_poll, create_answer):
+        response = create_board()
+        assert response.status_code == status.HTTP_201_CREATED
+
+        board_id = response.data['id']
+        response = create_poll(board_id)
+        assert response.status_code == status.HTTP_201_CREATED
+
+        poll_id = response.data['id']
+        response = create_answer(poll_id, text='')
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
