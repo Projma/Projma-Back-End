@@ -8,8 +8,10 @@ class Chart:
         self.xdata = []
         self.ydata = []
 
-    def add_data(self, xdata:list, ydata:list):
+    def add_x(self, xdata):
         self.xdata.append(xdata)
+
+    def add_y(self, ydata):
         self.ydata.append(ydata)
 
     @property
