@@ -238,3 +238,35 @@ class TestRetractVotes:
         response = api_client.delete(url)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert PollAnswer.objects.get(pk=ans1['id']).count == 1
+
+
+@pytest.mark.django_db
+class TestClosePoll:
+    def test_close_poll_returns_200(self, create_board, create_poll, create_answer, api_client):
+        response = TestCreatePoll.create_poll(create_board, create_poll)
+        assert response.status_code == status.HTTP_201_CREATED
+        poll_id = response.data['id']
+        response = create_answer(poll_id)
+        assert response.status_code == status.HTTP_201_CREATED
+        assert Poll.objects.get(pk=poll_id).is_open == True
+        
+        url = reverse('poll-detail', args=[poll_id]) + 'close/'
+        response = api_client.patch(url)
+        assert response.status_code == status.HTTP_200_OK
+        assert Poll.objects.get(pk=poll_id).is_open == False
+
+    def test_close_an_already_closed_poll_returns_400(self, create_board, create_poll, create_answer, api_client):
+        response = TestCreatePoll.create_poll(create_board, create_poll)
+        assert response.status_code == status.HTTP_201_CREATED
+        poll_id = response.data['id']
+        response = create_answer(poll_id)
+        assert response.status_code == status.HTTP_201_CREATED
+        assert Poll.objects.get(pk=poll_id).is_open == True
+        
+        url = reverse('poll-detail', args=[poll_id]) + 'close/'
+        response = api_client.patch(url)
+        assert response.status_code == status.HTTP_200_OK
+        assert Poll.objects.get(pk=poll_id).is_open == False
+        
+        response = api_client.patch(url)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
