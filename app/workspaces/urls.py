@@ -1,5 +1,5 @@
 from rest_framework.routers import DefaultRouter
-from .views import workspace, chart
+from .views import workspace
 
 router = DefaultRouter()
 
@@ -9,7 +9,6 @@ router.register('workspaceowner', workspace.WorkSpaceOwnerViewSet, basename='wor
 router.register('workspacemember', workspace.WorkSpaceMemberViewSet, basename='workspacemember')
 router.register('dashboard', workspace.UserDashboardViewset, basename='dashboard')
 
-router.register('chart', chart.ChartViewSet, basename='chart')
 
 
 urlpatterns = router.urls

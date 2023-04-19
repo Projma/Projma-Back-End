@@ -3,6 +3,7 @@ from board.views.board import *
 from board.views.label import *
 from board.views.tasklist import *
 from board.views.poll import *
+from board.views.chart import *
 
 router = DefaultRouter()
 
@@ -26,5 +27,8 @@ router.register('label', DeleteLabelViewSet, basename='board')
 
 router.register('poll', PollViewSet, basename='poll')
 router.register('poll-answers', PollAnswerViewSet, basename='poll-answers')
+
+router.register('chart', ChartViewSet, basename='chart')
+
 
 urlpatterns = router.urls
