@@ -79,3 +79,38 @@ class TestCreateAnswer:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
+@pytest.mark.django_db
+class TestDeleteAnswer:
+    def test_delete_exist_answer_returns_204(self, create_board, create_poll, create_answer, api_client):
+        response = create_board()
+        assert response.status_code == status.HTTP_201_CREATED
+
+        board_id = response.data['id']
+        response = create_poll(board_id)
+        assert response.status_code == status.HTTP_201_CREATED
+
+        poll_id = response.data['id']
+        response = create_answer(poll_id)
+        assert response.status_code == status.HTTP_201_CREATED
+
+        answer_id = response.data['id']
+        url = reverse('poll-answers-detail', args=[answer_id])
+        response = api_client.delete(url)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+
+    def test_delete_invalid_answer_returns_204(self, create_board, create_poll, create_answer, api_client):
+        response = create_board()
+        assert response.status_code == status.HTTP_201_CREATED
+
+        board_id = response.data['id']
+        response = create_poll(board_id)
+        assert response.status_code == status.HTTP_201_CREATED
+
+        poll_id = response.data['id']
+        response = create_answer(poll_id)
+        assert response.status_code == status.HTTP_201_CREATED
+
+        answer_id = response.data['id']
+        url = reverse('poll-answers-detail', args=[answer_id+1])
+        response = api_client.delete(url)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
