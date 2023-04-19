@@ -1,4 +1,4 @@
-from django.db.models import Count
+from django.db.models import Count, Sum
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -22,22 +22,28 @@ class ChartViewSet(viewsets.ViewSet):
             result[item[qskey]] = item[qsvalue]
         return result
 
-    @action(detail=False, methods=['get'], url_path='board-members-assign-tasks/(?P<b_id>[^/.]+)')
-    def board_members_assign_tasks(self, request, *args, **kwargs):
+    @action(detail=False, methods=['get'], url_path='board-members-activity/(?P<b_id>[^/.]+)')
+    def board_members_activity(self, request, *args, **kwargs):
         b_id = kwargs.get('b_id')
         if not b_id:
             return Response({'error': 'Board id is required'}, status=status.HTTP_400_BAD_REQUEST)
-        b_members = (get_object_or_404(Board, pk=b_id).members.all() | get_object_or_404(Board, pk=b_id).admins.all()).values('user__username').all().distinct()
-        b_members = [m['user__username'] for m in b_members]
-        qs = Task.objects.filter(tasklist__board__id=b_id)\
-            .values('doers__user__username')\
-            .annotate(count=Count('doers')).all()
-        all_tasks = Task.objects.filter(tasklist__board__id=b_id).count()
-        result = self.merge_querysets(qs.all(), b_members, 'doers__user__username')
-        chart = Chart('تعداد کار واگذار شده به هر فرد', 'فرد', 'تعداد')
-        for key, value in result.items():
-            chart.add_data([key, 'تمام کار ها'], [value, all_tasks])
-        return Response(chart.data, status=status.HTTP_200_OK)
+        b_members = (get_object_or_404(Board, pk=b_id).members.all() | get_object_or_404(Board, pk=b_id).admins.all())
+        qs = b_members.values('user__username')\
+                    .annotate(estimates=Sum('tasks__estimate'),
+                              dons=Sum('tasks__spend'),
+                              out_of_estimates=Sum('tasks__out_of_estimate')).all()
+        chart = Chart('فعالیت اعضا', 'فرد', 'فعالیت')
+        xdata = [m['user__username'] for m in qs.values('user__username')]
+        estimates_data = [m['estimates'] for m in qs.values('estimates')]
+        dons_data = [m['dons'] for m in qs.values('dons')]
+        out_of_estimates_data = [m['out_of_estimates'] for m in qs.values('out_of_estimates')]
+        ydata = [{'estimates':estimates_data}, {'dons': dons_data}, {'out_of_estimates': out_of_estimates_data}]
+        for x in xdata:
+            chart.add_x(x)
+        for y in ydata:
+            chart.add_y(y)
+        return Response(chart.data, status=200)
+
 
     @action(detail=False, methods=['get'], url_path='my-assign-tasks-for-all-boards/(?P<user_id>[^/.]+)')
     def my_assign_tasks_for_all_boards(self, request, *args, **kwargs):
