@@ -180,3 +180,61 @@ class TestVote:
         response = api_client.post(url)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert PollAnswer.objects.get(pk=ans1['id']).count == 0
+
+
+@pytest.mark.django_db
+class TestRetractVotes:
+    def test_retract_votes_returns_204(self, create_board, create_poll, create_answer, api_client):
+        response = TestCreatePoll.create_poll(create_board, create_poll)
+        poll_id = response.data['id']
+        response = create_answer(poll_id, text='ans1', order=1)
+        ans1 = response.data
+        assert response.status_code == status.HTTP_201_CREATED
+        assert PollAnswer.objects.get(pk=ans1['id']).count == 0
+        
+        url = reverse('poll-answers-detail', args=[ans1['id']]) + 'vote/'
+        response = api_client.post(url)
+        assert response.status_code == status.HTTP_200_OK
+        assert PollAnswer.objects.get(pk=ans1['id']).count == 1
+        
+        response = create_answer(poll_id, text='ans2', order=2)
+        ans2 = response.data
+        assert response.status_code == status.HTTP_201_CREATED
+        assert PollAnswer.objects.get(pk=ans2['id']).count == 0 and PollAnswer.objects.get(pk=ans1['id']).count == 1
+        
+        url = reverse('poll-answers-detail', args=[ans2['id']]) + 'vote/'
+        response = api_client.post(url)
+        assert response.status_code == status.HTTP_200_OK
+        assert PollAnswer.objects.get(pk=ans2['id']).count == 1 and PollAnswer.objects.get(pk=ans1['id']).count == 1
+        
+        url = reverse('poll-answers-detail', args=[ans1['id']]) + 'retract-vote/'
+        response = api_client.delete(url)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert PollAnswer.objects.get(pk=ans1['id']).count == 0
+        url = reverse('poll-answers-detail', args=[ans2['id']]) + 'retract-vote/'
+        response = api_client.delete(url)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert PollAnswer.objects.get(pk=ans2['id']).count == 0
+
+    def test_retract_votes_from_closed_poll_returns_400(self, create_board, create_poll, create_answer, api_client):
+        response = TestCreatePoll.create_poll(create_board, create_poll)
+        poll_id = response.data['id']
+        response = create_answer(poll_id, text='ans1', order=1)
+        ans1 = response.data
+        assert response.status_code == status.HTTP_201_CREATED
+        assert PollAnswer.objects.get(pk=ans1['id']).count == 0
+        
+        url = reverse('poll-answers-detail', args=[ans1['id']]) + 'vote/'
+        response = api_client.post(url)
+        assert response.status_code == status.HTTP_200_OK
+        assert PollAnswer.objects.get(pk=ans1['id']).count == 1
+        
+        poll = Poll.objects.get(pk=poll_id)
+        poll.is_open = False
+        poll.save()
+        assert Poll.objects.get(pk=poll_id).is_open == False
+        
+        url = reverse('poll-answers-detail', args=[ans1['id']]) + 'retract-vote/'
+        response = api_client.delete(url)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert PollAnswer.objects.get(pk=ans1['id']).count == 1
