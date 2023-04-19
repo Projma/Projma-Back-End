@@ -22,3 +22,33 @@ class TestCreatePoll:
         response = create_poll(board_id, question='')
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
+
+@pytest.mark.django_db
+class TestDeletePoll:
+    def test_delete_exist_poll_returns_204(self, create_board, create_poll, api_client):
+        response = create_board()
+        assert response.status_code == status.HTTP_201_CREATED
+
+        board_id = response.data['id']
+        response = create_poll(board_id)
+        assert response.status_code == status.HTTP_201_CREATED
+
+        poll_id = response.data['id']
+        url = reverse('poll-detail', args=[poll_id])
+        response = api_client.delete(url)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+
+    def test_delete_invalid_poll_returns_400(self, create_board, create_poll, api_client):
+        response = create_board()
+        assert response.status_code == status.HTTP_201_CREATED
+
+        board_id = response.data['id']
+        response = create_poll(board_id)
+        assert response.status_code == status.HTTP_201_CREATED
+
+        poll_id = response.data['id']
+        url = reverse('poll-detail', args=[poll_id+1])
+        response = api_client.delete(url)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
