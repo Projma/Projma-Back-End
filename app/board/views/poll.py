@@ -19,7 +19,7 @@ class PollViewSet(CreateModelMixin,
 
     serializer_class = PollSerializer
     queryset = Poll.objects.all()
-    permission_classes = [IsAdminUser | IsPollBoardAdminPermission | IsPollBoardMemberPermission | IsPollAnswerWorkSpaceOwnerPermission]
+    permission_classes = [IsAdminUser | IsPollBoardAdminPermission | IsPollBoardMemberPermission | IsPollBoardWorkSpaceOwnerPermission]
 
     @action(detail=True, url_path='retract-all-votes', methods=['delete'])
     def retract_all_votes(self, request, pk):
