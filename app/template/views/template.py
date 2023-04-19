@@ -44,6 +44,7 @@ class TemplateViewSet(ListModelMixin, RetrieveModelMixin, viewsets.GenericViewSe
 
 class CreateBoardFromTemplateViewSet(viewsets.GenericViewSet):
     serializer_class = BoardOverviewSerializer
+    queryset = Board.objects.all()
 
     @action(detail=True, methods=['get'], url_path='create-board-from-template/(?P<w_id>[^/.]+)')
     def create_board_from_template(self, request, pk, w_id):
