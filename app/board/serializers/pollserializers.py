@@ -3,10 +3,17 @@ from board.models import Poll, PollAnswer
 
 
 class PollSerializer(serializers.ModelSerializer):
+    is_creator = serializers.SerializerMethodField()
     class Meta:
         model = Poll
-        fields = ['id', 'board', 'creator', 'question', 'description', 'is_open', 'is_multianswer', 'is_known']
+        fields = ['id', 'board', 'creator', 'question', 'description', 'is_open', 'is_multianswer', 'is_known', 'is_creator']
         read_only_fields = ['id']
+
+    def get_is_creator(self, poll):
+        user = self.context.get('request').user.profile
+        if poll.creator == user:
+            return True
+        return False
 
 
 class PollAnswerSerializer(serializers.ModelSerializer):
