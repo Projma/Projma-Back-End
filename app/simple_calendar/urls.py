@@ -11,5 +11,6 @@ router.register('meeting', meeting.DeleteMeetingViewSet, basename='meeting')
 router.register('meeting', meeting.GetCalendarMeetingsViewSet, basename='meeting')
 router.register('meeting', meeting.StartMeetingViewSet, basename='meeting')
 router.register('meeting', meeting.EndMeetingViewSet, basename='meeting')
+router.register('meeting', meeting.GetMeetingViewSet, basename='meeting')
 
 urlpatterns = router.urls
