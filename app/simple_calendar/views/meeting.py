@@ -13,18 +13,6 @@ from datetime import timedelta, datetime, timezone
 from simple_calendar.utils import *
 from ProjmaBackend.settings import SKYROOM_API_KEY
 
-# class NewCommentViewSet(viewsets.GenericViewSet):
-#     queryset = Task.objects.all()
-#     serializer_class = CommentSerializer
-#     permission_classes = [IsAdminUser | IsTaskBoardMember | IsTaskBoardAdmin | IsTaskBoardWorkSpaceOwner]
-#     @action(detail=True, methods=['post'], url_path='new-comment')
-#     def new_comment(self, request, pk):
-#         task = self.get_object()
-#         serializer = CommentSerializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         serializer.save(task=task,sender=request.user.profile)
-#         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
 
 class CreateMeetingViewSet(viewsets.GenericViewSet):
     queryset = SimpleCalendar.objects.all()
@@ -166,7 +154,6 @@ class EndMeetingViewSet(viewsets.GenericViewSet):
         sky = SkyroomAPI(SKYROOM_API_KEY)
         params = dict()
         params['room_id'] = meet.room_id
-        print(params)
         try:
             result = sky.deleteRoom(params)
         except APIException as e:
