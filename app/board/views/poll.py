@@ -30,6 +30,12 @@ class PollViewSet(CreateModelMixin,
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
+    def destroy(self, request, *args, **kwargs):
+        poll = self.get_object()
+        if request.user.profile == poll.creator or request.user.is_staff:
+            return super().destroy(request, *args, **kwargs)
+        return Response("Only the creator of poll can delete it.", status=status.HTTP_400_BAD_REQUEST)
+
     @action(detail=True, url_path='retract-all-votes', methods=['delete'])
     def retract_all_votes(self, request, pk):
         poll = self.get_object()
