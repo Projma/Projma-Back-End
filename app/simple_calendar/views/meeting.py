@@ -79,7 +79,7 @@ class GetMeetingViewSet(viewsets.GenericViewSet):
     serializer_class = MeetingSerializer
     permission_classes = [IsAdminUser | IsMeetingBoardMember | IsMeetingBoardAdmin | IsMeetingBoardWorkSpaceOwner]
 
-    @action(detail=True, methods=['get'], url_path='get-meeting')
+    @action(detail=True, methods=['get'], url_path='get-meeting', url_name='get-meeting')
     def get_meeting(self, request, pk):
         meet = self.get_object()
         serializer = self.get_serializer(instance=meet)
@@ -98,9 +98,9 @@ class StartMeetingViewSet(viewsets.GenericViewSet):
         if meet.status != Meeting.NOTSTARTED:
             return Response(f'Meeting is {meet.status}', status=status.HTTP_400_BAD_REQUEST)
         if meet.repeat == 0 and datetime.now().date() != meet.from_date:
-            return Response(f'Start is available only in {meet.from_date}')
+            return Response(f'Start is available only in {meet.from_date}', status=status.HTTP_400_BAD_REQUEST)
         if (datetime.now() + timedelta(minutes=5)).time() < meet.start:
-            return Response(f'Start will be available 5 minutes befor {meet.start}')
+            return Response(f'Start will be available 5 minutes befor {meet.start}', status=status.HTTP_400_BAD_REQUEST)
 
         sky = SkyroomAPI(SKYROOM_API_KEY)
         create_room_params = {
@@ -163,4 +163,5 @@ class EndMeetingViewSet(viewsets.GenericViewSet):
 
         meet.status = Meeting.FINISHED if meet.repeat == 0 else Meeting.NOTSTARTED
         meet.save()
+        print(self.get_serializer(instance=meet).data)
         return Response(self.get_serializer(instance=meet).data, status=status.HTTP_200_OK)
