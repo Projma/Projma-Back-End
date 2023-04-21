@@ -39,7 +39,6 @@ class ChartViewSet(viewsets.GenericViewSet):
             chart.add_y(y)
         return Response(chart.data, status=200)
 
-
     @action(detail=True, methods=['get'], url_path='board-tasklists-activity')
     def board_tasklists_status(self, request, *args, **kwargs):
         b_id = self.get_object().pk
@@ -58,3 +57,41 @@ class ChartViewSet(viewsets.GenericViewSet):
         for y in ydata:
             chart.add_y(y)
         return Response(chart.data, status=200)
+
+    @action(detail=True, methods=['get'], url_path='board-label-activity')
+    def board_label_activity(self, request, *args, **kwargs):
+        board = self.get_object()
+        alltasks = []
+        for tl in board.tasklists.all():
+            alltasks += tl.tasks.all()
+        chart = Chart('میزان فعالیت برحسب برچسب', 'برچسب', 'تعداد ساعات تسک ها')
+        labels = list(board.labels.all())
+        print(labels)
+        for lb in labels:
+            chart.add_x(lb.title)
+            sum = 0
+            for t in alltasks:
+                if lb in t.labels.all():
+                    sum += t.spend
+            chart.add_y(sum)
+        print(chart.xdata)
+        print(chart.ydata)
+        return Response(chart.data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['get'], url_path='board-progress')
+    def board_progress(self, request, pk):
+        board = self.get_object()
+        chart = Chart('میزان پیشروی', 'لیست', 'وضعیت')
+        est_data = []
+        sp_data = []
+        for tl in board.tasklists.all():
+            chart.add_x(tl.title)
+            est = 0
+            spend = 0
+            for t in tl.tasks.all():
+                est += t.estimate
+                spend += t.spend
+            est_data.append(est)
+            sp_data.append(spend)
+        chart.ydata = [{'estimate': est_data, 'spend':sp_data}]
+        return Response(chart.data, status=status.HTTP_200_OK)
