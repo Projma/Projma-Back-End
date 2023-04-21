@@ -117,7 +117,7 @@ class Meeting(models.Model):
         singlemeet.creator = self.creator
         singlemeet.calendar = self.calendar
         singlemeet.color = self.color
-        return  singlemeet
+        return singlemeet
 
     def duplicate(self, from_date, until_date):
         cur_date = self.from_date
