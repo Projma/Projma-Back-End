@@ -74,14 +74,27 @@ class GetCalendarMeetingsViewSet(viewsets.GenericViewSet):
     @action(detail=True, methods=['get'], url_path='calendar-meetings')
     def get_calendar_meetings(self, request, pk):
         try:
-            from_date = datetime.strptime(request.GET.get('from_date'), "%Y-%m-%d")
-            until_date = datetime.strptime(request.GET.get('until_date'), "%Y-%m-%d")
+            from_date = (datetime.strptime(request.GET.get('from_date'), "%Y-%m-%d")).date()
+            until_date = (datetime.strptime(request.GET.get('until_date'), "%Y-%m-%d")).date()
         except TypeError as e:
             return Response(e.args + ('you may miss the start and end params in query',),
                             status=status.HTTP_400_BAD_REQUEST)
 
         cal = self.get_object()
-        serializer = self.get_serializer(instance=cal.get_meetings(from_date, until_date), many=True)
+        meets = cal.get_meetings(from_date, until_date, True)
+        serializer = self.get_serializer(instance=meets, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class GetMeetingViewSet(viewsets.GenericViewSet):
+    queryset = Meeting.objects.all()
+    serializer_class = MeetingSerializer
+    permission_classes = [IsAdminUser | IsMeetingBoardMember | IsMeetingBoardAdmin | IsMeetingBoardWorkSpaceOwner]
+
+    @action(detail=True, methods=['get'], url_path='get-meeting')
+    def get_meeting(self, request, pk):
+        meet = self.get_object()
+        serializer = self.get_serializer(instance=meet)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -94,6 +107,13 @@ class StartMeetingViewSet(viewsets.GenericViewSet):
     @action(detail=True, methods=['get'], url_path='start-meeting')
     def start_meeting(self, request, pk):
         meet = self.get_object()
+        if meet.status != Meeting.NOTSTARTED:
+            return Response(f'Meeting is {meet.status}', status=status.HTTP_400_BAD_REQUEST)
+        if meet.repeat == 0 and datetime.now().date() != meet.from_date:
+            return Response(f'Start is available only in {meet.from_date}')
+        if (datetime.now() + timedelta(minutes=5)).time() < meet.start:
+            return Response(f'Start will be available 5 minutes befor {meet.start}')
+
         sky = SkyroomAPI(SKYROOM_API_KEY)
         create_room_params = {
             'name': f'{meet.title}-{meet.id}',
@@ -120,7 +140,6 @@ class StartMeetingViewSet(viewsets.GenericViewSet):
         }
 
         try:
-            print(create_link_params)
             link = sky.createLoginUrl(create_link_params)
         except APIException as e:
             sky.deleteRoom({'room_id': roomid})
@@ -131,6 +150,7 @@ class StartMeetingViewSet(viewsets.GenericViewSet):
 
         meet.room_id = roomid
         meet.link = link
+        meet.status = Meeting.HOLDING
         meet.save()
         return Response(self.get_serializer(instance=meet).data, status=status.HTTP_200_OK)
 
@@ -154,4 +174,6 @@ class EndMeetingViewSet(viewsets.GenericViewSet):
         except HTTPException:
             return Response(f'Request failed', status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
+        meet.status = Meeting.FINISHED if meet.repeat == 0 else Meeting.NOTSTARTED
+        meet.save()
         return Response(self.get_serializer(instance=meet).data, status=status.HTTP_200_OK)
