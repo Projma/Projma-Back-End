@@ -1,5 +1,6 @@
 from datetime import timedelta, datetime, timezone
 from django.forms.models import model_to_dict
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
@@ -7,6 +8,7 @@ from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework.permissions import IsAdminUser
 from task.models import Task
+from board.models import Board
 from ..models import SimpleCalendar, Event
 from ..serializers.simplecalendarserializers import  SimpleCalendarSerializer
 from ..serializers.eventserializers import EventSerializer
@@ -20,6 +22,13 @@ class SimpleCalendarViewSet(mixins.CreateModelMixin,
     queryset = SimpleCalendar.objects.all()
     serializer_class = SimpleCalendarSerializer
     permission_classes = [IsAdminUser | IsCalendarBoardMember | IsCalendarBoardAdmin | IsCalendarBoardWorkSpaceOwner]
+
+    def create(self, request, *args, **kwargs):
+        board_id = request.data.get('board')
+        board = get_object_or_404(Board, pk=board_id)
+        if board and request.user.profile in board.admins.all():
+            return super().create(request, *args, **kwargs)
+        return Response("Only admins can create calendar", status=status.HTTP_403_FORBIDDEN)
 
     @action(detail=True, methods=['get'], url_path='events', url_name='events', serializer_class=EventSerializer)
     def get_period_events(self, request, pk):
