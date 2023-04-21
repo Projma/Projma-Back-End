@@ -30,7 +30,7 @@ class ChartViewSet(viewsets.GenericViewSet):
                     .annotate(estimates=Sum('tasks__estimate'),
                               dons=Sum('tasks__spend'),
                               out_of_estimates=Sum('tasks__out_of_estimate')).all()
-        chart = Chart('فعالیت اعضا', 'فرد', 'فعالیت')
+        chart = Chart('فعالیت اعضا', 'اعضا', 'فعالیت')
         xdata = [m['user__username'] for m in qs.values('user__username')]
         ydata = self.get_estimate_and_done_and_out(qs)
         for x in xdata:
@@ -50,7 +50,7 @@ class ChartViewSet(viewsets.GenericViewSet):
                     .annotate(estimates=Sum('tasks__estimate'),
                               dons=Sum('tasks__spend'),
                               out_of_estimates=Sum('tasks__out_of_estimate')).all()
-        chart = Chart('نتایج فعالیت ها', 'لیست فعالیت', 'فعالیت')
+        chart = Chart('نتایج فعالیت ها', 'لیست فعالیت ها', 'فعالیت')
         xdata = [tl['title'] for tl in qs.values('title')]
         ydata = self.get_estimate_and_done_and_out(qs)
         for x in xdata:
