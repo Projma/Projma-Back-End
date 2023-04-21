@@ -4,6 +4,7 @@ from rest_framework.test import APIClient
 from simple_calendar.models import Event
 import pytest
 
+
 @pytest.mark.django_db
 class TestCreateEvent:
     def create_calendar_api(create_board, create_calendar, authenticated=True):
