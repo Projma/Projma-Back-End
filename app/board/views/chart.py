@@ -14,9 +14,9 @@ class ChartViewSet(viewsets.GenericViewSet):
     queryset = Board.objects.all()
 
     def get_estimate_and_done_and_out(self, qs):
-        estimates_data = [item['estimates'] for item in qs.values('estimates')]
-        dons_data = [item['dons'] for item in qs.values('dons')]
-        out_of_estimates_data = [item['out_of_estimates'] for item in qs.values('out_of_estimates')]
+        estimates_data = [item['estimates'] if item['estimates'] else 0 for item in qs.values('estimates')]
+        dons_data = [item['dons'] if item['dons'] else 0 for item in qs.values('dons')]
+        out_of_estimates_data = [item['out_of_estimates'] if item['out_of_estimates'] else 0 for item in qs.values('out_of_estimates')]
         ydata = [{'estimates':estimates_data}, {'dons': dons_data}, {'out_of_estimates': out_of_estimates_data}]
         return ydata
 
