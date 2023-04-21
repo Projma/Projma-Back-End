@@ -14,9 +14,9 @@ class ChartViewSet(viewsets.GenericViewSet):
     queryset = Board.objects.all()
 
     def get_estimate_and_done_and_out(self, qs):
-        estimates_data = [item['estimates'] for item in qs.values('estimates')]
-        dons_data = [item['dons'] for item in qs.values('dons')]
-        out_of_estimates_data = [item['out_of_estimates'] for item in qs.values('out_of_estimates')]
+        estimates_data = [item['estimates'] if item['estimates'] else 0 for item in qs.values('estimates')]
+        dons_data = [item['dons'] if item['dons'] else 0 for item in qs.values('dons')]
+        out_of_estimates_data = [item['out_of_estimates'] if item['out_of_estimates'] else 0 for item in qs.values('out_of_estimates')]
         ydata = [{'estimates':estimates_data}, {'dons': dons_data}, {'out_of_estimates': out_of_estimates_data}]
         return ydata
 
@@ -30,7 +30,7 @@ class ChartViewSet(viewsets.GenericViewSet):
                     .annotate(estimates=Sum('tasks__estimate'),
                               dons=Sum('tasks__spend'),
                               out_of_estimates=Sum('tasks__out_of_estimate')).all()
-        chart = Chart('فعالیت اعضا', 'فرد', 'فعالیت')
+        chart = Chart('فعالیت اعضا', 'اعضا', 'فعالیت')
         xdata = [m['user__username'] for m in qs.values('user__username')]
         ydata = self.get_estimate_and_done_and_out(qs)
         for x in xdata:
@@ -50,7 +50,7 @@ class ChartViewSet(viewsets.GenericViewSet):
                     .annotate(estimates=Sum('tasks__estimate'),
                               dons=Sum('tasks__spend'),
                               out_of_estimates=Sum('tasks__out_of_estimate')).all()
-        chart = Chart('نتایج فعالیت ها', 'لیست فعالیت', 'فعالیت')
+        chart = Chart('نتایج فعالیت ها', 'لیست فعالیت ها', 'فعالیت')
         xdata = [tl['title'] for tl in qs.values('title')]
         ydata = self.get_estimate_and_done_and_out(qs)
         for x in xdata:
