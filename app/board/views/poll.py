@@ -21,6 +21,26 @@ class PollViewSet(CreateModelMixin,
     queryset = Poll.objects.all()
     permission_classes = [IsAdminUser | IsPollBoardAdminPermission | IsPollBoardMemberPermission | IsPollBoardWorkSpaceOwnerPermission]
 
+    def create(self, request, *args, **kwargs):
+        data = {**request.data}
+        data['creator'] = request.user.profile.pk
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, context={'request': request})
+        return Response(serializer.data)
+
+    def destroy(self, request, *args, **kwargs):
+        poll = self.get_object()
+        if request.user.profile == poll.creator or request.user.is_staff:
+            return super().destroy(request, *args, **kwargs)
+        return Response("Only the creator of poll can delete it.", status=status.HTTP_400_BAD_REQUEST)
+
     @action(detail=True, url_path='retract-all-votes', methods=['delete'])
     def retract_all_votes(self, request, pk):
         poll = self.get_object()
@@ -41,19 +61,21 @@ class PollViewSet(CreateModelMixin,
     def show_result(self, request, pk):
         poll = self.get_object()
         if poll.is_known:
-            serializer = KnownPollSerializer(poll)
+            serializer = KnownPollSerializer(poll, context={'request': request})
         else:
-            serializer = UnknownPollSerializer(poll)
+            serializer = UnknownPollSerializer(poll, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True, url_path='close', methods=['patch'])
     def close_poll(self, request, pk):
         poll = self.get_object()
-        if poll.is_open:
+        if not poll.is_open:
+            return Response("Poll is already closed.", status=status.HTTP_400_BAD_REQUEST)
+        elif poll.creator == request.user.profile or request.user.is_staff:
             poll.is_open = False
             poll.save()
             return Response("Ok", status=status.HTTP_200_OK)
-        return Response("Poll is already closed.", status=status.HTTP_400_BAD_REQUEST)
+        return Response("Only the creator of poll can close it.", status=status.HTTP_400_BAD_REQUEST)
 
 
 class PollAnswerViewSet(CreateModelMixin,

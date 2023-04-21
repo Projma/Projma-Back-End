@@ -109,6 +109,7 @@ class Poll(models.Model):
     is_open = models.BooleanField(default=True)
     is_multianswer = models.BooleanField(default=False)
     is_known = models.BooleanField(default=True)
+    creator = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='polls')
 
 
 class PollAnswer(models.Model):
