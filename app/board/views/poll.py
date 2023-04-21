@@ -21,6 +21,15 @@ class PollViewSet(CreateModelMixin,
     queryset = Poll.objects.all()
     permission_classes = [IsAdminUser | IsPollBoardAdminPermission | IsPollBoardMemberPermission | IsPollBoardWorkSpaceOwnerPermission]
 
+    def create(self, request, *args, **kwargs):
+        data = {**request.data}
+        data['creator'] = request.user.profile.pk
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
     @action(detail=True, url_path='retract-all-votes', methods=['delete'])
     def retract_all_votes(self, request, pk):
         poll = self.get_object()

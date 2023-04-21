@@ -5,7 +5,7 @@ from board.models import Poll, PollAnswer
 class PollSerializer(serializers.ModelSerializer):
     class Meta:
         model = Poll
-        fields = ['id', 'board', 'question', 'description', 'is_open', 'is_multianswer', 'is_known']
+        fields = ['id', 'board', 'creator', 'question', 'description', 'is_open', 'is_multianswer', 'is_known']
         read_only_fields = ['id']
 
 
