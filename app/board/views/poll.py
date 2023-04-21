@@ -41,9 +41,9 @@ class PollViewSet(CreateModelMixin,
     def show_result(self, request, pk):
         poll = self.get_object()
         if poll.is_known:
-            serializer = KnownPollSerializer(poll)
+            serializer = KnownPollSerializer(poll, context={'request': request})
         else:
-            serializer = UnknownPollSerializer(poll)
+            serializer = UnknownPollSerializer(poll, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True, url_path='close', methods=['patch'])
