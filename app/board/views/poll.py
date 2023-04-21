@@ -64,11 +64,13 @@ class PollViewSet(CreateModelMixin,
     @action(detail=True, url_path='close', methods=['patch'])
     def close_poll(self, request, pk):
         poll = self.get_object()
-        if poll.is_open:
+        if not poll.is_open:
+            return Response("Poll is already closed.", status=status.HTTP_400_BAD_REQUEST)
+        elif poll.creator == request.user.profile or request.user.is_staff:
             poll.is_open = False
             poll.save()
             return Response("Ok", status=status.HTTP_200_OK)
-        return Response("Poll is already closed.", status=status.HTTP_400_BAD_REQUEST)
+        return Response("Only the creator of poll can close it.", status=status.HTTP_400_BAD_REQUEST)
 
 
 class PollAnswerViewSet(CreateModelMixin,
