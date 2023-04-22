@@ -23,12 +23,12 @@ class SimpleCalendarViewSet(mixins.CreateModelMixin,
     serializer_class = SimpleCalendarSerializer
     permission_classes = [IsAdminUser | IsCalendarBoardMember | IsCalendarBoardAdmin | IsCalendarBoardWorkSpaceOwner]
 
-    def create(self, request, *args, **kwargs):
-        board_id = request.data.get('board')
-        board = get_object_or_404(Board, pk=board_id)
-        if board and request.user.profile in board.admins.all():
-            return super().create(request, *args, **kwargs)
-        return Response("Only admins can create calendar", status=status.HTTP_403_FORBIDDEN)
+    # def create(self, request, *args, **kwargs):
+    #     board_id = request.data.get('board')
+    #     board = get_object_or_404(Board, pk=board_id)
+    #     if board and request.user.profile in board.admins.all():
+    #         return super().create(request, *args, **kwargs)
+    #     return Response("Only admins can create calendar", status=status.HTTP_403_FORBIDDEN)
 
     @action(detail=True, methods=['get'], url_path='events', url_name='events', serializer_class=EventSerializer)
     def get_period_events(self, request, pk):
