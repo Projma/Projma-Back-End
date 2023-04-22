@@ -64,7 +64,7 @@ class ChartViewSet(viewsets.GenericViewSet):
         alltasks = []
         for tl in board.tasklists.all():
             alltasks += tl.tasks.all()
-        chart = Chart('میزان فعالیت برحسب برچسب', 'برچسب', 'تعداد ساعات تسک ها')
+        chart = Chart('میزان فعالیت برحسب برچسب', 'برچسب', 'ساعت')
         labels = list(board.labels.all())
         print(labels)
         for lb in labels:
