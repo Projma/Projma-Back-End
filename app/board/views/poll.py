@@ -22,7 +22,8 @@ class PollViewSet(CreateModelMixin,
     permission_classes = [IsAdminUser | IsPollBoardAdminPermission | IsPollBoardMemberPermission | IsPollBoardWorkSpaceOwnerPermission]
 
     def create(self, request, *args, **kwargs):
-        data = {**request.data}
+        # data = {**request.data}
+        data = request.data.copy()
         data['creator'] = request.user.profile.pk
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
