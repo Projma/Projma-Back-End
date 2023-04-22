@@ -125,7 +125,7 @@ class TestDeleteAnswer:
 @pytest.mark.django_db
 class TestVote:
     def test_vote_once_returns_200(self, create_board, create_poll, create_answer, api_client):
-        response = TestCreatePoll.create_poll(create_board, create_poll)
+        response = TestCreatePoll.create_poll(create_board, create_poll, is_multianswer=True)
         poll_id = response.data['id']
         response = create_answer(poll_id, text='ans1', order=1)
         ans1 = response.data
@@ -185,7 +185,7 @@ class TestVote:
 @pytest.mark.django_db
 class TestRetractVotes:
     def test_retract_votes_returns_204(self, create_board, create_poll, create_answer, api_client):
-        response = TestCreatePoll.create_poll(create_board, create_poll)
+        response = TestCreatePoll.create_poll(create_board, create_poll, is_multianswer=True)
         poll_id = response.data['id']
         response = create_answer(poll_id, text='ans1', order=1)
         ans1 = response.data
