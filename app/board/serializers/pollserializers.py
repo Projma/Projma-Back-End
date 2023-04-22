@@ -1,6 +1,7 @@
+from django.db.models import QuerySet
 from rest_framework import serializers
 from board.models import Poll, PollAnswer
-
+from accounts.models import Profile
 
 class PollSerializer(serializers.ModelSerializer):
     is_creator = serializers.SerializerMethodField()
@@ -57,13 +58,35 @@ class UnknownAnswerSerializer(serializers.ModelSerializer):
 
 class KnownPollSerializer(serializers.ModelSerializer):
     answers = KnownAnswerSerializer(many=True)
+    all_voters_count = serializers.SerializerMethodField()
     class Meta:
         model = Poll
-        fields = ['id', 'is_open', 'answers']
+        fields = ['id', 'is_open', 'answers', 'all_voters_count']
+
+    def get_all_voters_count(self, poll: Poll):
+        answers = poll.answers.all()
+        voters = None
+        for ans in answers:
+            if voters:
+                voters = voters.union(ans.voters.all())
+            else:
+                voters = ans.voters.all()
+        return len(voters)
 
 
 class UnknownPollSerializer(serializers.ModelSerializer):
     answers = UnknownAnswerSerializer(many=True)
+    all_voters_count = serializers.SerializerMethodField()
     class Meta:
         model = Poll
-        fields = ['id', 'is_open', 'answers']
+        fields = ['id', 'is_open', 'answers', 'all_voters_count']
+
+    def get_all_voters_count(self, poll: Poll):
+        answers = poll.answers.all()
+        voters = None
+        for ans in answers:
+            if voters:
+                voters = voters.union(ans.voters.all())
+            else:
+                voters = ans.voters.all()
+        return len(voters)
