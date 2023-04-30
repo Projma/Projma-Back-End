@@ -8,7 +8,7 @@ from simple_calendar.models import Event
 
 now = datetime.now()
 EVENT_TITLE = "event_1"
-EVENT_TIME = datetime(now.year, now.month, now.day + 2, 23, 59, 59)
+EVENT_TIME = datetime(now.year, now.month, now.day, 23, 59, 59)
 EVENT_DURATION = 7
 EVENT_COLOR = '#B253b2'
 EVENT_TYPES = [x[0] for x in Event.EVENT_TYPE_CHOICES]
@@ -18,7 +18,7 @@ MEETING_TITLE = "meeting_1"
 MEETING_DESCRIPTION = 'meeting_description'
 MEETING_START = datetime.now().time()
 MEETING_END = datetime.now().time()
-MEETING_FROM_DATE = datetime(now.year, now.month, now.day + 2, 23, 59, 59).date()
+MEETING_FROM_DATE = datetime(now.year, now.month, now.day, 23, 59, 59).date()
 MEETING_UNTIL_DATE = MEETING_FROM_DATE
 MEETING_REPEAT = 0
 MEETING_COLOR = '#222222'
