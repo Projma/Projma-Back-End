@@ -14,12 +14,17 @@ class RetroSession(models.Model):
 
 
 class CardGroup(models.Model):
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=256)
     retro_session = models.ForeignKey(RetroSession, on_delete=models.CASCADE, related_name='card_groups')
 
 
 class RetroCard(models.Model):
     card_group = models.ForeignKey(CardGroup, on_delete=models.CASCADE, related_name='retro_cards')
+    text = models.CharField(max_length=256)
+
+    def init_group(self, session_id):
+        session = RetroSession.objects.get(session_id)
+        CardGroup.objects.create(name=self.text, retro_session=session)
 
 
 class RetroReaction(models.Model):
