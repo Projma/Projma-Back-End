@@ -1,6 +1,7 @@
 import pytest
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 from retro.models import RetroSession, RetroCard, CardGroup
 from accounts.models import Profile
 =======
@@ -10,10 +11,14 @@ from retro.models import RetroSession
 from retro.models import RetroSession, RetroCard, CardGroup
 from accounts.models import Profile
 >>>>>>> 1d61429 ([feat]: add retro models)
+=======
+from retro.models import RetroSession
+>>>>>>> 0c41274 ([feat]: start retro tests)
 
 
 @pytest.mark.django_db
 class TestCreateRetroSession:
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -72,4 +77,9 @@ class TestCreateRetroSession:
 >>>>>>> 0c41274 ([feat]: start retro tests)
 =======
 >>>>>>> 1d61429 ([feat]: add retro models)
+=======
+    def test_create_retro_session_success(self, create_board):
+        board = create_board()
+        # session = RetroSession.objects.create(board=None, attendees=[], admin=None)
+>>>>>>> 0c41274 ([feat]: start retro tests)
 
