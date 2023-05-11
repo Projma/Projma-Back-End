@@ -37,3 +37,4 @@ class RetroReaction(models.Model):
     ]
     type = models.CharField(max_length=7, choices=TYPE_CHOICES)
     card_group = models.ForeignKey(CardGroup, on_delete=models.CASCADE, related_name='retro_reactions')
+    reactor = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='retro_reactions')
