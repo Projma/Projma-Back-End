@@ -21,6 +21,7 @@ class CardGroup(models.Model):
 class RetroCard(models.Model):
     card_group = models.ForeignKey(CardGroup, on_delete=models.CASCADE, related_name='retro_cards', null=True)
     text = models.CharField(max_length=256)
+    is_positive = models.BooleanField()
 
     def init_group(self, session_id):
         session = RetroSession.objects.get(session_id)
