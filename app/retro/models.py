@@ -19,6 +19,7 @@ class RetroSession(models.Model):
 class CardGroup(models.Model):
     name = models.CharField(max_length=256)
     retro_session = models.ForeignKey(RetroSession, on_delete=models.CASCADE, related_name='card_groups')
+    is_discussed = models.BooleanField(default=False)
 
 
 class RetroCard(models.Model):
