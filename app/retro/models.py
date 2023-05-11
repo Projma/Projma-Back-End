@@ -12,6 +12,8 @@ class RetroSession(models.Model):
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='retro_sessions', null=True)
     attendees = models.ManyToManyField(Profile, related_name='retro_sessions')
     admin = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='administrating_retro_sessions', null=True)
+    participant_limitation = models.IntegerField(default=-1, help_text='the default is -1 which means no limitation')
+    topic_limitation = models.IntegerField(default=-1, help_text='the default is -1 which means no limitation')
 
 
 class CardGroup(models.Model):
