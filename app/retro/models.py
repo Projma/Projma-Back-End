@@ -4,7 +4,6 @@ from colorfield.fields import ColorField
 from accounts.models import Profile
 from board.models import Board
 from workspaces.models import WorkSpace
-from .types import Reaction
 
 # Create your models here.
 
@@ -13,7 +12,7 @@ class RetroSession(models.Model):
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='retro_sessions', null=True)
     attendees = models.ManyToManyField(Profile, related_name='retro_sessions')
     admin = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='administrating_retro_sessions', null=True)
-    participant_limitation = models.IntegerField(default=-1, help_text='the default is -1 which means no limitation')
+    vote_limitation = models.IntegerField(default=-1, help_text='the default is -1 which means no limitation')
 
 
 class CardGroup(models.Model):
@@ -34,11 +33,6 @@ class RetroCard(models.Model):
         self.save()
 
 class RetroReaction(models.Model):
-    TYPE_CHOICES = [
-        (Reaction.LIKE.name, Reaction.LIKE.value),
-        (Reaction.DISLIKE.name, Reaction.DISLIKE.value)
-    ]
-    type = models.CharField(max_length=7, choices=TYPE_CHOICES)
     card_group = models.ForeignKey(CardGroup, on_delete=models.CASCADE, related_name='retro_reactions')
     reactor = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='retro_reactions')
 
