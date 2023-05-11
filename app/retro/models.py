@@ -37,6 +37,7 @@ class RetroCard(models.Model):
 class RetroReaction(models.Model):
     card_group = models.ForeignKey(CardGroup, on_delete=models.CASCADE, related_name='retro_reactions')
     reactor = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='retro_reactions')
+    count = models.IntegerField(default=0)
 
     class Meta:
         unique_together = (('card_group', 'reactor'))
