@@ -1,6 +1,6 @@
-from enum import Enum
+from enum import IntEnum
 
-class RetroSteps(Enum):
+class RetroSteps(IntEnum):
     ICEBREAKER = 0
     REFLECT = 1
     GROUP = 2

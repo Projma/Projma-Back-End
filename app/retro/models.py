@@ -14,7 +14,7 @@ class RetroSession(models.Model):
     attendees = models.ManyToManyField(Profile, related_name='retro_sessions')
     admin = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='administrating_retro_sessions', null=True)
     vote_limitation = models.IntegerField(default=-1, help_text='the default is -1 which means no limitation')
-    retro_step = models.SmallIntegerField(default=RetroSteps.ICEBREAKER)
+    retro_step = models.SmallIntegerField(default=RetroSteps.ICEBREAKER.value)
 
 
 class CardGroup(models.Model):
