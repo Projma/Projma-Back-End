@@ -10,12 +10,13 @@ class BoardConsumer(WebsocketConsumer):
         #     self.room_group_name,
         #     self.channel_name
         # )
+        self.accept()
+
         self.send(json.dumps({
             'type': 'Test Message For Channel Connectivity',
             'message': 'Kire Khar :/',
         }))
 
-        self.accept()
     # async def connect(self):
     #     for key in self.scope.keys():
     #         print(key, self.scope[key])
