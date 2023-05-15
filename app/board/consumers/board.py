@@ -14,7 +14,7 @@ class BoardConsumer(WebsocketConsumer):
 
         self.send(json.dumps({
             'type': 'Test Message For Channel Connectivity',
-            'message': 'Kire Khar :/',
+            'message': 'Kosse nane chini KHARKOSDEH',
         }))
 
     # async def connect(self):
