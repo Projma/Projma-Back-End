@@ -12,7 +12,7 @@ class BoardConsumer(WebsocketConsumer):
         # )
         self.send(json.dumps({
             'type': 'Test Message For Channel Connectivity',
-            'message': '',
+            'message': 'Kire Khar :/',
         }))
 
         self.accept()
