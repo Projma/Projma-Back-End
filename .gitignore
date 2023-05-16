@@ -10,6 +10,7 @@
 db.sqlite3
 env/
 app/.idea
+.idea
 
 
 
