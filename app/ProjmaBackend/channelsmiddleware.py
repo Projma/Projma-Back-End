@@ -37,8 +37,9 @@ class JwtAuthMiddleware(BaseMiddleware):
         # Get the token
         try:
             token = parse_qs(scope["query_string"].decode("utf8"))["token"][0]
+            # boardid = parse_qs(scope["query_string"].decode("utf8"))["board"][0]
         except:
-            return  None
+            return None
 
         # Try to authenticate the user
         try:
@@ -51,17 +52,8 @@ class JwtAuthMiddleware(BaseMiddleware):
         else:
             #  Then token is valid, decode it
             decoded_data = jwt_decode(token, settings.SECRET_KEY, algorithms=["HS256"])
-            # print(decoded_data)
-            # Will return a dictionary like -
-            # {
-            #     "token_type": "access",
-            #     "exp": 1568770772,
-            #     "jti": "5c15e80d65b04c20ad34d77b6703251b",
-            #     "user_id": 6
-            # }
-
-            # Get the user using ID
             scope["user"] = await get_user(validated_token=decoded_data)
+
         return await super().__call__(scope, receive, send)
 
 

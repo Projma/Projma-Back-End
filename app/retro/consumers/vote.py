@@ -5,15 +5,30 @@ from channels.auth import login
 
 class VoteConsumer(WebsocketConsumer):
     def connect(self):
-        # self.room_group_name = 'X'
-        # async_to_sync(self.channel_layer.group_add)(
-        #     self.room_group_name,
-        #     self.channel_name
-        # )
+        user = self.scope['user']
+        self.room_group_name = 'X'
+        async_to_sync(self.channel_layer.group_add)(
+            self.room_group_name,
+            self.channel_name
+        )
         self.accept()
-        self.send(json.dumps({
-            'type': 'Test Message For Channel Connectivity',
-            'message': 'madar chini',
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {
+                'type': 'chat_message',
+                'message': f'{user.username} has opened to the board'
+            }
+        )
+        # self.send(json.dumps({
+        #     'type': 'Test Message For Channel Connectivity',
+        #     'message': 'madar chini',
+        # }))
+
+    def chat_message(self, event):
+        message = event['message']
+        self.send(text_data=json.dumps({
+            'type': 'info',
+            'message': message
         }))
 
     # async def connect(self):
