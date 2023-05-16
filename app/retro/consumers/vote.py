@@ -6,7 +6,9 @@ from channels.auth import login
 class VoteConsumer(WebsocketConsumer):
     def connect(self):
         user = self.scope['user']
-        self.room_group_name = 'X'
+        board = self.scope['board']
+
+        self.room_group_name = str(board.id)
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
             self.channel_name
