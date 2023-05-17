@@ -23,9 +23,11 @@ class SessionViewSet(RetrieveModelMixin, CreateModelMixin,
             session_id = self.kwargs.get('pk')
             session = get_object_or_404(RetroSession, pk=session_id)
             if session.retro_step == RetroSteps.ICEBREAKER:
-                return IceBreakerSerializer
+                return IceBreakerStepSerializer
             elif session.retro_step == RetroSteps.REFLECT:
-                return ReflectSerializer
+                return ReflectStepSerializer
+            elif session.retro_step == RetroSteps.GROUP:
+                return GroupStepSerializer
 
     def create(self, request, *args, **kwargs):
         board = get_object_or_404(Board, pk=request.data.get('board'))
