@@ -15,6 +15,8 @@ from rest_framework.authtoken.models import Token
 from urllib.parse import parse_qs
 from channels.db import database_sync_to_async
 from django.contrib.auth.models import AnonymousUser
+from board.models import Board
+from asgiref.sync import sync_to_async
 
 
 @database_sync_to_async
@@ -37,31 +39,25 @@ class JwtAuthMiddleware(BaseMiddleware):
         # Get the token
         try:
             token = parse_qs(scope["query_string"].decode("utf8"))["token"][0]
+            boardid = parse_qs(scope["query_string"].decode("utf8"))["board"][0]
+            boardid = int(boardid)
         except:
-            return  None
+            return None
 
         # Try to authenticate the user
         try:
             # This will automatically validate the token and raise an error if token is invalid
             UntypedToken(token)
+            board = await sync_to_async(Board.objects.get)(id=boardid)
         except (InvalidToken, TokenError) as e:
             # Token is invalid
             # print(e)
             return None
-        else:
-            #  Then token is valid, decode it
-            decoded_data = jwt_decode(token, settings.SECRET_KEY, algorithms=["HS256"])
-            # print(decoded_data)
-            # Will return a dictionary like -
-            # {
-            #     "token_type": "access",
-            #     "exp": 1568770772,
-            #     "jti": "5c15e80d65b04c20ad34d77b6703251b",
-            #     "user_id": 6
-            # }
 
-            # Get the user using ID
-            scope["user"] = await get_user(validated_token=decoded_data)
+        #  Then token is valid, decode it
+        decoded_data = jwt_decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+        scope["user"] = await get_user(validated_token=decoded_data)
+        scope["board"] = board
         return await super().__call__(scope, receive, send)
 
 
