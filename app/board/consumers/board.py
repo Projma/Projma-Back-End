@@ -45,7 +45,8 @@ class BoardConsumer(WebsocketConsumer):
             board = Board.objects.get(id=board_id)
         except:
             return {'code': 1, 'message': 'Board id is not valid'}
-        if self.USER not in board.members.all() or self.USER in board.admins.all():
+        if self.USER.profile not in board.members.all() | board.admins.all() \
+                or self.USER.profile != board.workspace.owner:
             return {'code': 1, 'message': 'You dont have permission to access this board'}
 
         self.BOARD_GROUP = f'board_{board.id}'
