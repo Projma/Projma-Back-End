@@ -30,6 +30,8 @@ class SessionViewSet(RetrieveModelMixin, CreateModelMixin,
                 return GroupStepSerializer
             elif session.retro_step == RetroSteps.VOTE:
                 return VoteStepSerializer
+            else:
+                return DiscussStepSerializer
 
     def get_serializer_context(self):
         return super().get_serializer_context()

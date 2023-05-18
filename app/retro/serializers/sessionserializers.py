@@ -2,7 +2,7 @@ from django.db.models import Sum
 from rest_framework import serializers
 from retro.models import RetroSession, CardGroup, RetroCard, RetroReaction
 from retro.serializers.cardserializer import RetroCardSerializer
-from retro.serializers.groupserializer import CardGroupSerializer
+from retro.serializers.groupserializer import CardGroupSerializer, DiscussCardGroupSerializer
 from retro.serializers.reactionserializer import RetroReactionSerializer
 from accounts.serializers import PublicInfoProfileSerializer
 
@@ -90,3 +90,16 @@ class VoteStepSerializer(serializers.ModelSerializer):
         if team_votes['count__sum']:
             votes = votes - team_votes['count__sum']
         return votes
+
+
+class DiscussStepSerializer(serializers.ModelSerializer):
+    groups = serializers.SerializerMethodField()
+    class Meta:
+        model = RetroSession
+        fields = ['id', 'groups']
+
+    def get_groups(self, obj:RetroSession):
+        cgs = obj.card_groups.all()
+        serializer = DiscussCardGroupSerializer(cgs, many=True)
+        data = sorted(serializer.data, key=lambda x:x['votes'], reverse=True)
+        return data
