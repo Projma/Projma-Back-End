@@ -21,17 +21,12 @@ class SessionViewSet(RetrieveModelMixin, CreateModelMixin,
             return CreateSessionSerializer
         if self.request.method == 'GET':
             session_id = self.kwargs.get('pk')
-            session, _ = self.queryset.get_or_create(pk=session_id)
-            if session.retro_step == RetroSteps.ICEBREAKER:
-                return IceBreakerStepSerializer
-            elif session.retro_step == RetroSteps.REFLECT:
-                return ReflectStepSerializer
-            elif session.retro_step == RetroSteps.GROUP:
-                return GroupStepSerializer
-            elif session.retro_step == RetroSteps.VOTE:
-                return VoteStepSerializer
+            session = self.queryset.filter(pk=session_id).first()
+            serializer_classes = [IceBreakerStepSerializer, ReflectStepSerializer, GroupStepSerializer, VoteStepSerializer]
+            if session:
+                return serializer_classes[session.retro_step]
             else:
-                return DiscussStepSerializer
+                return CreateSessionSerializer
 
     def get_serializer_context(self):
         return super().get_serializer_context()
