@@ -1,7 +1,9 @@
+from django.db.models import Sum
 from rest_framework import serializers
-from retro.models import RetroSession, CardGroup, RetroCard
+from retro.models import RetroSession, CardGroup, RetroCard, RetroReaction
 from retro.serializers.cardserializer import RetroCardSerializer
 from retro.serializers.groupserializer import CardGroupSerializer
+from retro.serializers.reactionserializer import RetroReactionSerializer
 from accounts.serializers import PublicInfoProfileSerializer
 
 
@@ -26,6 +28,7 @@ class ReflectStepSerializer(serializers.ModelSerializer):
     class Meta:
         model = RetroSession
         fields = ['id', 'board', 'admin', 'retro_step', 'cards', 'groups']
+        read_only_fields = ['id', 'board', 'admin']
 
     def get_cards(self, obj:RetroSession):
         queryset = RetroCard.objects.select_related('card_group__retro_session').\
@@ -44,8 +47,46 @@ class GroupStepSerializer(serializers.ModelSerializer):
     class Meta:
         model = RetroSession
         fields = ['id', 'board', 'admin', 'retro_step', 'groups']
+        read_only_fields = ['id', 'board', 'admin']
 
     def get_groups(self, obj:RetroSession):
         queryset = CardGroup.objects.filter(retro_session__pk=obj.pk).all()
         serializer = CardGroupSerializer(queryset, many=True)
         return serializer.data
+
+
+class VoteStepSerializer(serializers.ModelSerializer):
+    group_votes = serializers.SerializerMethodField()
+    user_votes = serializers.SerializerMethodField()
+    team_votes = serializers.SerializerMethodField()
+    class Meta:
+        model = RetroSession
+        fields = ['id', 'board', 'admin', 'group_votes', 'user_votes', 'team_votes']
+        read_only_fields = ['id', 'board', 'admin']
+
+    def get_reactions(self, obj:RetroSession, all=False):
+        queryset = RetroReaction.objects.filter(card_group__retro_session__pk=obj.pk)
+        if not all:
+            queryset = queryset.filter(reactor=self.context['request'].user.profile).all()
+        return queryset
+
+    def get_group_votes(self, obj:RetroSession):
+        queryset = self.get_reactions(obj)
+        serializer = RetroReactionSerializer(queryset, many=True)
+        return serializer.data
+
+    def get_user_votes(self, obj:RetroSession):
+        queryset = self.get_reactions(obj)
+        user_votes = queryset.aggregate(Sum('count'))
+        votes = obj.vote_limitation
+        if user_votes['count__sum']:
+            votes = votes - user_votes['count__sum']
+        return votes
+
+    def get_team_votes(self, obj:RetroSession):
+        queryset = self.get_reactions(obj, True)
+        team_votes = queryset.aggregate(Sum('count'))
+        votes = obj.vote_limitation * len(obj.attendees.all())
+        if team_votes['count__sum']:
+            votes = votes - team_votes['count__sum']
+        return votes
