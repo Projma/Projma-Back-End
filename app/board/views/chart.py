@@ -9,7 +9,7 @@ from task.models import Task
 from board.models import Board
 from ..chart_model import Chart
 
-class ChartViewSet(viewsets.GenericViewSet):
+class ChartViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
     queryset = Board.objects.all()
 
