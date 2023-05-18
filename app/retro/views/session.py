@@ -21,7 +21,7 @@ class SessionViewSet(RetrieveModelMixin, CreateModelMixin,
             return CreateSessionSerializer
         if self.request.method == 'GET':
             session_id = self.kwargs.get('pk')
-            session = get_object_or_404(RetroSession, pk=session_id)
+            session, _ = self.queryset.get_or_create(pk=session_id)
             if session.retro_step == RetroSteps.ICEBREAKER:
                 return IceBreakerStepSerializer
             elif session.retro_step == RetroSteps.REFLECT:
