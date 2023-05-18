@@ -28,6 +28,11 @@ class SessionViewSet(RetrieveModelMixin, CreateModelMixin,
                 return ReflectStepSerializer
             elif session.retro_step == RetroSteps.GROUP:
                 return GroupStepSerializer
+            elif session.retro_step == RetroSteps.VOTE:
+                return VoteStepSerializer
+
+    def get_serializer_context(self):
+        return super().get_serializer_context()
 
     def create(self, request, *args, **kwargs):
         board = get_object_or_404(Board, pk=request.data.get('board'))
