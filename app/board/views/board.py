@@ -152,6 +152,11 @@ class RemoveOrJoinToBoardViewSet(viewsets.GenericViewSet):
             if user.profile in qs:
                 return Response('User is already a member of this board', status=status.HTTP_400_BAD_REQUEST)
             board.members.add(user.profile)
+            wowner = Profile.objects.filter(pk=board.workspace.owner).all()
+            for r in board.retro_sessions.all():
+                attendees = board.members.all() | board.admins.all() | wowner | r.attendees.all()
+                r.attendees.set(attendees)
+                r.save()
             return Response('User added to the board successfully', status=status.HTTP_200_OK)
         except Exception as e:
             return Response(f'{repr(e)}', status=status.HTTP_400_BAD_REQUEST)
@@ -170,6 +175,11 @@ class RemoveOrJoinToBoardViewSet(viewsets.GenericViewSet):
             elif user.profile in board.members.all():
                 board.members.remove(user.profile)
             board.save()
+            wowner = Profile.objects.filter(pk=board.workspace.owner).all()
+            for r in board.retro_sessions.all():
+                attendees = board.members.all() | board.admins.all() | wowner 
+                r.attendees.set(attendees)
+                r.save()
             return Response('User removed successfully', status=status.HTTP_200_OK)
         except Exception as e:
             return Response(f'{repr(e)}', status=status.HTTP_400_BAD_REQUEST)
