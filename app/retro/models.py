@@ -30,7 +30,7 @@ class RetroCard(models.Model):
     is_positive = models.BooleanField()
 
     def init_group(self, session_id):
-        session = RetroSession.objects.get(session_id)
+        session = RetroSession.objects.get(pk=session_id)
         cg = CardGroup.objects.create(name=self.text, retro_session=session)
         self.card_group = cg
         self.save()
