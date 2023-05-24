@@ -18,9 +18,16 @@ class ReflectConsumer(AsyncWebsocketConsumer):
     def create_card(self, data):
         obj = RetroCard.objects.create(**data)
         obj.init_group(self.SESSION_ID)
+
+    @sync_to_async
+    def get_query(self):
         positive_cards = RetroCard.objects.filter(card_group__retro_session=self.SESSION_ID).filter(is_positive=True).count()
         negative_cards = RetroCard.objects.filter(card_group__retro_session=self.SESSION_ID).filter(is_positive=False).count()
         return json.dumps({'positive_cnt': positive_cards, 'negative_cnt': negative_cards})
+
+    async def send_nums(self, event):
+        res = await self.get_query()
+        await self.send(res)
 
     async def receive(self, text_data=None, bytes_data=None):
         json_data = json.loads(text_data)
@@ -28,10 +35,11 @@ class ReflectConsumer(AsyncWebsocketConsumer):
         text = json_data['text']
         card_obj = {'text': text, 
                     'is_positive': is_positive}
-        res = await self.create_card(card_obj)
-        print(res)
-        self.send(res)
-        return res
+        await self.create_card(card_obj)
+        await self.channel_layer.group_send(self.GROUP_NAME,{
+            'type': 'send_nums',
+            'data': card_obj
+        })
 
     async def disconnect(self, code):
         await self.channel_layer.group_discard(self.GROUP_NAME, self.channel_name)
