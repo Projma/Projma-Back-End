@@ -61,7 +61,7 @@ class VoteStepSerializer(serializers.ModelSerializer):
     team_votes = serializers.SerializerMethodField()
     class Meta:
         model = RetroSession
-        fields = ['id', 'board', 'admin', 'group_votes', 'user_votes', 'team_votes']
+        fields = ['id', 'board', 'admin', 'retro_step', 'group_votes', 'user_votes', 'team_votes']
         read_only_fields = ['id', 'board', 'admin']
 
     def get_reactions(self, obj:RetroSession, all=False):
@@ -96,7 +96,7 @@ class DiscussStepSerializer(serializers.ModelSerializer):
     groups = serializers.SerializerMethodField()
     class Meta:
         model = RetroSession
-        fields = ['id', 'groups']
+        fields = ['id', 'retro_step', 'groups']
 
     def get_groups(self, obj:RetroSession):
         cgs = obj.card_groups.all()
