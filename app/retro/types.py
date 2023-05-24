@@ -6,8 +6,9 @@ class RetroSteps(IntEnum):
     GROUP = 2
     VOTE = 3
     DISCUSS = 4
+    END = 5
 
     def next(step):
-        if step == RetroSteps.DISCUSS:
-            return step
+        if step == RetroSteps.END:
+            return RetroSteps.END
         return RetroSteps(step + 1)

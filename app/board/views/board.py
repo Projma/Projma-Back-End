@@ -12,6 +12,7 @@ from board.permissions.boardpermissions import *
 from accounts.serializers import *
 from board.serializers.boardserializers import *
 from board.models import Board
+from retro.types import RetroSteps
 
 
 class BoardAdminViewSet(viewsets.GenericViewSet):
@@ -52,6 +53,15 @@ class BoardMembershipViewSet(viewsets.GenericViewSet):
         board = self.get_object()
         serializer = BoardMemberSerializer(instance=board)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['get'], url_path='get-open-retro')
+    def get_open_retro(self, request, pk):
+        board = self.get_object()
+        retro = board.retro_sessions.exclude(retro_step=RetroSteps.END).first()
+        response = {'retro': -1}
+        if retro:
+            response['retro'] = retro.pk
+        return Response(response, status=status.HTTP_200_OK)
 
 
 class BoardMembersViewSet(viewsets.GenericViewSet):
