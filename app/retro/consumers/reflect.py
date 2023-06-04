@@ -8,6 +8,9 @@ from retro.models import RetroSession, CardGroup, RetroCard
 
 
 class ReflectConsumer(SessionConsumer):
+    async def connect(self, *args, **kwargs):
+        return await super().connect(step_name='reflect')
+
     @sync_to_async
     def create_card(self, data):
         obj = RetroCard.objects.create(**data)
