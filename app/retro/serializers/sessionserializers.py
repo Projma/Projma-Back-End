@@ -2,7 +2,7 @@ from django.db.models import Sum
 from rest_framework import serializers
 from retro.models import RetroSession, CardGroup, RetroCard, RetroReaction
 from retro.serializers.cardserializer import RetroCardSerializer
-from retro.serializers.groupserializer import CardGroupSerializer, DiscussCardGroupSerializer
+from retro.serializers.groupserializer import CardGroupSerializer, DiscussCardGroupSerializer, GroupsWithCardsSerializer
 from retro.serializers.reactionserializer import RetroReactionSerializer
 from accounts.serializers import PublicInfoProfileSerializer
 
@@ -51,7 +51,7 @@ class GroupStepSerializer(serializers.ModelSerializer):
 
     def get_groups(self, obj:RetroSession):
         queryset = CardGroup.objects.filter(retro_session__pk=obj.pk).all()
-        serializer = CardGroupSerializer(queryset, many=True)
+        serializer = GroupsWithCardsSerializer(queryset, many=True)
         return serializer.data
 
 
