@@ -18,7 +18,7 @@ class SessionConsumer(AsyncWebsocketConsumer):
         else:
             await self.channel_layer.group_add(self.GROUP_NAME, self.channel_name)
             await self.accept()
-            await self.send(json.dumps({'code': 1, 'message': 'Connected successfully'}))
+            await self.send(json.dumps({'code': 0, 'message': 'Connected successfully'}))
 
     @sync_to_async
     def check_accessability(self):
