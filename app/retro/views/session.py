@@ -22,7 +22,7 @@ class SessionViewSet(RetrieveModelMixin, CreateModelMixin,
         if self.request.method == 'GET':
             session_id = self.kwargs.get('pk')
             session = self.queryset.filter(pk=session_id).first()
-            serializer_classes = [IceBreakerStepSerializer, ReflectStepSerializer, GroupStepSerializer, VoteStepSerializer]
+            serializer_classes = [IceBreakerStepSerializer, ReflectStepSerializer, GroupStepSerializer, VoteStepSerializer, DiscussCardGroupSerializer]
             if session:
                 return serializer_classes[session.retro_step]
             else:
