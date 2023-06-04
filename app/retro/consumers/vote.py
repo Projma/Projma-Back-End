@@ -65,11 +65,11 @@ class VoteConsumer(SessionConsumer):
         json_data = json.loads(text_data)
         request_type = json_data['type']
         if request_type == 'update_limitation':
-            value = json_data['value']
+            value = json_data['data']['value']
             await self.update_limitation(value)
         elif request_type == 'vote':
-            cg_id = json_data['card_group_id']
-            value = json_data['value']
+            cg_id = json_data['data']['card_group_id']
+            value = json_data['data']['value']
             await self.vote(cg_id, value)
         await self.channel_layer.group_send(self.GROUP_NAME,{
             'type': 'show_vote'
