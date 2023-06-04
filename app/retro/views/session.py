@@ -44,3 +44,47 @@ class SessionViewSet(RetrieveModelMixin, CreateModelMixin,
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class GetSessionReflect(GenericViewSet):
+    queryset = RetroSession.objects.all()
+    serializer_class = ReflectStepSerializer
+    # permission_classes = [IsAdminUser | IsMeetingBoardMember | IsMeetingBoardAdmin | IsMeetingBoardWorkSpaceOwner]
+
+    @action(detail=True, methods=['get'], url_path='get-session-reflect', url_name='get-session-reflect')
+    def get_meeting(self, request, pk):
+        sess = self.get_object()
+        serializer = self.get_serializer(instance=sess)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class GetSessionGroup(GenericViewSet):
+    queryset = RetroSession.objects.all()
+    serializer_class = GroupStepSerializer
+
+    @action(detail=True, methods=['get'], url_path='get-session-group', url_name='get-session-group')
+    def get_meeting(self, request, pk):
+        sess = self.get_object()
+        serializer = self.get_serializer(instance=sess)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class GetSessionVote(GenericViewSet):
+    queryset = RetroSession.objects.all()
+    serializer_class = VoteStepSerializer
+
+    @action(detail=True, methods=['get'], url_path='get-session-vote', url_name='get-session-vote')
+    def get_meeting(self, request, pk):
+        sess = self.get_object()
+        serializer = self.get_serializer(instance=sess)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class GetSessionDiscuss(GenericViewSet):
+    queryset = RetroSession.objects.all()
+    serializer_class = DiscussStepSerializer
+
+    @action(detail=True, methods=['get'], url_path='get-session-discuss', url_name='get-session-discuss')
+    def get_meeting(self, request, pk):
+        sess = self.get_object()
+        serializer = self.get_serializer(instance=sess)
+        return Response(serializer.data, status=status.HTTP_200_OK)
