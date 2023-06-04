@@ -10,7 +10,7 @@ class ReflectConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.USER = self.scope['user']
         self.SESSION_ID = int(self.scope['url_route']['kwargs']['session_id'])
-        self.GROUP_NAME = "session_%s" % self.SESSION_ID
+        self.GROUP_NAME = "session_%s_reflect" % self.SESSION_ID
         await self.channel_layer.group_add(self.GROUP_NAME, self.channel_name)
         await self.accept()
 
@@ -40,6 +40,7 @@ class ReflectConsumer(AsyncWebsocketConsumer):
             'type': 'send_nums',
             'data': card_obj
         })
+        await self.send(json.dumps({'text': text}))
 
     async def disconnect(self, code):
         await self.channel_layer.group_discard(self.GROUP_NAME, self.channel_name)
