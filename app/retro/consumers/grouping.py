@@ -12,10 +12,8 @@ class GroupConsumer(SessionConsumer):
 
     @sync_to_async
     def is_admin(self):
-        board = RetroSession.objects.get(pk=self.SESSION_ID).board
-        admin = board.admins.all()
-        wowner = board.workspace.owner
-        if self.USER in admin or self.USER == wowner:
+        retro = RetroSession.objects.get(pk=self.SESSION_ID)
+        if self.USER.profile == retro.admin:
             return True
         return False
 
@@ -25,6 +23,13 @@ class GroupConsumer(SessionConsumer):
         card.card_group = parent_card
         card.save()
 
+    @sync_to_async
+    def split_cards(self, card_id, card_text):
+        pre_group = CardGroup.objects.filter(name=card_text).first()
+        card = RetroCard.objects.get(pk=card_id)
+        card.card_group = pre_group
+        card.save()
+
     async def show_groups(self):
         pass
 
@@ -32,10 +37,14 @@ class GroupConsumer(SessionConsumer):
         json_data = json.loads(text_data)
         if await self.is_admin():
             request_type = json_data['type']
-            if request_type == "show_groups":
-                p_c = json_data['parent_card']
-                c = json_data['card']
+            if request_type == "merge":
+                p_c = json_data['data']['parent_card']
+                c = json_data['data']['card']
                 await self.merge_cards(p_c, c)
+            elif request_type == 'split':
+                c_id = json_data['data']['id']
+                c_text = json_data['data']['text']
+                await self.split_cards(c_id, c_text)
             await self.channel_layer.group_send(self.GROUP_NAME, {'type': 'show_groups'})
         else:
             self.send(json.dumps({'code': 1, 'message': 'You are not allowed.'}))
