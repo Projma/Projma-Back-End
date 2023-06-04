@@ -4,6 +4,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from retro.types import RetroSteps
 from retro.models import RetroSession, CardGroup, RetroCard
 from .session import SessionConsumer
+from retro.serializers.groupserializer import GroupsWithCardsSerializer
 
 
 class GroupConsumer(SessionConsumer):
@@ -20,18 +21,28 @@ class GroupConsumer(SessionConsumer):
     @sync_to_async
     def merge_cards(self, parent_card, card):
         card = RetroCard.objects.get(pk=card)
+        parent_card = RetroCard.objects.get(pk=parent_card).card_group
+        pre_parent = card.card_group
+        pre_parent.delete()
         card.card_group = parent_card
         card.save()
 
     @sync_to_async
-    def split_cards(self, card_id, card_text):
-        pre_group = CardGroup.objects.filter(name=card_text).first()
+    def split_cards(self, card_id):
         card = RetroCard.objects.get(pk=card_id)
-        card.card_group = pre_group
-        card.save()
+        if card.text != card.card_group.name:
+            card.init_group(self.SESSION_ID)
+            card.save()
 
-    async def show_groups(self):
-        pass
+    @sync_to_async
+    def get_groups(self):
+        groups = CardGroup.objects.filter(retro_session=self.SESSION_ID).all()
+        serializer = GroupsWithCardsSerializer(groups, many=True)
+        return serializer.data
+
+    async def show_groups(self, *args, **kwargs):
+        qs = await self.get_groups()
+        await self.send(json.dumps(qs))
 
     async def receive(self, text_data=None, bytes_data=None):
         json_data = json.loads(text_data)
@@ -43,8 +54,7 @@ class GroupConsumer(SessionConsumer):
                 await self.merge_cards(p_c, c)
             elif request_type == 'split':
                 c_id = json_data['data']['id']
-                c_text = json_data['data']['text']
-                await self.split_cards(c_id, c_text)
+                await self.split_cards(c_id)
             await self.channel_layer.group_send(self.GROUP_NAME, {'type': 'show_groups'})
         else:
             self.send(json.dumps({'code': 1, 'message': 'You are not allowed.'}))
