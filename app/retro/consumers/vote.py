@@ -5,29 +5,11 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.auth import login
 from retro.types import RetroSteps
 from retro.models import RetroSession, RetroReaction, CardGroup
+from .session import SessionConsumer
 
-class VoteConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        self.USER = self.scope['user']
-        self.SESSION_ID = int(self.scope['url_route']['kwargs']['session_id'])
-        self.GROUP_NAME = "session_%s" % self.SESSION_ID
-        if not await self.check_accessability():
-            await self.accept()
-            await self.send(json.dumps({'code': 1, 'message': 'You do not have access to this session'}))
-        else:
-            await self.channel_layer.group_add(self.GROUP_NAME, self.channel_name)
-            await self.accept()
-            await self.send(json.dumps({'code': 1, 'message': 'Connected successfully'}))
-
-    @sync_to_async
-    def check_accessability(self):
-        board = RetroSession.objects.get(pk=self.SESSION_ID).board
-        admin = board.admins.all()
-        members = board.members.all()
-        wowner = board.workspace.owner
-        if (not self.USER.profile in (admin | members)) and self.USER.profile != wowner:
-            return False
-        return True
+class VoteConsumer(SessionConsumer):
+    async def connect(self, *args, **kwargs):
+        return await super().connect(step_name='vote')
 
     @sync_to_async
     def update_limitation(self, val):
@@ -92,6 +74,3 @@ class VoteConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_send(self.GROUP_NAME,{
             'type': 'show_vote'
         })
-
-    async def disconnect(self, code):
-        await self.channel_layer.group_discard(self.GROUP_NAME, self.channel_name)
