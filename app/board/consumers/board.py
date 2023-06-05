@@ -81,6 +81,7 @@ class BoardConsumer(WebsocketConsumer):
     def add_card(self, event):
         if self.channel_name != event['sender_channel_name']:
             self.send(text_data=json.dumps(event))
+
     def edit_tasklist_name(self, event):
         if self.channel_name != event['sender_channel_name']:
             self.send(text_data=json.dumps(event))
