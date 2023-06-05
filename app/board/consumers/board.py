@@ -15,7 +15,7 @@ class BoardConsumer(WebsocketConsumer):
 
         # self.send(json.dumps({
         #     'type': 'Test Message For Channel Connectivity',
-        #     'message': 'Kosse nane chini KHARKOSDEH',
+        #     'message': '',
         # }))
 
     def receive(self, text_data):
@@ -45,14 +45,14 @@ class BoardConsumer(WebsocketConsumer):
             board = Board.objects.get(id=board_id)
         except:
             return {'code': 1, 'message': 'Board id is not valid'}
-        if self.USER.profile not in board.members.all() | board.admins.all() \
-                or self.USER.profile != board.workspace.owner:
+        if self.USER.profile not in (board.members.all() | board.admins.all()) \
+                and self.USER.profile != board.workspace.owner:
             return {'code': 1, 'message': 'You dont have permission to access this board'}
 
-        self.BOARD_GROUP = f'board_{board.id}'
+        self.BOARD_GROUP_NAME = f'board_{board.id}'
 
         async_to_sync(self.channel_layer.group_add)(
-            self.BOARD_GROUP,
+            self.BOARD_GROUP_NAME,
             self.channel_name
         )
         return {'code': 0, 'message': 'Joined board group successfully'}
@@ -81,8 +81,7 @@ class BoardConsumer(WebsocketConsumer):
     def add_card(self, event):
         if self.channel_name != event['sender_channel_name']:
             self.send(text_data=json.dumps(event))
-
-    def edit_list_name(self, event):
+    def edit_tasklist_name(self, event):
         if self.channel_name != event['sender_channel_name']:
             self.send(text_data=json.dumps(event))
 
