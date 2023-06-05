@@ -25,10 +25,11 @@ class IceBreakerStepSerializer(serializers.ModelSerializer):
 class ReflectStepSerializer(serializers.ModelSerializer):
     cards = serializers.SerializerMethodField()
     groups = serializers.SerializerMethodField()
+    is_retro_admin = serializers.SerializerMethodField()
     class Meta:
         model = RetroSession
-        fields = ['id', 'board', 'admin', 'retro_step', 'cards', 'groups']
-        read_only_fields = ['id', 'board', 'admin']
+        fields = ['id', 'board', 'admin', 'retro_step', 'cards', 'groups', 'is_retro_admin']
+        read_only_fields = ['id', 'board', 'admin', 'is_retro_admin']
 
     def get_cards(self, obj:RetroSession):
         queryset = RetroCard.objects.select_related('card_group__retro_session').\
@@ -41,28 +42,37 @@ class ReflectStepSerializer(serializers.ModelSerializer):
         serializer = CardGroupSerializer(queryset, many=True)
         return serializer.data
 
+    def get_is_retro_admin(self, obj:RetroSession):
+        return self.context['request'].user.profile == obj.admin
 
 class GroupStepSerializer(serializers.ModelSerializer):
     groups = serializers.SerializerMethodField()
+    is_retro_admin = serializers.SerializerMethodField()
+
     class Meta:
         model = RetroSession
-        fields = ['id', 'board', 'admin', 'retro_step', 'groups']
-        read_only_fields = ['id', 'board', 'admin']
+        fields = ['id', 'board', 'admin', 'retro_step', 'groups', 'is_retro_admin']
+        read_only_fields = ['id', 'board', 'admin', 'is_retro_admin']
 
     def get_groups(self, obj:RetroSession):
         queryset = CardGroup.objects.filter(retro_session__pk=obj.pk).all()
         serializer = GroupsWithCardsSerializer(queryset, many=True)
         return serializer.data
 
+    def get_is_retro_admin(self, obj:RetroSession):
+        return self.context['request'].user.profile == obj.admin
+
 
 class VoteStepSerializer(serializers.ModelSerializer):
     group_votes = serializers.SerializerMethodField()
     user_votes = serializers.SerializerMethodField()
     team_votes = serializers.SerializerMethodField()
+    is_retro_admin = serializers.SerializerMethodField()
+
     class Meta:
         model = RetroSession
-        fields = ['id', 'board', 'admin', 'retro_step', 'group_votes', 'user_votes', 'team_votes']
-        read_only_fields = ['id', 'board', 'admin']
+        fields = ['id', 'board', 'admin', 'retro_step', 'group_votes', 'user_votes', 'team_votes', 'is_retro_admin']
+        read_only_fields = ['id', 'board', 'admin', 'is_retro_admin']
 
     def get_reactions(self, obj:RetroSession, all=False):
         queryset = RetroReaction.objects.filter(card_group__retro_session__pk=obj.pk)
@@ -91,16 +101,24 @@ class VoteStepSerializer(serializers.ModelSerializer):
             votes = votes - team_votes['count__sum']
         return votes
 
+    def get_is_retro_admin(self, obj:RetroSession):
+        return self.context['request'].user.profile == obj.admin
+
 
 class DiscussStepSerializer(serializers.ModelSerializer):
     groups = serializers.SerializerMethodField()
+    is_retro_admin = serializers.SerializerMethodField()
 
     class Meta:
         model = RetroSession
-        fields = ['id', 'retro_step', 'groups']
+        fields = ['id', 'retro_step', 'groups', 'is_retro_admin']
+        read_only_fields = ['id', 'is_retro_admin']
 
     def get_groups(self, obj:RetroSession):
         cgs = obj.card_groups.all()
         serializer = DiscussCardGroupSerializer(cgs, many=True)
         data = sorted(serializer.data, key=lambda x:x['votes'], reverse=True)
         return data
+
+    def get_is_retro_admin(self, obj:RetroSession):
+        return self.context['request'].user.profile == obj.admin
