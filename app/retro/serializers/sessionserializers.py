@@ -86,6 +86,7 @@ class VoteStepSerializer(serializers.ModelSerializer):
         data = {}
         for g in groups:
             data[g.pk] = {}
+            data[g.pk]['id'] = g.pk
             data[g.pk]['cards'] = SimpleRetroCardSerializer(g.retro_cards, many=True).data
             try:
                 data[g.pk]['vote_cnt'] = reactions.values('card_group').annotate(g_count=Count('card_group')).get(card_group=g.pk)['g_count']
