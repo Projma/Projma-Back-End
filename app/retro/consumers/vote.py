@@ -16,7 +16,7 @@ class VoteConsumer(SessionConsumer):
         retro_session = RetroSession.objects.get(pk=self.SESSION_ID)
         all_votes = RetroReaction.objects.filter(card_group__retro_session=retro_session)\
                         .aggregate(all_votes=Sum('count'))['all_votes']
-        if retro_session.vote_limitation * retro_session.attendees.count() + val < all_votes:
+        if all_votes and retro_session.vote_limitation * retro_session.attendees.count() + val < all_votes:
             self.send(json.dumps({'code': 1, 'message': 'You can not decrease the vote limitation'}))
         elif retro_session.admin == self.USER.profile:
             retro_session.vote_limitation += val
