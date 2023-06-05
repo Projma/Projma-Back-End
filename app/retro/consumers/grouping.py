@@ -20,19 +20,25 @@ class GroupConsumer(SessionConsumer):
 
     @sync_to_async
     def merge_cards(self, parent_card, card):
-        card = RetroCard.objects.get(pk=card)
-        parent_card = RetroCard.objects.get(pk=parent_card).card_group
-        pre_parent = card.card_group
-        pre_parent.delete()
-        card.card_group = parent_card
-        card.save()
+        if parent_card != card:
+            card = RetroCard.objects.get(pk=card)
+            parent_card = RetroCard.objects.get(pk=parent_card).card_group
+            pre_parent = card.card_group
+            if pre_parent != parent_card:
+                card.card_group = parent_card
+                card.save()
+                if not len(pre_parent.retro_cards.all()):
+                    pre_parent.delete()
 
     @sync_to_async
     def split_cards(self, card_id):
         card = RetroCard.objects.get(pk=card_id)
-        # if card.text != card.card_group.name:
-        card.init_group(self.SESSION_ID)
-        card.save()
+        if card.text != card.card_group.name:
+            parent_card = card.card_group
+            card.init_group(self.SESSION_ID)
+            card.save()
+            if not (parent_card.retro_cards.all()):
+                parent_card.delete()
 
     @sync_to_async
     def get_groups(self):

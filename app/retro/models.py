@@ -1,4 +1,4 @@
-from typing import Collection, Optional
+from typing import Any, Collection, Iterable, Optional
 from django.db import models
 from colorfield.fields import ColorField
 from accounts.models import Profile
