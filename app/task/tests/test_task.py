@@ -38,3 +38,18 @@ class TestGetTask:
         task_id = response.data['id']
         response = api_client.get(f'/task/{task_id+1}/get-task/')
         assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+@pytest.mark.django_db
+class TestDeleteTask:
+    def test_delete_valid_task_returns_204(self, api_client, create_board, create_tasklist, create_task):
+        response = TestCreateTask.create_task(create_board, create_tasklist, create_task)
+        task_id = response.data['id']
+        response = api_client.delete(f'/task/delete-task/{task_id}/')
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+
+    def test_delete_invalid_task_returns_404(self, api_client, create_board, create_tasklist, create_task):
+        response = TestCreateTask.create_task(create_board, create_tasklist, create_task)
+        task_id = response.data['id']
+        response = api_client.delete(f'/task/delete-task/{task_id+1}/')
+        assert response.status_code == status.HTTP_404_NOT_FOUND
