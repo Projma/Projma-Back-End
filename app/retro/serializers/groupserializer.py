@@ -17,7 +17,7 @@ class GroupsWithCardsSerializer(serializers.ModelSerializer):
     class Meta:
         model = CardGroup
         fields = ['id', 'name', 'cards', 'hide']
-        
+
     def get_cards(self, obj: CardGroup):
         cards = RetroCard.objects.filter(card_group=obj.pk)
         serializer = SimpleRetroCardSerializer(cards, many=True)
