@@ -30,9 +30,9 @@ class GroupConsumer(SessionConsumer):
     @sync_to_async
     def split_cards(self, card_id):
         card = RetroCard.objects.get(pk=card_id)
-        if card.text != card.card_group.name:
-            card.init_group(self.SESSION_ID)
-            card.save()
+        # if card.text != card.card_group.name:
+        card.init_group(self.SESSION_ID)
+        card.save()
 
     @sync_to_async
     def get_groups(self):
