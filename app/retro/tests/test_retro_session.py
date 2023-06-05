@@ -38,3 +38,55 @@ class TestDeleteRetro:
         retro = create_retro()
         response = api_client.delete(f'/retro/{retro.pk+1}/')
         assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+@pytest.mark.django_db
+class TestGetRetroReflectStep:
+    def test_get_valid_retro_reflect_step_returns_200(self, api_client, create_retro):
+        retro = create_retro()
+        response = api_client.get(f'/retro/{retro.pk}/get-session-reflect/')
+        assert response.status_code == status.HTTP_200_OK
+
+    def test_get_invalid_retro_reflect_step_returns_404(self, api_client, create_retro):
+        retro = create_retro()
+        response = api_client.get(f'/retro/{retro.pk+1}/get-session-reflect/')
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+@pytest.mark.django_db
+class TestGetRetroGroupStep:
+    def test_get_valid_retro_group_step_returns_200(self, api_client, create_retro):
+        retro = create_retro()
+        response = api_client.get(f'/retro/{retro.pk}/get-session-group/')
+        assert response.status_code == status.HTTP_200_OK
+
+    def test_get_invalid_retro_group_step_returns_404(self, api_client, create_retro):
+        retro = create_retro()
+        response = api_client.get(f'/retro/{retro.pk+1}/get-session-group/')
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+@pytest.mark.django_db
+class TestGetRetroVoteStep:
+    def test_get_valid_retro_vote_step_returns_200(self, api_client, create_retro):
+        retro = create_retro()
+        response = api_client.get(f'/retro/{retro.pk}/get-session-vote/')
+        assert response.status_code == status.HTTP_200_OK
+
+    def test_get_invalid_retro_vote_step_returns_404(self, api_client, create_retro):
+        retro = create_retro()
+        response = api_client.get(f'/retro/{retro.pk+1}/get-session-vote/')
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+@pytest.mark.django_db
+class TestGetRetroDiscussStep:
+    def test_get_valid_retro_discuss_step_returns_200(self, api_client, create_retro):
+        retro = create_retro()
+        response = api_client.get(f'/retro/{retro.pk}/get-session-discuss/')
+        assert response.status_code == status.HTTP_200_OK
+
+    def test_get_invalid_retro_discuss_step_returns_404(self, api_client, create_retro):
+        retro = create_retro()
+        response = api_client.get(f'/retro/{retro.pk+1}/get-session-discuss/')
+        assert response.status_code == status.HTTP_404_NOT_FOUND
