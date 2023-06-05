@@ -2,7 +2,7 @@ from django.urls import re_path
 from retro.consumers.vote import VoteConsumer
 from retro.consumers.session import SessionConsumer
 from retro.consumers.reflect import ReflectConsumer
-from retro.consumers.grouping import GroupConsumer
+from retro.consumers.group import GroupConsumer
 from retro.consumers.discuss import DiscussConsumer
 
 websocket_urlpatterns = {
