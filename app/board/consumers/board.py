@@ -73,6 +73,16 @@ class BoardConsumer(WebsocketConsumer):
     def remove_tasklist(self, event):
         if self.channel_name != event['sender_channel_name']:
             self.send(text_data=json.dumps(event))
+    def remove_card(self, event):
+        if self.channel_name != event['sender_channel_name']:
+            self.send(text_data=json.dumps(event))
+    def add_card(self, event):
+        if self.channel_name != event['sender_channel_name']:
+            self.send(text_data=json.dumps(event))
+    def edit_list_name(self, event):
+        if self.channel_name != event['sender_channel_name']:
+            self.send(text_data=json.dumps(event))
+
 
     async def disconnect(self, code):
         pass
