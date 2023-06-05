@@ -12,17 +12,20 @@ class CardGroupSerializer(serializers.ModelSerializer):
 
 class GroupsWithCardsSerializer(serializers.ModelSerializer):
     hide = serializers.BooleanField(default=False)
+    is_positive = serializers.SerializerMethodField()
     cards = serializers.SerializerMethodField()
 
     class Meta:
         model = CardGroup
-        fields = ['id', 'name', 'cards', 'hide']
+        fields = ['id', 'name', 'cards', 'hide', 'is_positive']
 
     def get_cards(self, obj: CardGroup):
         cards = RetroCard.objects.filter(card_group=obj.pk)
         serializer = SimpleRetroCardSerializer(cards, many=True)
         return serializer.data
 
+    def get_is_positive(self, obj:CardGroup):
+        return obj.retro_cards.first().is_positive
 
 class DiscussCardGroupSerializer(serializers.ModelSerializer):
     votes = serializers.SerializerMethodField()
