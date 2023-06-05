@@ -1,7 +1,7 @@
-from django.db.models import Sum
+from django.db.models import Sum, Count
 from rest_framework import serializers
 from retro.models import RetroSession, CardGroup, RetroCard, RetroReaction
-from retro.serializers.cardserializer import RetroCardSerializer
+from retro.serializers.cardserializer import RetroCardSerializer, SimpleRetroCardSerializer
 from retro.serializers.groupserializer import CardGroupSerializer, DiscussCardGroupSerializer, GroupsWithCardsSerializer
 from retro.serializers.reactionserializer import RetroReactionSerializer
 from accounts.serializers import PublicInfoProfileSerializer
@@ -81,9 +81,17 @@ class VoteStepSerializer(serializers.ModelSerializer):
         return queryset
 
     def get_group_votes(self, obj:RetroSession):
-        queryset = self.get_reactions(obj)
-        serializer = RetroReactionSerializer(queryset, many=True)
-        return serializer.data
+        reactions = self.get_reactions(obj, True)
+        groups = CardGroup.objects.filter(retro_session=obj.pk).all()
+        data = {}
+        for g in groups:
+            data[g.pk] = {}
+            data[g.pk]['cards'] = SimpleRetroCardSerializer(g.retro_cards, many=True).data
+            try:
+                data[g.pk]['vote_cnt'] = reactions.values('card_group').annotate(g_count=Count('card_group')).get(card_group=g.pk)['g_count']
+            except RetroReaction.DoesNotExist:
+                data[g.pk]['vote_cnt'] = 0
+        return data
 
     def get_user_votes(self, obj:RetroSession):
         queryset = self.get_reactions(obj)
@@ -119,6 +127,3 @@ class DiscussStepSerializer(serializers.ModelSerializer):
         serializer = DiscussCardGroupSerializer(cgs, many=True)
         data = sorted(serializer.data, key=lambda x:x['votes'], reverse=True)
         return data
-
-    def get_is_retro_admin(self, obj:RetroSession):
-        return self.context['request'].user.profile == obj.admin
