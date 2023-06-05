@@ -101,6 +101,6 @@ class DiscussStepSerializer(serializers.ModelSerializer):
 
     def get_groups(self, obj:RetroSession):
         cgs = obj.card_groups.all()
-        serializer = GroupsWithCardsSerializer(cgs, many=True)
+        serializer = DiscussCardGroupSerializer(cgs, many=True)
         data = sorted(serializer.data, key=lambda x:x['votes'], reverse=True)
         return data

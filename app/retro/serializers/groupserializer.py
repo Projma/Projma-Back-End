@@ -26,13 +26,19 @@ class GroupsWithCardsSerializer(serializers.ModelSerializer):
 
 class DiscussCardGroupSerializer(serializers.ModelSerializer):
     votes = serializers.SerializerMethodField()
+    cards = serializers.SerializerMethodField()
 
     class Meta:
         model = CardGroup
-        fields = ['id', 'name', 'retro_session', 'is_discussed', 'votes']
+        fields = ['id', 'name', 'retro_session', 'is_discussed', 'votes', 'cards']
 
     def get_votes(self, obj):
         total_votes = obj.retro_reactions.aggregate(vote_nums=Sum('count'))
         if total_votes['vote_nums']:
             return total_votes['vote_nums']
         return 0
+
+    def get_cards(self, obj: CardGroup):
+        cards = RetroCard.objects.filter(card_group=obj.pk)
+        serializer = SimpleRetroCardSerializer(cards, many=True)
+        return serializer.data
