@@ -68,6 +68,7 @@ class GetSessionGroup(GenericViewSet):
         serializer = self.get_serializer(instance=sess)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 class GetSessionVote(GenericViewSet):
     queryset = RetroSession.objects.all()
     serializer_class = VoteStepSerializer
