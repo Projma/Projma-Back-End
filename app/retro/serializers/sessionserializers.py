@@ -91,6 +91,7 @@ class VoteStepSerializer(serializers.ModelSerializer):
                 data[g.pk]['vote_cnt'] = reactions.values('card_group').annotate(g_count=Count('card_group')).get(card_group=g.pk)['g_count']
             except RetroReaction.DoesNotExist:
                 data[g.pk]['vote_cnt'] = 0
+            data[g.pk]['is_positive'] = g.retro_cards.first().is_positive
         return data
 
     def get_user_votes(self, obj:RetroSession):
