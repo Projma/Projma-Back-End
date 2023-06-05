@@ -89,7 +89,7 @@ class VoteStepSerializer(serializers.ModelSerializer):
             data[g.pk]['id'] = g.pk
             data[g.pk]['cards'] = SimpleRetroCardSerializer(g.retro_cards, many=True).data
             try:
-                data[g.pk]['vote_cnt'] = reactions.get('card_group').count
+                data[g.pk]['vote_cnt'] = reactions.get(card_group=g.pk).count
             except RetroReaction.DoesNotExist:
                 data[g.pk]['vote_cnt'] = 0
             data[g.pk]['is_positive'] = g.retro_cards.first().is_positive
