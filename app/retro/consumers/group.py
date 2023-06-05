@@ -51,16 +51,17 @@ class GroupConsumer(SessionConsumer):
         await self.send(json.dumps(qs))
 
     async def receive(self, text_data=None, bytes_data=None):
-        json_data = json.loads(text_data)
+        typ, data = await super().receive(text_data, bytes_data)
+
         if await self.is_admin():
-            request_type = json_data['type']
-            if request_type == "merge":
-                p_c = json_data['data']['parent_card']
-                c = json_data['data']['card']
+            if typ == "merge":
+                p_c = data['parent_card']
+                c = data['card']
                 await self.merge_cards(p_c, c)
-            elif request_type == 'split':
-                c_id = json_data['data']['id']
+                await self.channel_layer.group_send(self.GROUP_NAME, {'type': 'show_groups'})
+            elif typ == 'split':
+                c_id = data['id']
                 await self.split_cards(c_id)
-            await self.channel_layer.group_send(self.GROUP_NAME, {'type': 'show_groups'})
+                await self.channel_layer.group_send(self.GROUP_NAME, {'type': 'show_groups'})
         else:
-            self.send(json.dumps({'code': 1, 'message': 'You are not allowed.'}))
+            await self.send(json.dumps({'code': 1, 'message': 'You are not allowed.'}))
