@@ -129,3 +129,6 @@ class DiscussStepSerializer(serializers.ModelSerializer):
         serializer = DiscussCardGroupSerializer(cgs, many=True)
         data = sorted(serializer.data, key=lambda x:x['votes'], reverse=True)
         return data
+
+    def get_is_retro_admin(self, obj:RetroSession):
+        return self.context['request'].user.profile == obj.admin
