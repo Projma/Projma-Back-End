@@ -26,9 +26,10 @@ environ.Env.read_env(env_file=BASE_DIR / '../.env.dev')
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False if env('DEBUG') == 'False' else True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [host for host in env('ALLOWED_HOSTS').split(';')]
+CSRF_TRUSTED_ORIGINS = [host for host in env('CSRF_TRUSTED_ORIGINS').split(';')]
 
 
 # Application definition
