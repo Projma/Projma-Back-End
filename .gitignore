@@ -9,6 +9,8 @@
 *.env.prod
 db.sqlite3
 env/
+app/.idea
+.idea
 
 
 
@@ -178,92 +180,66 @@ dmypy.json
 cython_debug/
 
 # PyCharm
-#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
-#  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
-#  and can be added to the global gitignore or merged into this file.  For a more nuclear
-#  option (not recommended) you can uncomment the following to ignore the entire idea folder.
-#.idea/
+# User-specific stuff
+app/.idea/**/workspace.xml
+app/.idea/**/tasks.xml
+app/.idea/**/usage.statistics.xml
+app/.idea/**/dictionaries
+app/.idea/**/shelf
 
-### Python ###
-# Byte-compiled / optimized / DLL files
+# AWS User-specific
+app/.idea/**/aws.xml
 
-# C extensions
+# Generated files
+app/.idea/**/contentModel.xml
 
-# Distribution / packaging
+# Sensitive or high-churn files
+app/.idea/**/dataSources/
+app/.idea/**/dataSources.ids
+app/.idea/**/dataSources.local.xml
+app/.idea/**/sqlDataSources.xml
+app/.idea/**/dynamic.xml
+app/.idea/**/uiDesigner.xml
+app/.idea/**/dbnavigator.xml
 
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+# Gradle
+app/.idea/**/gradle.xml
+app/.idea/**/libraries
 
-# Installer logs
 
-# Unit test / coverage reports
+# CMake
+cmake-build-*/
 
-# Translations
+# Mongo Explorer plugin
+.idea/**/mongoSettings.xml
 
-# Django stuff:
+# File-based project format
+*.iws
 
-# Flask stuff:
+# IntelliJ
+out/
 
-# Scrapy stuff:
+# mpeltonen/sbt-idea plugin
+.idea_modules/
 
-# Sphinx documentation
+# JIRA plugin
+atlassian-ide-plugin.xml
 
-# PyBuilder
+# Cursive Clojure plugin
+.idea/replstate.xml
 
-# Jupyter Notebook
+# SonarLint plugin
+.idea/sonarlint/
 
-# IPython
+# Crashlytics plugin (for Android Studio and IntelliJ)
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
 
-# pyenv
-#   For a library or package, you might want to ignore these files since the code is
-#   intended to run in multiple environments; otherwise, check them in:
-# .python-version
+# Editor-based Rest Client
+.idea/httpRequests
 
-# pipenv
-#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
-#   However, in case of collaboration, if having platform-specific dependencies or dependencies
-#   having no cross-platform support, pipenv may install dependencies that don't work, or not
-#   install all needed dependencies.
+# Android studio 3.1+ serialized cache file
+.idea/caches/build_file_checksums.ser
 
-# poetry
-#   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.
-#   This is especially recommended for binary packages to ensure reproducibility, and is more
-#   commonly ignored for libraries.
-#   https://python-poetry.org/docs/basic-usage/#commit-your-poetrylock-file-to-version-control
-
-# pdm
-#   Similar to Pipfile.lock, it is generally recommended to include pdm.lock in version control.
-#   pdm stores project-wide configurations in .pdm.toml, but it is recommended to not include it
-#   in version control.
-#   https://pdm.fming.dev/#use-with-ide
-
-# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
-
-# Celery stuff
-
-# SageMath parsed files
-
-# Environments
-
-# Spyder project settings
-
-# Rope project settings
-
-# mkdocs documentation
-
-# mypy
-
-# Pyre type checker
-
-# pytype static type analyzer
-
-# Cython debug symbols
-
-# PyCharm
-#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
-#  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
-#  and can be added to the global gitignore or merged into this file.  For a more nuclear
-#  option (not recommended) you can uncomment the following to ignore the entire idea folder.
-
-# End of https://www.toptal.com/developers/gitignore/api/django,python

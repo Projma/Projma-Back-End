@@ -17,7 +17,6 @@ from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -27,14 +26,16 @@ environ.Env.read_env(env_file=BASE_DIR / '../.env.dev')
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False if env('DEBUG') == 'False' else True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [host for host in env('ALLOWED_HOSTS').split(';')]
+CSRF_TRUSTED_ORIGINS = [host for host in env('CSRF_TRUSTED_ORIGINS').split(';')]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_filters',
     'rest_framework',
+    'rest_framework.authtoken',
     'rest_framework_simplejwt',
     'corsheaders',
     'cloudinary_storage',
@@ -54,7 +56,8 @@ INSTALLED_APPS = [
     'board',
     'task',
     'template',
-    'simple_calendar'
+    'simple_calendar',
+    'retro',
 ]
 
 MIDDLEWARE = [
@@ -88,6 +91,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'ProjmaBackend.wsgi.application'
+
+ASGI_APPLICATION = "ProjmaBackend.asgi.application"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 
 # Database
@@ -182,6 +192,9 @@ SIMPLE_JWT = {
 
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
+SKYROOM_API_KEY = env('SKYROOM_API_KEY')
+SKYROOM_USERNAME = env('SKYROOM_USERNAME')
 
 # CLOUDINARY_STORAGE = {
 #     'CLOUD_NAME': 'projmacloud',

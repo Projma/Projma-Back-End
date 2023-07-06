@@ -1,3 +1,4 @@
+from django.urls import reverse
 from rest_framework.test import APIClient
 from accounts.models import User
 import pytest
@@ -9,6 +10,8 @@ WORKSPACE_NAME = 'test_workspace'
 WORKSPACE_TYPE = 'education'
 BOARD_NAME = 'test_board'
 TASKLIST_NAME = 'test_tasklist'
+POLL_QUESTION = 'Question'
+POLL_ANSWER_TEXT = 'Text'
 
 class UserConf:
     def create_user(api_client):
@@ -63,12 +66,27 @@ class BoardConf:
             return workspace_response
         return _create_board
 
+
 class TaskListConf:
     def create_tasklist(api_client:APIClient):
         def _create_tasklist(board_id, title=TASKLIST_NAME):
             # return api_client.post(f'/workspaces/board/{board_id}/create-tasklist/', {'title': title})
             return api_client.post(f'/board/tasklist/{board_id}/create-tasklist/', {'title': title})
         return _create_tasklist
+
+
+class PollConf:
+    def create_poll(api_client:APIClient):
+        def _create_poll(board_id, question=POLL_QUESTION, is_open=True, is_multianswer=False, is_known=True):
+            url = reverse('poll-list')
+            return api_client.post(url, {'board': board_id, 'question': question, 'is_open': is_open, 'is_multianswer': is_multianswer, 'is_known': is_known})
+        return _create_poll
+
+    def create_answer(api_client:APIClient):
+        def _create_answer(poll_id, text=POLL_ANSWER_TEXT, order=1):
+            url = reverse('poll-answers-list')
+            return api_client.post(url, {'poll': poll_id, 'text': text, 'order': order})
+        return _create_answer
 
 
 @pytest.fixture
@@ -98,6 +116,20 @@ def create_tasklist(api_client:APIClient):
     def _create_tasklist(board_id, title=TASKLIST_NAME):
         return TaskListConf.create_tasklist(api_client)(board_id, title)
     return _create_tasklist
+
+@pytest.fixture
+def create_poll(api_client:APIClient):
+    '''you should create board first then call it. it returns the response(poll object)'''
+    def _create_poll(board_id, question=POLL_QUESTION, is_open=True, is_multianswer=False, is_known=True):
+        return PollConf.create_poll(api_client)(board_id, question, is_open, is_multianswer, is_known)
+    return _create_poll
+
+@pytest.fixture
+def create_answer(api_client:APIClient):
+    '''you should create board then create poll after that call it. it returns the response(pollanswer object)'''
+    def _create_answer(poll_id, text=POLL_ANSWER_TEXT, order=1):
+        return PollConf.create_answer(api_client)(poll_id, text, order)
+    return _create_answer
 
 @pytest.fixture
 def api_client():
