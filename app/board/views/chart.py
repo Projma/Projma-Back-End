@@ -7,11 +7,13 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from task.models import Task
 from board.models import Board
+from board.serializers.boardserializers import BoardMemberSerializer
 from ..chart_model import Chart
 
-class ChartViewSet(viewsets.ViewSet):
+class ChartViewSet(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
     queryset = Board.objects.all()
+    serializer_class = BoardMemberSerializer
 
     def get_estimate_and_done_and_out(self, qs):
         estimates_data = [item['estimates'] if item['estimates'] else 0 for item in qs.values('estimates')]
