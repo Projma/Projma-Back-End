@@ -61,6 +61,13 @@ class Command(BaseCommand):
                 {'title': 'در حال انجام'},\
                 {'title': 'انجام شده'}],
             l_params = []
+        ),
+        "retro template": BaseTemplate(
+            t_params = {'name': 'صفحه رترو', 'description': 'قالب صفحه رترو', 'background_pic': 'background_pics/retro-pic.jpg'},
+            tl_params = [{'title': 'نکات مثبت'}, \
+                {'title': 'نکات منفی'}, \
+                {'title': 'ایده جدید'}],
+            l_params = []
         )
     }
 
