@@ -9,7 +9,6 @@ on:
 
 jobs:
   build:
-    
     runs-on: ubuntu-latest
     services:
       postgres_main:
@@ -55,21 +54,27 @@ jobs:
         file: app/Dockerfile.prod
         push: true
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/projmabackend:1.0.0
-  #  deploy:
+  
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+      - 
+        name: remote ssh
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASS }}
+          port: ${{ secrets.VPS_PORT }}
 
-  #   needs: publish
-    
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     -
-  #       name: Checkout
-  #       uses: actions/checkout@v3
-  #     -
-  #       name: Set up SSH
-  #       uses: webfactory/ssh-agent@v0.7.0
-  #       with:
-  #         ssh-private-key: ${{ secrets.SSH_KEY }}
-  #     -
-  #       name: Set up on server
-  #       run: |
-  #         ssh -o StrictHostKeyChecking=no -i ${{ env.SSH_AUTH_SOCK }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "sudo docker ps -q | xargs sudo docker stop | xargs sudo docker rm && sudo docker pull farzanrahmani/projmafrontend:latest && sudo docker run -d -p 80:80 mohammad2782/projmabackend:1.0.0"
+          script: |
+            docker compose -f /root/Projma-Back-End/docker-compose.dep.yml down
+            docker ps | grep "mohammad2782/projmabackend" | awk '{print $3}' | xargs docker rmi
+            docker pull mohammad2782/projmabackend:1.0.0
+            docker compose -f /root/Projma-Back-End/docker-compose.dep.yml up -d
+
+   
