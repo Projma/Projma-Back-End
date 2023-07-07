@@ -34,7 +34,7 @@ class UserViewSet(viewsets.GenericViewSet):
         except:
             return Response('User not found', status=status.HTTP_404_NOT_FOUND)
         # url = request.get_host() + f'/accounts/users/{self._ACTIVE_ACCOUNT_KEY}'
-        url = 'http://localhost:3000/email-verification'
+        url = 'http://91.107.153.171:80/email-verification'
         email_template = 'emails/bootstrap_email_ev.html'
         context = {'username': user.username}
         email_sender = SendEmail(self.queryset)
