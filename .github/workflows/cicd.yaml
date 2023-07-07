@@ -36,8 +36,6 @@ jobs:
     - name: Make env file
       run: |
         echo "${{ secrets.DEV_ENV_FILE }}" > ./.env.dev
-    - name: Modify entrypoint permission
-      run: chmod +x app/entrypoint.prod.sh
     - name: Run Tests
       run: |
         cd app
@@ -47,6 +45,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+    - name: Modify entrypoint permission
+      run: chmod +x app/entrypoint.prod.sh
     - name: Login to Docker Hub
       uses: docker/login-action@v2
       with:
