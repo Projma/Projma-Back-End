@@ -24,7 +24,8 @@ class EventViewSet(mixins.CreateModelMixin,
             calendar_id = request.data.get('calendar')
             calendar = get_object_or_404(SimpleCalendar, pk=calendar_id)
             # return super().create(request, *args, **kwargs)
-            if calendar and request.user.profile in (calendar.board.admins.all() | calendar.board.members.all()):
+            if calendar and request.user.profile in (calendar.board.admins.all() | calendar.board.members.all()) \
+                    or request.user.profile == calendar.board.workspace.owner or request.user.is_superuser:
                 return super().create(request, *args, **kwargs)
             return Response("Only admins and members of board can create event for this board", status=status.HTTP_403_FORBIDDEN)
         except ValidationError as e:

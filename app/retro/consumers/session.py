@@ -10,7 +10,9 @@ class SessionConsumer(AsyncWebsocketConsumer):
     async def connect(self, *args, **kwargs):
         self.USER = self.scope['user']
         self.SESSION_ID = int(self.scope['url_route']['kwargs']['session_id'])
-        step_name = kwargs['step_name']
+        step_name = kwargs.get('step_name')
+        if not step_name:
+            step_name = 'start'
         self.GROUP_NAME = f'session_{self.SESSION_ID}_{step_name}'
         if not await self.check_accessability():
             await self.accept()
