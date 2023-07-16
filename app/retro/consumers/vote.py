@@ -61,7 +61,8 @@ class VoteConsumer(SessionConsumer):
             "team_votes": team_votes
         }))
 
-    async def receive(self, text_data):
+    async def receive(self, text_data, bytes_data=None):
+        typ, data = await super().receive(text_data, bytes_data)
         json_data = json.loads(text_data)
         request_type = json_data['type']
         if request_type == 'update_limitation':
