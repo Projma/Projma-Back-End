@@ -3,7 +3,7 @@ version: '3.8'
 services:
   web:
     image: mohammad2782/projmabackend:1.0.0
-    command: gunicorn ProjmaBackend.wsgi:application --bind 0.0.0.0:8000
+    command: daphne -b 0.0.0.0 -p 8000 ProjmaBackend.asgi:application
     volumes:
       - static_volume:/home/app/web/static
       - media_volume:/home/app/web/media
