@@ -15,8 +15,7 @@ from ..serializers.eventserializers import EventSerializer
 from ..permissions.calendarpermissions import *
 
 
-class SimpleCalendarViewSet(mixins.CreateModelMixin,
-                            mixins.DestroyModelMixin,
+class SimpleCalendarViewSet(mixins.DestroyModelMixin,
                             mixins.RetrieveModelMixin,
                             viewsets.GenericViewSet):
     queryset = SimpleCalendar.objects.all()
