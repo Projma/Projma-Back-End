@@ -80,7 +80,7 @@ jobs:
 
           script: |
             docker compose -f /root/Projma-Back-End/docker-compose.dep.yml down
-            docker ps | grep "mohammad2782/projmabackend" | awk '{print $3}' | xargs docker rmi
+            docker images | grep "mohammad2782/projmabackend" | awk '{print $3}' | xargs docker rmi
             docker pull mohammad2782/projmabackend:1.0.0
             docker compose -f /root/Projma-Back-End/docker-compose.dep.yml up -d
 
