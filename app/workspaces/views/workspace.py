@@ -12,6 +12,8 @@ from ..serializers.workspaceserializers import *
 from board.serializers.boardserializers import *
 from ..permissions.workspacepermissions import *
 from accounts.serializers import *
+from simple_calendar.models import SimpleCalendar
+
 
 
 
@@ -148,7 +150,8 @@ class WorkSpaceOwnerViewSet(viewsets.GenericViewSet):
         ws = self.get_object()
         serializer = BoardAdminSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(workspace=ws)
+        board = serializer.save(workspace=ws)
+        cal = SimpleCalendar.objects.create(board=board, id=board.id)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(methods=['post'], detail=True, url_path='add-user-to-workspace/(?P<user_id>.+)', serializer_class=WorkSpaceMemberSerializer)
