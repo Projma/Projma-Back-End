@@ -31,6 +31,8 @@ DEBUG = False if env('DEBUG') == 'False' else True
 ALLOWED_HOSTS = [host for host in env('ALLOWED_HOSTS').split(';')]
 CSRF_TRUSTED_ORIGINS = [host for host in env('CSRF_TRUSTED_ORIGINS').split(';')]
 
+FRONTEND_SOCK = env('FRONTEND_SOCK')
+
 
 # Application definition
 
